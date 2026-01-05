@@ -461,7 +461,7 @@ def generate_tag_app(
         "import typer",
         "from typer import Context",
         "",
-        f"app = typer.Typer(help=\"{tag} operations\")",
+        f"app = typer.Typer(help=\"{tag} operations\", context_settings={{\"help_option_names\": [\"-h\", \"--help\"]}})",
         "",
     ]
 

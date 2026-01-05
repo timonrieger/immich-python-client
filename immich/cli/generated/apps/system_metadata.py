@@ -7,7 +7,7 @@ from typing import Any
 import typer
 from typer import Context
 
-app = typer.Typer(help="System metadata operations")
+app = typer.Typer(help="System metadata operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("get-admin-onboarding")
 def get_admin_onboarding(

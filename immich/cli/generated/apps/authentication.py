@@ -7,7 +7,7 @@ from typing import Any
 import typer
 from typer import Context
 
-app = typer.Typer(help="Authentication operations")
+app = typer.Typer(help="Authentication operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("change-password")
 def change_password(

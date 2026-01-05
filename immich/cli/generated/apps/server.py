@@ -7,7 +7,7 @@ from typing import Any
 import typer
 from typer import Context
 
-app = typer.Typer(help="Server operations")
+app = typer.Typer(help="Server operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("delete-server-license")
 def delete_server_license(

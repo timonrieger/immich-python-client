@@ -7,7 +7,7 @@ from typing import Any
 import typer
 from typer import Context
 
-app = typer.Typer(help="Timeline operations")
+app = typer.Typer(help="Timeline operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("get-time-bucket")
 def get_time_bucket(

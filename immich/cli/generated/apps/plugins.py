@@ -7,7 +7,7 @@ from typing import Any
 import typer
 from typer import Context
 
-app = typer.Typer(help="Plugins operations")
+app = typer.Typer(help="Plugins operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("get-plugin")
 def get_plugin(

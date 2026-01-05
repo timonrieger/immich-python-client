@@ -7,7 +7,7 @@ from typing import Any
 import typer
 from typer import Context
 
-app = typer.Typer(help="Jobs operations")
+app = typer.Typer(help="Jobs operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("create-job")
 def create_job(

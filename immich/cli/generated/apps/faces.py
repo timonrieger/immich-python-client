@@ -7,7 +7,7 @@ from typing import Any
 import typer
 from typer import Context
 
-app = typer.Typer(help="Faces operations")
+app = typer.Typer(help="Faces operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("create-face")
 def create_face(

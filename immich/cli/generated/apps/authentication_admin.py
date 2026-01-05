@@ -7,7 +7,7 @@ from typing import Any
 import typer
 from typer import Context
 
-app = typer.Typer(help="Authentication (admin) operations")
+app = typer.Typer(help="Authentication (admin) operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("unlink-all-o-auth-accounts-admin")
 def unlink_all_o_auth_accounts_admin(

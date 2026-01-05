@@ -20,7 +20,16 @@ from immich.cli.config import create_client
 from immich.cli.runtime import print_response
 
 # Global state
-app = typer.Typer(help="Immich API CLI")
+app = typer.Typer(
+    help=(
+        "Immich CLI (unofficial).\n\n"
+        "Install: pip install immich[cli]\n"
+        "Auth/config via env: IMMICH_BASE_URL + one of IMMICH_API_KEY / "
+        "IMMICH_BEARER_TOKEN / IMMICH_COOKIE.\n"
+        "Request bodies: --json PATH. Responses: JSON."
+    ),
+    context_settings={"help_option_names": ["-h", "--help"]},
+)
 console = Console()
 
 
