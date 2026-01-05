@@ -82,29 +82,25 @@ jobs:
           if [ "$LATEST_MAJOR" != "$STORED_MAJOR" ]; then
             # Major version bump
             COMMIT_TYPE="feat"
-            COMMIT_BODY=$'Sync generated client to Immich '"$LATEST_TAG"$'\n\nBREAKING CHANGE: Immich server had a major release. Review upstream release notes for potential client-impacting changes: '"$RELEASE_URL"
+            COMMIT_BODY="BREAKING CHANGE: Immich server had a major release. Review upstream release notes for potential client-impacting changes."
           elif [ "$LATEST_MINOR" != "$STORED_MINOR" ]; then
             # Minor version bump
             COMMIT_TYPE="feat"
-            COMMIT_BODY=$'Sync generated client to Immich '"$LATEST_TAG"$'\n\nUpstream release notes: '"$RELEASE_URL"
+            COMMIT_BODY=""
           else
             # Patch version bump
             COMMIT_TYPE="fix"
-            COMMIT_BODY=$'Sync generated client to Immich '"$LATEST_TAG"$'\n\nUpstream release notes: '"$RELEASE_URL"
+            COMMIT_BODY=""
           fi
 
           echo "commit_type=$COMMIT_TYPE" >> "$GITHUB_OUTPUT"
-          echo "commit_body=$COMMIT_BODY" >> "$GITHUB_OUTPUT"
 
-          {
-            echo "commit_message<<'EOF'"
-            echo "$COMMIT_TYPE: sync immich $LATEST_TAG"
-            if [ -n "$COMMIT_BODY" ]; then
-              echo ""
-              echo "$COMMIT_BODY"
-            fi
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
+          # Build commit message
+          COMMIT_MESSAGE="$COMMIT_TYPE: sync client to Immich $LATEST_TAG"$'\n\n'"Immich Release Notes: $RELEASE_URL"
+          if [ -n "$COMMIT_BODY" ]; then
+            COMMIT_MESSAGE="$COMMIT_MESSAGE"$'\n\n'"$COMMIT_BODY"
+          fi
+          echo "commit_message=$COMMIT_MESSAGE" >> "$GITHUB_OUTPUT"
 
       - name: Compute PR branch name
         id: pr_branch
