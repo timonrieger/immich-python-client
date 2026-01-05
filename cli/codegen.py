@@ -1,0 +1,377 @@
+#!/usr/bin/env python3
+"""Generate Typer CLI commands from OpenAPI specification."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import shutil
+from pathlib import Path
+from typing import Any
+
+try:
+    import requests
+except ImportError:
+    print("Error: requests is required. Install with: pip install requests")
+    raise SystemExit(1)
+
+
+def project_root() -> Path:
+    """Get project root directory."""
+    return Path(__file__).resolve().parents[1]
+
+
+def openapi_url(ref: str) -> str:
+    """Build OpenAPI spec URL from git ref."""
+    return (
+        "https://raw.githubusercontent.com/immich-app/immich/"
+        f"{ref}/open-api/immich-openapi-specs.json"
+    )
+
+
+def to_snake_case(name: str) -> str:
+    """Convert string to snake_case."""
+    # Insert underscore before uppercase letters (except first)
+    s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", name)
+    # Insert underscore before uppercase letters that follow lowercase
+    s2 = re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1)
+    # Replace spaces/hyphens with underscores and lowercase
+    s3 = re.sub(r"[\s-]+", "_", s2)
+    return s3.lower()
+
+
+def to_kebab_case(name: str) -> str:
+    """Convert string to kebab-case."""
+    snake = to_snake_case(name)
+    return snake.replace("_", "-")
+
+
+def python_type_from_schema(schema: dict[str, Any]) -> str:
+    """Convert OpenAPI schema to Python type hint."""
+    if "type" not in schema:
+        # Reference or complex type
+        if "$ref" in schema:
+            ref = schema["$ref"]
+            # Extract model name from #/components/schemas/ModelName
+            model_name = ref.split("/")[-1]
+            return model_name
+        return "Any"
+
+    schema_type = schema["type"]
+    if schema_type == "string":
+        if "format" in schema:
+            fmt = schema["format"]
+            if fmt == "uuid":
+                return "str"  # UUID as string for CLI
+            if fmt == "date-time":
+                return "str"  # datetime as string for CLI
+        return "str"
+    elif schema_type == "integer":
+        return "int"
+    elif schema_type == "number":
+        return "float"
+    elif schema_type == "boolean":
+        return "bool"
+    elif schema_type == "array":
+        items = schema.get("items", {})
+        item_type = python_type_from_schema(items)
+        return f"list[{item_type}]"
+    elif schema_type == "object":
+        return "dict[str, Any]"
+    else:
+        return "Any"
+
+
+def validate_operation(operation: dict[str, Any], path: str, method: str) -> None:
+    """Validate operation meets CLI generation requirements."""
+    if "operationId" not in operation:
+        raise ValueError(
+            f"Operation {method.upper()} {path} missing required 'operationId'"
+        )
+
+    if "tags" not in operation or not operation["tags"]:
+        raise ValueError(
+            f"Operation {operation.get('operationId')} missing required 'tags'"
+        )
+
+    # Check parameters
+    for param in operation.get("parameters", []):
+        param_in = param.get("in")
+        if param_in not in ["path", "query"]:
+            raise ValueError(
+                f"Operation {operation.get('operationId')} has unsupported "
+                f"parameter location: {param_in} (only 'path' and 'query' supported)"
+            )
+
+    # Check request body
+    if "requestBody" in operation:
+        content = operation["requestBody"].get("content", {})
+        if "application/json" not in content:
+            raise ValueError(
+                f"Operation {operation.get('operationId')} has requestBody "
+                "but no 'application/json' content type (only JSON supported)"
+            )
+
+
+def get_request_body_model(
+    operation: dict[str, Any], spec: dict[str, Any]
+) -> str | None:
+    """Extract request body model class name from operation."""
+    if "requestBody" not in operation:
+        return None
+
+    content = operation["requestBody"].get("content", {})
+    json_schema = content.get("application/json", {}).get("schema", {})
+
+    if "$ref" in json_schema:
+        ref = json_schema["$ref"]
+        return ref.split("/")[-1]
+
+    # Inline schema - we'll need to construct it, but for now return None
+    # and handle in runtime
+    return None
+
+
+def generate_command_function(
+    operation: dict[str, Any],
+    path: str,
+    method: str,
+    spec: dict[str, Any],
+    tag_attr: str,
+) -> str:
+    """Generate a Typer command function for an operation."""
+    operation_id = operation["operationId"]
+    func_name = to_snake_case(operation_id)
+    cmd_name = to_kebab_case(operation_id)
+
+    # Extract parameters
+    path_params: list[dict[str, Any]] = []
+    query_params: list[dict[str, Any]] = []
+
+    for param in operation.get("parameters", []):
+        if param["in"] == "path":
+            path_params.append(param)
+        elif param["in"] == "query":
+            query_params.append(param)
+
+    # Get request body model
+    request_body_model = get_request_body_model(operation, spec)
+
+    # Build function signature
+    lines = [f'@app.command("{cmd_name}")']
+    lines.append(f"def {func_name}(")
+
+    # Path parameters (required positional)
+    for param in sorted(path_params, key=lambda p: p["name"]):
+        param_name = param["name"]
+        schema = param.get("schema", {"type": "string"})
+        param_type = python_type_from_schema(schema)
+        required = param.get("required", False)
+        if required:
+            lines.append(f"    {param_name}: {param_type},")
+        else:
+            lines.append(f"    {param_name}: {param_type} | None = None,")
+
+    # Query parameters (optional flags)
+    for param in sorted(query_params, key=lambda p: p["name"]):
+        param_name = param["name"]
+        schema = param.get("schema", {"type": "string"})
+        param_type = python_type_from_schema(schema)
+        flag_name = param_name.replace("_", "-")
+        lines.append(
+            f"    {param_name}: {param_type} | None = typer.Option(None, \"--{flag_name}\"),"
+        )
+
+    # Request body (optional --json flag)
+    if request_body_model:
+        lines.append(
+            '    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),'
+        )
+
+    lines.append("    ctx: typer.Context,")
+    lines.append(") -> None:")
+
+    # Function body
+    lines.append('    """' + operation.get("summary", operation_id) + '"""')
+    lines.append("    from pathlib import Path")
+    lines.append("    from immich.cli.runtime import load_json_file, deserialize_request_body, print_response, run_command")
+
+    # Build kwargs
+    lines.append("    kwargs = {}")
+
+    # Add path params
+    for param in path_params:
+        param_name = param["name"]
+        lines.append(f"    kwargs['{param_name}'] = {param_name}")
+
+    # Add query params
+    for param in query_params:
+        param_name = param["name"]
+        lines.append(f"    if {param_name} is not None:")
+        lines.append(f"        kwargs['{param_name}'] = {param_name}")
+
+    # Handle request body
+    if request_body_model:
+        # Infer parameter name from model name (e.g., UserUpdateMeDto -> user_update_me_dto)
+        body_param_name = to_snake_case(request_body_model)
+        lines.append("    if json_path is not None:")
+        lines.append("        json_data = load_json_file(json_path)")
+        # Model import path: convert ModelNameDto to model_name_dto.py
+        model_module = to_snake_case(request_body_model)
+        lines.append(
+            f"        from immich.client.models.{model_module} import {request_body_model}"
+        )
+        lines.append(f"        {body_param_name} = deserialize_request_body(json_data, {request_body_model})")
+        lines.append(f"        kwargs['{body_param_name}'] = {body_param_name}")
+
+    # Get client and API group
+    lines.append("    client = ctx.obj['client']")
+    lines.append(f"    api_group = client.{tag_attr}")
+
+    # Call method
+    method_name = to_snake_case(operation_id)
+    lines.append(f"    result = run_command(client, api_group, '{method_name}', **kwargs)")
+
+    # Print result
+    lines.append("    format_mode = ctx.obj.get('format', 'pretty')")
+    lines.append("    print_response(result, format_mode)")
+
+    return "\n".join(lines)
+
+
+def generate_tag_app(
+    tag: str, operations: list[tuple[str, str, dict[str, Any]]], spec: dict[str, Any]
+) -> str:
+    """Generate a Typer app module for a tag."""
+    tag_snake = to_snake_case(tag)
+    tag_attr = tag_snake  # This should match AsyncClient attribute
+
+    lines = [
+        '"""Generated CLI commands for ' + tag + ' tag (auto-generated, do not edit)."""',
+        "",
+        "from __future__ import annotations",
+        "",
+        "from pathlib import Path",
+        "import typer",
+        "from typer import Context",
+        "",
+        f"app = typer.Typer(help=\"{tag} operations\")",
+        "",
+    ]
+
+    # Generate command for each operation
+    for path, method, operation in sorted(operations, key=lambda x: x[2].get("operationId", "")):
+        func_code = generate_command_function(operation, path, method, spec, tag_attr)
+        lines.append(func_code)
+        lines.append("")
+
+    return "\n".join(lines)
+
+
+def main() -> int:
+    """Main codegen entrypoint."""
+    parser = argparse.ArgumentParser(
+        description="Generate Immich CLI from OpenAPI specification."
+    )
+    parser.add_argument(
+        "--ref",
+        default=os.environ.get("IMMICH_OPENAPI_REF", "main"),
+        help="Immich git ref for OpenAPI spec (default: IMMICH_OPENAPI_REF or 'main')",
+    )
+    args = parser.parse_args()
+
+    root = project_root()
+    generated_dir = root / "immich" / "cli" / "generated"
+    apps_dir = generated_dir / "apps"
+
+    # Fetch OpenAPI spec
+    url = openapi_url(args.ref)
+    print(f"Fetching OpenAPI spec from: {url}")
+
+    try:
+        resp = requests.get(url, timeout=30)
+        resp.raise_for_status()
+        spec = resp.json()
+    except requests.RequestException as e:
+        print(f"Error: Failed to fetch OpenAPI spec: {e}", file=__import__("sys").stderr)
+        return 1
+    except json.JSONDecodeError as e:
+        print(f"Error: Invalid JSON in OpenAPI spec: {e}", file=__import__("sys").stderr)
+        return 1
+
+    # Validate and group operations
+    operations_by_tag: dict[str, list[tuple[str, str, dict[str, Any]]]] = {}
+
+    for path, path_item in spec.get("paths", {}).items():
+        for method, operation in path_item.items():
+            if method not in ["get", "post", "put", "patch", "delete"]:
+                continue
+
+            try:
+                validate_operation(operation, path, method)
+            except ValueError as e:
+                print(f"Error: {e}", file=__import__("sys").stderr)
+                return 1
+
+            # Group by first tag
+            tags = operation.get("tags", [])
+            tag = tags[0] if tags else "default"
+            if tag not in operations_by_tag:
+                operations_by_tag[tag] = []
+            operations_by_tag[tag].append((path, method, operation))
+
+    # Clean and recreate generated directory
+    if generated_dir.exists():
+        shutil.rmtree(generated_dir)
+    generated_dir.mkdir(parents=True, exist_ok=True)
+    apps_dir.mkdir(parents=True, exist_ok=True)
+
+    # Generate app modules
+    apps_dict: dict[str, str] = {}
+    for tag in sorted(operations_by_tag.keys()):
+        operations = operations_by_tag[tag]
+        tag_snake = to_snake_case(tag)
+        app_content = generate_tag_app(tag, operations, spec)
+
+        app_file = apps_dir / f"{tag_snake}.py"
+        app_file.write_text(app_content, encoding="utf-8")
+        apps_dict[tag] = f"immich.cli.generated.apps.{tag_snake}"
+
+    # Generate __init__.py
+    init_lines = [
+        '"""Generated CLI commands (auto-generated, do not edit)."""',
+        "",
+        "from __future__ import annotations",
+        "",
+        "from typing import Any",
+        "import typer",
+        "",
+    ]
+
+    # Import apps
+    for tag, module_path in sorted(apps_dict.items()):
+        tag_snake = to_snake_case(tag)
+        init_lines.append(f"from immich.cli.generated.apps import {tag_snake}")
+
+    init_lines.append("")
+    init_lines.append("APPS: dict[str, typer.Typer] = {")
+
+    for tag, module_path in sorted(apps_dict.items()):
+        tag_snake = to_snake_case(tag)
+        init_lines.append(f'    "{tag}": {tag_snake}.app,')
+
+    init_lines.append("}")
+
+    init_file = generated_dir / "__init__.py"
+    init_file.write_text("\n".join(init_lines), encoding="utf-8")
+
+    print(f"Generated CLI commands for {len(operations_by_tag)} tags")
+    print(f"Output directory: {generated_dir}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+
