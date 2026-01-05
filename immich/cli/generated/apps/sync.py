@@ -7,7 +7,7 @@ from typing import Any
 import typer
 from typer import Context
 
-app = typer.Typer(help="Sync operations")
+app = typer.Typer(help="Sync operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("delete-sync-ack")
 def delete_sync_ack(

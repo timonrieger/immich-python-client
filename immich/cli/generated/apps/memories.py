@@ -7,7 +7,7 @@ from typing import Any
 import typer
 from typer import Context
 
-app = typer.Typer(help="Memories operations")
+app = typer.Typer(help="Memories operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("add-memory-assets")
 def add_memory_assets(

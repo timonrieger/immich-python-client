@@ -7,7 +7,7 @@ from typing import Any
 import typer
 from typer import Context
 
-app = typer.Typer(help="Maintenance (admin) operations")
+app = typer.Typer(help="Maintenance (admin) operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("maintenance-login")
 def maintenance_login(

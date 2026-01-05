@@ -7,7 +7,7 @@ from typing import Any
 import typer
 from typer import Context
 
-app = typer.Typer(help="Queues operations")
+app = typer.Typer(help="Queues operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("empty-queue")
 def empty_queue(

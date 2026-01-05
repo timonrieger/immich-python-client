@@ -7,7 +7,7 @@ from typing import Any
 import typer
 from typer import Context
 
-app = typer.Typer(help="Views operations")
+app = typer.Typer(help="Views operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("get-assets-by-original-path")
 def get_assets_by_original_path(

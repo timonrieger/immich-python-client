@@ -7,7 +7,7 @@ from typing import Any
 import typer
 from typer import Context
 
-app = typer.Typer(help="System config operations")
+app = typer.Typer(help="System config operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("get-config")
 def get_config(

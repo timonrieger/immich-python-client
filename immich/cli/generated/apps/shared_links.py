@@ -7,7 +7,7 @@ from typing import Any
 import typer
 from typer import Context
 
-app = typer.Typer(help="Shared links operations")
+app = typer.Typer(help="Shared links operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("add-shared-link-assets")
 def add_shared_link_assets(

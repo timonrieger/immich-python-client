@@ -7,7 +7,7 @@ from typing import Any
 import typer
 from typer import Context
 
-app = typer.Typer(help="Download operations")
+app = typer.Typer(help="Download operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("download-archive")
 def download_archive(

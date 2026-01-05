@@ -7,7 +7,7 @@ from typing import Any
 import typer
 from typer import Context
 
-app = typer.Typer(help="Tags operations")
+app = typer.Typer(help="Tags operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("bulk-tag-assets")
 def bulk_tag_assets(

@@ -7,7 +7,7 @@ from typing import Any
 import typer
 from typer import Context
 
-app = typer.Typer(help="Albums operations")
+app = typer.Typer(help="Albums operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("add-assets-to-album")
 def add_assets_to_album(

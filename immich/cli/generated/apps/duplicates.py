@@ -7,7 +7,7 @@ from typing import Any
 import typer
 from typer import Context
 
-app = typer.Typer(help="Duplicates operations")
+app = typer.Typer(help="Duplicates operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("delete-duplicate")
 def delete_duplicate(

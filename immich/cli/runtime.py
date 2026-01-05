@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 from typing import Any, Optional
 
+from immich import AsyncClient
 from immich.client.exceptions import ApiException
 from pydantic import ValidationError
 
@@ -111,11 +112,16 @@ def run_command(
         )
         sys.exit(1)
 
-    coro = method(**kwargs)
-    
-    # Run async call - client lifecycle is managed by the caller
+    async def _call_and_close() -> Any:
+        try:
+            return await method(**kwargs)
+        finally:
+            # Ensure we don't leak aiohttp connectors/sessions after each command.
+            # In a CLI context we generally run one command per process.
+            await client.close()
+
     try:
-        return asyncio.run(run_async(coro))
+        return asyncio.run(run_async(_call_and_close()))
     except Exception as e:
         if isinstance(e, ApiException):
             handle_api_error(e)
