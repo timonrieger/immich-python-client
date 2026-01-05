@@ -25,17 +25,11 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install uv + Python
-        uses: astral-sh/setup-uv@v6
-        with:
-          version: "0.9.17"
-          python-version: "3.11"
-
       - name: Install mise
         uses: jdx/mise-action@v2
 
       - name: Install project dependencies
-        run: uv sync --locked --dev
+        run: mise exec -- uv sync --locked
 
       - name: Fetch latest stable Immich tag
         id: fetch_tag
