@@ -2,6 +2,10 @@
 
 Unofficial Python client for the [Immich](https://immich.app) API.
 
+> [!IMPORTANT]
+> This repository is **auto-generated** from the Immich OpenAPI specification.
+> **Do not open pull requests**: PRs will be closed. See [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
+
 ## Status
 
 - **Unofficial**: This project is not affiliated with or endorsed by the Immich project.
