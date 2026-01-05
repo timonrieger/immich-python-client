@@ -58,6 +58,7 @@ module-name = "immich"
 module-root = ""
 
 [project.urls]
+Repository = "https://github.com/timonrieger/immich-python-client"
 Changelog = "https://github.com/timonrieger/immich-python-client/releases"
 
 [tool.ruff]
