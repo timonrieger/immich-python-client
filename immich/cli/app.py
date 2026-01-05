@@ -47,7 +47,11 @@ def _callback(
     ctx.obj["debug"] = debug
     ctx.obj["format"] = format_mode
 
-    # If help/completion parsing, or no command provided, don't require config.
+    # If help/completion parsing (root or subcommand), don't require config.
+    if any(a in sys.argv for a in ("-h", "--help", "--install-completion", "--show-completion")):
+        return
+
+    # If no command provided, show help without requiring config.
     if getattr(ctx, "resilient_parsing", False) or ctx.invoked_subcommand is None:
         console.print(ctx.get_help())
         raise typer.Exit(0)
@@ -56,7 +60,7 @@ def _callback(
     try:
         ctx.obj["client"] = create_client()
     except ValueError as e:
-        console.print(f"[red]Error:[/red] {e}", err=True)
+        console.print(f"[red]Error:[/red] {e}", file=sys.stderr)
         raise typer.Exit(1)
 
 
