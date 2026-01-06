@@ -214,3 +214,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Custom
+node_modules/
+out/
+**/**/out/
+demo.py

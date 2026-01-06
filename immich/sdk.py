@@ -10,7 +10,7 @@ from immich.client.configuration import Configuration
 from immich.client.api.activities_api import ActivitiesApi
 from immich.client.api.albums_api import AlbumsApi
 from immich.client.api.api_keys_api import APIKeysApi
-from immich.client.api.assets_api import AssetsApi
+from immich.client_wrapper.assets_api_wrapped import AssetsApiWrapped
 from immich.client.api.authentication_admin_api import AuthenticationAdminApi
 from immich.client.api.authentication_api import AuthenticationApi
 from immich.client.api.deprecated_api import DeprecatedApi
@@ -102,7 +102,7 @@ class AsyncClient:
         self.activities = ActivitiesApi(self.base_client)
         self.albums = AlbumsApi(self.base_client)
         self.api_keys = APIKeysApi(self.base_client)
-        self.assets = AssetsApi(self.base_client)
+        self.assets = AssetsApiWrapped(self.base_client)
         self.authentication = AuthenticationApi(self.base_client)
         self.authentication_admin = AuthenticationAdminApi(self.base_client)
         self.deprecated = DeprecatedApi(self.base_client)
