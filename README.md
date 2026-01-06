@@ -1,5 +1,20 @@
 # Immich API Client
 
+<p align="center">
+    <a href="https://coderabbit.ai" target="_blank" rel="noopener noreferrer">
+        <img src="https://img.shields.io/coderabbit/prs/github/timonrieger/immich-python-client?utm_source=oss&utm_medium=github&utm_campaign=timonrieger%2Fimmich-python-client&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews" alt="CodeRabbit Pull Request Reviews">
+    </a>
+    <a href="https://github.com/timonrieger/immich-python-client/actions/workflows/test.yml">
+        <img src="https://github.com/timonrieger/immich-python-client/actions/workflows/test.yml/badge.svg" alt="Tests">
+    </a>
+    <a href="https://pypi.org/project/immich" target="_blank" rel="noopener noreferrer">
+        <img src="https://img.shields.io/pypi/v/immich?color=%2334D058&label=pypi%20package" alt="Package version">
+    </a>
+    <a href="https://pypi.org/project/immich" target="_blank" rel="noopener noreferrer">
+        <img src="https://img.shields.io/pypi/pyversions/immich.svg?color=%2334D058" alt="Supported Python versions">
+    </a>
+</p>
+
 Unofficial Python client for the [Immich](https://immich.app) API.
 
 > [!IMPORTANT]
