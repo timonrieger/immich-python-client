@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any, Optional
+from uuid import UUID
 
 from immich.client.api.assets_api import AssetsApi
 from immich.utils import filename_from_headers
@@ -11,7 +12,7 @@ class AssetsApiWrapped(AssetsApi):
     async def download_asset_to_file(
         self,
         *args: Any,
-        id: str,
+        id: UUID,
         out_dir: Path,
         fallback_base: Optional[str] = None,
         **kwargs: Any,
