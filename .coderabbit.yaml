@@ -1,0 +1,2 @@
+reviews:
+  auto_title_instructions: "Generate the PR/MR title using Conventional Commits. Follow the rules in `.cursor/rules/conventional-commits.mdc`."
