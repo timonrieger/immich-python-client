@@ -55,7 +55,7 @@ class AssetsApiWrapped(AssetsApi):
         key: Optional[StrictStr] = None,
         size: Optional[AssetMediaSize] = None,
         slug: Optional[StrictStr] = None,
-        fallback_base: Optional[str] = None,
+        filename: Optional[str] = None,
         **kwargs: Any,
     ) -> Path:
         """
@@ -66,7 +66,7 @@ class AssetsApiWrapped(AssetsApi):
         :param key: Public share key (the last path segment of a public share URL, i.e. `/share/<key>`). When provided, the thumbnail can be fetched via the public share link without an API key. Typically you pass either `key` or `slug`.
         :param size: Thumbnail size.
         :param slug: Public share slug for custom share URLs (the last path segment of `/s/<slug>`). Allows access without authentication. Typically you pass either `slug` or `key`.
-        :param fallback_base: The fallback base for the filename. We try to derive the original filename from the headers, but if we fail, we use this base. For example, you could use "video-" + asset_id as a prefix. Defaults to "orig-" + asset_id.
+        :param filename: The filename to use. If not provided, we use the original filename from the headers or default to "thumb-" + asset_id.
         :param kwargs: Additional arguments to pass to the `view_asset_with_http_info` method.
 
         For exact request/response behavior, inspect `AssetsApi.view_asset_with_http_info`
@@ -77,7 +77,7 @@ class AssetsApiWrapped(AssetsApi):
         )
         name = resolve_output_filename(
             resp.headers,
-            default_base=fallback_base or f"thumb-{id}",
+            default_base=filename or f"thumb-{id}",
         )
 
         out_dir.mkdir(parents=True, exist_ok=True)
