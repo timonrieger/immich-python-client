@@ -31,7 +31,9 @@ jobs:
 
       - name: Setup | Force release branch to be at workflow sha
         run: |
-          git reset --hard ${{ github.event.workflow_run.head_sha }}
+          git reset --hard ${TRIGGER_SHA}
+        env:
+          TRIGGER_SHA: ${{ github.event.workflow_run.head_sha }}
 
       - name: Action | Semantic Version Release
         id: release
@@ -44,7 +46,7 @@ jobs:
           changelog: false # github releases are sufficient
 
       - name: Upload | Distribution Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: distribution-artifacts
           path: dist
@@ -68,7 +70,7 @@ jobs:
 
     steps:
       - name: Setup | Download Build Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
         id: artifact-download
         with:
           name: distribution-artifacts
