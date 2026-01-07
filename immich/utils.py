@@ -127,10 +127,14 @@ async def download_file(
     :param out_dir: Output directory where the downloaded file will be written.
     :param resolve_filename: Callable that derives the filename. It takes the response headers and returns a string.
     :param show_progress: Whether to show a progress bar.
-    :param pbar: A tqdm progress bar to use. If not provided, a new one will be created. If provided, show_progress is ignored.
+    :param pbar: A tqdm progress bar to use. If not provided, a new one will be created. If provided, show_progress is ignored. Must be closed by the caller.
     :param resumeable: Whether the download can be resumed from an existing partial `.temp` file via HTTP Range requests.
     :return: The path to the downloaded file.
     """
+    resp = None
+    temp_path = None
+    pbar_created = False
+
     try:
         file_size = 0
         resp = await make_request(None)
@@ -149,6 +153,16 @@ async def download_file(
             logger.info(f"File already exists: {out_path}")
             file_size = out_path.stat().st_size
             if file_size == total_size:
+                resp.close()
+                return out_path
+            else:
+                logger.warning(
+                    f"File size mismatch for {out_path}: local file is {file_size} bytes, "
+                    f"server reports {total_size} bytes. Skipping download for security reasons. "
+                    f"Possible reasons: file was modified locally, file corruption, or server file was updated. "
+                    f"If you want to re-download, delete the file and rerun the request."
+                )
+                resp.close()
                 return out_path
 
         resumed = False
@@ -158,10 +172,8 @@ async def download_file(
             if file_size < total_size:
                 if resumeable:
                     resume_header = {"Range": f"bytes={file_size}-"}
-                    # Close the initial response before retrying with Range.
                     resp.close()
                     resp = await make_request(resume_header)
-                    # If the server didn't honor Range, restart to avoid corrupt output.
                     if file_size > 0 and resp.status != 206:
                         logger.debug(
                             "Server does not support resuming; restarting download"
@@ -188,6 +200,7 @@ async def download_file(
                 desc=str(out_path),
                 disable=not show_progress,
             )
+            pbar_created = True
 
         if resumed and file_size > 0:
             pbar.update(file_size)
@@ -199,15 +212,18 @@ async def download_file(
                         continue
                     f.write(chunk)
                     pbar.update(len(chunk))
+
+        temp_path.replace(out_path)
+        return out_path
+
     except Exception:
-        if temp_path.exists():
+        if temp_path and temp_path.exists():
             temp_path.unlink()
         raise
     finally:
         if resp and not resp.closed:
             resp.close()
-        if pbar:
-            pbar.close()
 
-    temp_path.replace(out_path)
-    return out_path
+        # Only close pbar if we created it
+        if pbar_created and pbar:
+            pbar.close()

@@ -98,6 +98,7 @@ class DownloadApiWrapped(DownloadApi):
                 )
                 out_paths.append(out_dir / filename)
                 archives_pbar.update(1)
+                pbar.close()
         finally:
             archives_pbar.close()
 
