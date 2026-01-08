@@ -230,7 +230,7 @@ async def upload_files(
                 else:
                     msg = str(e)
                 failed.append((filepath, msg))
-                logger.error(f"Failed to upload {filepath}: {msg}")
+                logger.exception(f"Failed to upload {filepath}: {msg}")
 
     await asyncio.gather(*[upload_with_semaphore(f) for f in files])
     pbar.close()
