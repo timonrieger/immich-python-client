@@ -164,7 +164,7 @@ class AssetsApiWrapped(AssetsApi):
             show_progress=show_progress,
         )
 
-    async def upload_asset_smart(
+    async def upload(
         self,
         paths: Path | list[Path] | str | list[str],
         *,
