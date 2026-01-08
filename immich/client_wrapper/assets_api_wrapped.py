@@ -211,7 +211,10 @@ class AssetsApiWrapped(AssetsApi):
             )
 
         new_files, duplicates = await check_dupes(
-            files=files, assets_api=self, check_duplicates=check_duplicates, show_progress=show_progress
+            files=files,
+            assets_api=self,
+            check_duplicates=check_duplicates,
+            show_progress=show_progress,
         )
 
         uploaded, failed = await upload_files(
@@ -223,13 +226,26 @@ class AssetsApiWrapped(AssetsApi):
             dry_run=dry_run,
         )
 
-        await update_albums(uploaded=uploaded, album_name=album_name, albums_api=albums_api)
+        await update_albums(
+            uploaded=uploaded, album_name=album_name, albums_api=albums_api
+        )
 
-        await delete_files(uploaded=uploaded, duplicates=duplicates, delete_after_upload=delete_after_upload, delete_duplicates=delete_duplicates, dry_run=dry_run)
+        await delete_files(
+            uploaded=uploaded,
+            duplicates=duplicates,
+            delete_after_upload=delete_after_upload,
+            delete_duplicates=delete_duplicates,
+            dry_run=dry_run,
+        )
 
         return UploadResult(
             uploaded=[asset for asset, _ in uploaded],
             duplicates=duplicates,
             failed=failed,
-            stats=UploadStats(total=len(files), uploaded=len(uploaded), duplicates=len(duplicates), failed=len(failed)),
+            stats=UploadStats(
+                total=len(files),
+                uploaded=len(uploaded),
+                duplicates=len(duplicates),
+                failed=len(failed),
+            ),
         )

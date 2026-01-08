@@ -5,7 +5,6 @@ import fnmatch
 import hashlib
 import json
 import logging
-from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional, cast
@@ -29,11 +28,13 @@ logger = logging.getLogger(__name__)
 
 BATCH_SIZE = 5000
 
+
 class UploadStats(BaseModel):
     total: int
     uploaded: int
     duplicates: int
     failed: int
+
 
 class UploadResult(BaseModel):
     uploaded: list[AssetMediaResponseDto]
@@ -68,14 +69,16 @@ async def scan_files(
                 for file_path in path.rglob(f"*{ext}"):
                     if not include_hidden and file_path.name.startswith("."):
                         continue
-                    if ignore_pattern and fnmatch.fnmatch(str(file_path), f"*{ignore_pattern}"):
+                    if ignore_pattern and fnmatch.fnmatch(
+                        str(file_path), f"*{ignore_pattern}"
+                    ):
                         continue
                     files.append(file_path)
     return sorted(set(files))
 
 
 async def compute_sha1(filepath: Path) -> str:
-    sha1 = hashlib.sha1()
+    sha1 = hashlib.sha1(usedforsecurity=False)
     with open(filepath, "rb") as f:
         while chunk := f.read(1024 * 1024):
             sha1.update(chunk)
@@ -102,7 +105,9 @@ async def check_duplicates(
     new_files: list[Path] = []
     duplicates: list[tuple[Path, str]] = []
 
-    check_pbar = tqdm.tqdm(total=len(files), desc="Checking duplicates", disable=not show_progress)
+    check_pbar = tqdm.tqdm(
+        total=len(files), desc="Checking duplicates", disable=not show_progress
+    )
 
     for i in range(0, len(checksums), BATCH_SIZE):
         batch = checksums[i : i + BATCH_SIZE]
@@ -135,14 +140,19 @@ async def upload_file(
     dry_run: bool = False,
 ) -> AssetMediaResponseDto:
     if dry_run:
-        return AssetMediaResponseDto(id=str(uuid.uuid4()), status=AssetMediaStatus.CREATED)
+        return AssetMediaResponseDto(
+            id=str(uuid.uuid4()), status=AssetMediaStatus.CREATED
+        )
 
     stats = filepath.stat()
 
     sidecar_data = None
     if include_sidecars:
         no_ext = filepath.parent / filepath.stem
-        for sidecar_path in [no_ext.with_suffix(".xmp"), filepath.with_suffix(filepath.suffix + ".xmp")]:
+        for sidecar_path in [
+            no_ext.with_suffix(".xmp"),
+            filepath.with_suffix(filepath.suffix + ".xmp"),
+        ]:
             if sidecar_path.exists():
                 sidecar_data = str(sidecar_path)
                 break
@@ -188,7 +198,9 @@ async def upload_files(
     async def upload_with_semaphore(filepath: Path) -> None:
         async with semaphore:
             try:
-                response = await upload_file(filepath, assets_api, include_sidecars, dry_run)
+                response = await upload_file(
+                    filepath, assets_api, include_sidecars, dry_run
+                )
                 uploaded.append((response, filepath))
                 if not dry_run:
                     pbar.update(filepath.stat().st_size)
@@ -258,4 +270,3 @@ async def delete_files(
             filepath.unlink()
         except Exception as e:
             logger.error(f"Failed to delete {filepath}: {e}")
-

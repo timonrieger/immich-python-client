@@ -80,7 +80,9 @@ async def test_scan_files_directory_recursive(mock_server_api, tmp_path: Path) -
 
 
 @pytest.mark.asyncio
-async def test_scan_files_unsupported_extension(mock_server_api, tmp_path: Path) -> None:
+async def test_scan_files_unsupported_extension(
+    mock_server_api, tmp_path: Path
+) -> None:
     test_file = tmp_path / "test.txt"
     test_file.write_bytes(b"test")
     result = await scan_files(test_file, mock_server_api)
@@ -99,7 +101,9 @@ async def test_scan_files_ignore_pattern_file(mock_server_api, tmp_path: Path) -
 
 
 @pytest.mark.asyncio
-async def test_scan_files_ignore_pattern_single_file(mock_server_api, tmp_path: Path) -> None:
+async def test_scan_files_ignore_pattern_single_file(
+    mock_server_api, tmp_path: Path
+) -> None:
     file1 = tmp_path / "test.jpg"
     file2 = tmp_path / "ignore.jpg"
     file1.write_bytes(b"test1")
@@ -109,7 +113,9 @@ async def test_scan_files_ignore_pattern_single_file(mock_server_api, tmp_path: 
 
 
 @pytest.mark.asyncio
-async def test_scan_files_ignore_pattern_wildcard(mock_server_api, tmp_path: Path) -> None:
+async def test_scan_files_ignore_pattern_wildcard(
+    mock_server_api, tmp_path: Path
+) -> None:
     file1 = tmp_path / "test.jpg"
     file2 = tmp_path / "ignore.jpg"
     file3 = tmp_path / "other.jpg"
@@ -122,7 +128,9 @@ async def test_scan_files_ignore_pattern_wildcard(mock_server_api, tmp_path: Pat
 
 
 @pytest.mark.asyncio
-async def test_scan_files_ignore_pattern_directory(mock_server_api, tmp_path: Path) -> None:
+async def test_scan_files_ignore_pattern_directory(
+    mock_server_api, tmp_path: Path
+) -> None:
     subdir = tmp_path / "subdir"
     subdir.mkdir()
     file1 = tmp_path / "test.jpg"
@@ -157,7 +165,9 @@ async def test_scan_files_include_hidden_files(mock_server_api, tmp_path: Path) 
 
 
 @pytest.mark.asyncio
-async def test_scan_files_case_insensitive_extension_file(mock_server_api, tmp_path: Path) -> None:
+async def test_scan_files_case_insensitive_extension_file(
+    mock_server_api, tmp_path: Path
+) -> None:
     file1 = tmp_path / "test.JPG"
     file2 = tmp_path / "test2.JpEg"
     file1.write_bytes(b"test1")
@@ -168,7 +178,9 @@ async def test_scan_files_case_insensitive_extension_file(mock_server_api, tmp_p
 
 
 @pytest.mark.asyncio
-async def test_scan_files_mixed_file_and_directory(mock_server_api, tmp_path: Path) -> None:
+async def test_scan_files_mixed_file_and_directory(
+    mock_server_api, tmp_path: Path
+) -> None:
     subdir = tmp_path / "subdir"
     subdir.mkdir()
     file1 = tmp_path / "test1.jpg"
@@ -185,6 +197,7 @@ async def test_scan_files_empty_directory(mock_server_api, tmp_path: Path) -> No
     result = await scan_files(tmp_path, mock_server_api)
     assert len(result) == 0
 
+
 @pytest.mark.asyncio
 async def test_scan_files_video_extensions(mock_server_api, tmp_path: Path) -> None:
     file1 = tmp_path / "test.mp4"
@@ -197,7 +210,9 @@ async def test_scan_files_video_extensions(mock_server_api, tmp_path: Path) -> N
 
 
 @pytest.mark.asyncio
-async def test_scan_files_duplicate_files_in_list(mock_server_api, tmp_path: Path) -> None:
+async def test_scan_files_duplicate_files_in_list(
+    mock_server_api, tmp_path: Path
+) -> None:
     file1 = tmp_path / "test.jpg"
     file1.write_bytes(b"test1")
     result = await scan_files([file1, file1], mock_server_api)
@@ -206,7 +221,9 @@ async def test_scan_files_duplicate_files_in_list(mock_server_api, tmp_path: Pat
 
 
 @pytest.mark.asyncio
-async def test_scan_files_file_with_ignore_pattern_no_match(mock_server_api, tmp_path: Path) -> None:
+async def test_scan_files_file_with_ignore_pattern_no_match(
+    mock_server_api, tmp_path: Path
+) -> None:
     file1 = tmp_path / "test.jpg"
     file1.write_bytes(b"test1")
     result = await scan_files(file1, mock_server_api, ignore_pattern="other.jpg")
@@ -215,11 +232,12 @@ async def test_scan_files_file_with_ignore_pattern_no_match(mock_server_api, tmp
 
 
 @pytest.mark.asyncio
-async def test_scan_files_directory_with_only_unsupported_files(mock_server_api, tmp_path: Path) -> None:
+async def test_scan_files_directory_with_only_unsupported_files(
+    mock_server_api, tmp_path: Path
+) -> None:
     file1 = tmp_path / "test.txt"
     file2 = tmp_path / "test.doc"
     file1.write_bytes(b"test1")
     file2.write_bytes(b"test2")
     result = await scan_files(tmp_path, mock_server_api)
     assert len(result) == 0
-
