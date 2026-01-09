@@ -5081,6 +5081,7 @@ class AssetsApi:
         filename: Optional[StrictStr] = None,
         is_favorite: Optional[StrictBool] = None,
         live_photo_video_id: Optional[UUID] = None,
+        metadata: Optional[List[AssetMetadataUpsertItemDto]] = None,
         sidecar_data: Optional[
             Union[StrictBytes, StrictStr, Tuple[StrictStr, StrictBytes]]
         ] = None,

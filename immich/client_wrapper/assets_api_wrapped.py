@@ -208,14 +208,14 @@ class AssetsApiWrapped(AssetsApi):
                 stats=UploadStats(total=0, uploaded=0, duplicates=0, failed=0),
             )
 
-        new_files, duplicates = await check_dupes(
+        new_files, checked_duplicates = await check_dupes(
             files=files,
             assets_api=self,
             check_duplicates=check_duplicates,
             show_progress=show_progress,
         )
 
-        uploaded, failed = await upload_files(
+        uploaded, actual_duplicates, failed = await upload_files(
             files=new_files,
             assets_api=self,
             concurrency=concurrency,
@@ -228,6 +228,10 @@ class AssetsApiWrapped(AssetsApi):
             uploaded=uploaded, album_name=album_name, albums_api=albums_api
         )
 
+        # we can either check pre-upload duplicates or on-upload duplicates, so we return the appropriate list
+        # alternative would be to use both lists and deduplicate by asset_id, however adds overhead and assumes the API returned different results
+        duplicates = checked_duplicates if check_duplicates else actual_duplicates
+
         await delete_files(
             uploaded=uploaded,
             duplicates=duplicates,
@@ -238,7 +242,7 @@ class AssetsApiWrapped(AssetsApi):
         )
 
         return UploadResult(
-            uploaded=[asset for asset, _ in uploaded],
+            uploaded=uploaded,
             duplicates=duplicates,
             failed=failed,
             stats=UploadStats(

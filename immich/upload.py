@@ -7,15 +7,16 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional, cast
+from typing import Any, Literal, Optional, cast
 from uuid import UUID
 import uuid
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import tqdm
 from immich.client.api.albums_api import AlbumsApi
 from immich.client.api.assets_api import AssetsApi
 from immich.client.api.server_api import ServerApi
+from immich.client.api_response import ApiResponse
 from immich.client.models.asset_bulk_upload_check_dto import AssetBulkUploadCheckDto
 from immich.client.models.asset_bulk_upload_check_item import AssetBulkUploadCheckItem
 from immich.client.models.asset_media_response_dto import AssetMediaResponseDto
@@ -36,11 +37,51 @@ class UploadStats(BaseModel):
     failed: int
 
 
+class DuplicateEntry(BaseModel):
+    """Represents a duplicate file that already exists in Immich."""
+
+    filepath: Path = Field(
+        ..., description="The path to the local file that was rejected."
+    )
+    asset_id: Optional[str] = Field(
+        None, description="The ID of the asset. Set if reason is 'duplicate'."
+    )
+    reason: Optional[Literal["duplicate", "is_trashed", "unsupported_format"]] = Field(
+        None, description="The reason for the rejection."
+    )
+
+
+class FailedEntry(BaseModel):
+    """Represents a file that failed to upload."""
+
+    filepath: Path = Field(
+        ..., description="The path to the local file that failed to upload."
+    )
+    error: str = Field(..., description="The error message from the server.")
+
+
+class UploadedEntry(BaseModel):
+    """Represents a successfully uploaded file."""
+
+    asset: AssetMediaResponseDto = Field(
+        ..., description="The asset that was uploaded."
+    )
+    filepath: Path = Field(
+        ..., description="The path to the local file that was uploaded."
+    )
+
+
 class UploadResult(BaseModel):
-    uploaded: list[AssetMediaResponseDto]
-    duplicates: list[tuple[Path, str]]
-    failed: list[tuple[Path, str]]
-    stats: UploadStats
+    uploaded: list[UploadedEntry] = Field(
+        ..., description="The assets that were uploaded."
+    )
+    duplicates: list[DuplicateEntry] = Field(
+        ..., description="The files that were rejected."
+    )
+    failed: list[FailedEntry] = Field(
+        ..., description="The files that failed to upload."
+    )
+    stats: UploadStats = Field(..., description="The statistics of the upload.")
 
 
 async def scan_files(
@@ -93,7 +134,7 @@ async def check_duplicates(
     assets_api: AssetsApi,
     check_duplicates: bool = True,
     show_progress: bool = True,
-) -> tuple[list[Path], list[tuple[Path, str]]]:
+) -> tuple[list[Path], list[DuplicateEntry]]:
     if not check_duplicates:
         return files, []
 
@@ -106,7 +147,7 @@ async def check_duplicates(
     pbar.close()
 
     new_files: list[Path] = []
-    duplicates: list[tuple[Path, str]] = []
+    duplicates: list[DuplicateEntry] = []
 
     check_pbar = tqdm.tqdm(
         total=len(files), desc="Checking duplicates", disable=not show_progress
@@ -126,9 +167,13 @@ async def check_duplicates(
             if result.action == "accept":
                 new_files.append(filepath)
             else:
-                # TODO: pass reason to caller (https://api.immich.app/models/AssetBulkUploadCheckResult)
-                # e.g. is_trashed, unsupported_format, duplicate
-                duplicates.append((filepath, result.asset_id or ""))
+                duplicates.append(
+                    DuplicateEntry(
+                        filepath=filepath,
+                        asset_id=result.asset_id,
+                        reason=result.reason or (result.is_trashed and "is_trashed"),
+                    )
+                )
 
         check_pbar.update(len(batch))
     check_pbar.close()
@@ -162,10 +207,16 @@ async def upload_file(
     assets_api: AssetsApi,
     include_sidecars: bool = True,
     dry_run: bool = False,
-) -> AssetMediaResponseDto:
+) -> ApiResponse[AssetMediaResponseDto]:
     if dry_run:
-        return AssetMediaResponseDto(
+        mock_data = AssetMediaResponseDto(
             id=str(uuid.uuid4()), status=AssetMediaStatus.CREATED
+        )
+        return ApiResponse(
+            status_code=201,
+            headers=None,
+            data=mock_data,
+            raw_data=b"",
         )
 
     stats = filepath.stat()
@@ -178,7 +229,7 @@ async def upload_file(
 
     asset_data = str(filepath)
 
-    response = await assets_api.upload_asset(
+    response = await assets_api.upload_asset_with_http_info(
         asset_data=asset_data,
         device_asset_id=f"{filepath.name}-{stats.st_size}".replace(" ", ""),
         device_id="immich-python-client",
@@ -196,9 +247,9 @@ async def upload_files(
     show_progress: bool = True,
     include_sidecars: bool = True,
     dry_run: bool = False,
-) -> tuple[list[tuple[AssetMediaResponseDto, Path]], list[tuple[Path, str]]]:
+) -> tuple[list[UploadedEntry], list[DuplicateEntry], list[FailedEntry]]:
     if not files:
-        return [], []
+        return [], [], []
 
     total_size = sum(f.stat().st_size for f in files)
     pbar = tqdm.tqdm(
@@ -210,8 +261,9 @@ async def upload_files(
     )
 
     semaphore = asyncio.Semaphore(concurrency)
-    uploaded: list[tuple[AssetMediaResponseDto, Path]] = []
-    failed: list[tuple[Path, str]] = []
+    uploaded: list[UploadedEntry] = []
+    duplicates: list[DuplicateEntry] = []
+    failed: list[FailedEntry] = []
 
     async def upload_with_semaphore(filepath: Path) -> None:
         async with semaphore:
@@ -219,7 +271,14 @@ async def upload_files(
                 response = await upload_file(
                     filepath, assets_api, include_sidecars, dry_run
                 )
-                uploaded.append((response, filepath))
+                if response.status_code == 201:
+                    uploaded.append(
+                        UploadedEntry(asset=response.data, filepath=filepath)
+                    )
+                elif response.status_code == 200:
+                    duplicates.append(
+                        DuplicateEntry(filepath=filepath, asset_id=response.data.id)
+                    )
                 if not dry_run:
                     pbar.update(filepath.stat().st_size)
             except Exception as e:
@@ -228,17 +287,17 @@ async def upload_files(
                     msg = str(body.get("message", str(e)))
                 else:
                     msg = str(e)
-                failed.append((filepath, msg))
+                failed.append(FailedEntry(filepath=filepath, error=msg))
                 logger.exception(f"Failed to upload {filepath}: {msg}")
 
     await asyncio.gather(*[upload_with_semaphore(f) for f in files])
     pbar.close()
 
-    return uploaded, failed
+    return uploaded, duplicates, failed
 
 
 async def update_albums(
-    uploaded: list[tuple[AssetMediaResponseDto, Path]],
+    uploaded: list[UploadedEntry],
     album_name: Optional[str],
     albums_api: AlbumsApi,
 ) -> None:
@@ -255,7 +314,7 @@ async def update_albums(
         album_map[album_name] = album.id
 
     album_id = album_map[album_name]
-    asset_ids = [UUID(asset.id) for asset, _ in uploaded]
+    asset_ids = [UUID(entry.asset.id) for entry in uploaded]
 
     for i in range(0, len(asset_ids), 1000):
         batch = asset_ids[i : i + 1000]
@@ -265,8 +324,8 @@ async def update_albums(
 
 
 async def delete_files(
-    uploaded: list[tuple[AssetMediaResponseDto, Path]],
-    duplicates: list[tuple[Path, str]],
+    uploaded: list[UploadedEntry],
+    duplicates: list[DuplicateEntry],
     delete_after_upload: bool = False,
     delete_duplicates: bool = False,
     include_sidecars: bool = True,
@@ -274,12 +333,12 @@ async def delete_files(
 ) -> None:
     to_delete: list[Path] = []
     if delete_after_upload:
-        for _, filepath in uploaded:
-            to_delete.append(filepath)
+        for entry in uploaded:
+            to_delete.append(entry.filepath)
 
     if delete_duplicates:
-        for filepath, _ in duplicates:
-            to_delete.append(filepath)
+        for entry in duplicates:
+            to_delete.append(entry.filepath)
 
     for filepath in to_delete:
         main_deleted = True
