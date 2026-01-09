@@ -170,13 +170,17 @@ async def check_duplicates(
             filepath = Path(result.id)
             if result.action == "accept":
                 new_files.append(filepath)
-            else:
+            elif result.action == "reject":
                 rejected.append(
                     RejectedEntry(
                         filepath=filepath,
                         asset_id=result.asset_id,
-                        reason=cast(_REJECTED_REASONS, result.reason),
+                        reason=cast(Optional[_REJECTED_REASONS], result.reason),
                     )
+                )
+            else:
+                logger.warning(
+                    f"Check upload result returned unexpected action {result.action} for {filepath}"
                 )
 
         check_pbar.update(len(batch))
