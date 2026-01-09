@@ -196,6 +196,8 @@ class AssetsApiWrapped(AssetsApi):
 
         :return: UploadResult with uploaded assets, rejected files, failures, and statistics.
         """
+        if concurrency < 1:
+            raise ValueError("concurrency must be >= 1")
         server_api = ServerApi(self.api_client)
         albums_api = AlbumsApi(self.api_client)
 
@@ -227,9 +229,10 @@ class AssetsApiWrapped(AssetsApi):
             dry_run=dry_run,
         )
 
-        await update_albums(
-            uploaded=uploaded, album_name=album_name, albums_api=albums_api
-        )
+        if album_name and not dry_run:
+            await update_albums(
+                uploaded=uploaded, album_name=album_name, albums_api=albums_api
+            )
 
         # we can either check pre-upload rejected files or on-upload rejected files, so we return the appropriate list
         # alternative would be to use both lists and deduplicate by asset_id, however adds overhead and assumes the API returned different results

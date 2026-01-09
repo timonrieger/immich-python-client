@@ -276,18 +276,25 @@ async def upload_files(
                     )
                 elif response.status_code == 200:
                     rejected.append(
-                        RejectedEntry(filepath=filepath, asset_id=response.data.id)
+                        RejectedEntry(
+                            filepath=filepath,
+                            asset_id=response.data.id,
+                            reason="duplicate",
+                        )
                     )
                 if not dry_run:
                     pbar.update(filepath.stat().st_size)
             except Exception as e:
                 if isinstance(e, ApiException) and e.body:
-                    body: dict[str, Any] = json.loads(cast(str, e.body))
-                    msg = str(body.get("message", str(e)))
+                    try:
+                        body: dict[str, Any] = json.loads(cast(str, e.body))
+                        msg = str(body.get("message", str(e)))
+                    except (ValueError, json.JSONDecodeError):
+                        msg = str(e.body) if e.body else str(e)
                 else:
                     msg = str(e)
                 failed.append(FailedEntry(filepath=filepath, error=msg))
-                logger.error(f"Failed to upload {filepath}: {msg}")
+                logger.exception(f"Failed to upload {filepath}: {msg}")
 
     await asyncio.gather(*[upload_with_semaphore(f) for f in files])
     pbar.close()
