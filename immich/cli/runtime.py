@@ -6,7 +6,7 @@ import asyncio
 import json
 import sys
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from immich import AsyncClient
 from immich.client.exceptions import ApiException
@@ -33,6 +33,7 @@ def load_json_file(path: Path) -> dict[str, Any]:
         print(f"Error: Failed to read {path}: {e}", file=sys.stderr)
         sys.exit(1)
 
+
 def load_file_bytes(path: Path) -> tuple[str, bytes]:
     """Load a file as bytes and return (filename, bytes) for multipart uploads."""
     try:
@@ -42,9 +43,7 @@ def load_file_bytes(path: Path) -> tuple[str, bytes]:
         sys.exit(1)
 
 
-def deserialize_request_body(
-    json_data: dict[str, Any], model_class: type[Any]
-) -> Any:
+def deserialize_request_body(json_data: dict[str, Any], model_class: type[Any]) -> Any:
     """Deserialize JSON data into Pydantic model."""
     try:
         return model_class.model_validate(json_data)
@@ -55,13 +54,22 @@ def deserialize_request_body(
 
 def serialize_response(data: Any, format_mode: str = "pretty") -> str:
     """Serialize response data to JSON string."""
-    # Convert Pydantic models to dict
-    if hasattr(data, "model_dump"):
-        data = data.model_dump()
-    elif hasattr(data, "dict"):  # Pydantic v1 compatibility
-        data = data.dict()
 
-    json_str = json.dumps(data, indent=2, default=str)
+    def convert_to_dict(obj: Any) -> Any:
+        """Recursively convert Pydantic models to dicts."""
+        if hasattr(obj, "model_dump"):
+            return obj.model_dump()
+        elif hasattr(obj, "dict"):  # Pydantic v1 compatibility
+            return obj.dict()
+        elif isinstance(obj, list):
+            return [convert_to_dict(item) for item in obj]
+        elif isinstance(obj, dict):
+            return {k: convert_to_dict(v) for k, v in obj.items()}
+        return obj
+
+    data = convert_to_dict(data)
+    indent = 2 if format_mode == "pretty" else None
+    json_str = json.dumps(data, indent=indent, default=str)
 
     if format_mode == "pretty" and print_json:
         # Rich will handle the pretty printing
@@ -126,4 +134,3 @@ def run_command(
         if isinstance(e, ApiException):
             handle_api_error(e)
         raise
-

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import sys
-from typing import Optional
 
 try:
     import typer
@@ -17,7 +16,6 @@ except ImportError:
     sys.exit(1)
 
 from immich.cli.config import create_client
-from immich.cli.runtime import print_response
 
 # Global state
 app = typer.Typer(
@@ -31,6 +29,7 @@ app = typer.Typer(
     context_settings={"help_option_names": ["-h", "--help"]},
 )
 console = Console()
+stderr_console = Console(file=sys.stderr)
 
 
 @app.callback(invoke_without_command=True)
@@ -48,7 +47,10 @@ def _callback(
     ctx.obj["format"] = format_mode
 
     # If help/completion parsing (root or subcommand), don't require config.
-    if any(a in sys.argv for a in ("-h", "--help", "--install-completion", "--show-completion")):
+    if any(
+        a in sys.argv
+        for a in ("-h", "--help", "--install-completion", "--show-completion")
+    ):
         return
 
     # If no command provided, show help without requiring config.
@@ -60,8 +62,8 @@ def _callback(
     try:
         ctx.obj["client"] = create_client()
     except ValueError as e:
-        console.print(f"[red]Error:[/red] {e}", file=sys.stderr)
-        raise typer.Exit(1)
+        stderr_console.print(f"[red]Error:[/red] {e}")
+        raise typer.Exit(1) from None
 
 
 def attach_generated_apps() -> None:
@@ -84,4 +86,3 @@ attach_generated_apps()
 def main() -> None:
     """Entry point for console script."""
     app()
-
