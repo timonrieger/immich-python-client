@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
+import json
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="Shared links operations", context_settings={"help_option_names": ["-h", "--help"]})
 
@@ -15,11 +15,9 @@ def add_shared_link_assets(
     id: str,
     key: str | None = typer.Option(None, "--key"),
     slug: str | None = typer.Option(None, "--slug"),
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Add assets to a shared link"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if key is not None:
@@ -27,7 +25,6 @@ def add_shared_link_assets(
     if slug is not None:
         kwargs['slug'] = slug
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.asset_ids_dto import AssetIdsDto
         asset_ids_dto = deserialize_request_body(json_data, AssetIdsDto)
@@ -41,14 +38,11 @@ def add_shared_link_assets(
 @app.command("create-shared-link")
 def create_shared_link(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Create a shared link"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.shared_link_create_dto import SharedLinkCreateDto
         shared_link_create_dto = deserialize_request_body(json_data, SharedLinkCreateDto)
@@ -63,13 +57,14 @@ def create_shared_link(
 def get_all_shared_links(
     ctx: typer.Context,
     album_id: str | None = typer.Option(None, "--album-id"),
+    id: str | None = typer.Option(None, "--id"),
 ) -> None:
     """Retrieve all shared links"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if album_id is not None:
         kwargs['album_id'] = album_id
+    if id is not None:
+        kwargs['id'] = id
     client = ctx.obj['client']
     api_group = client.shared_links
     result = run_command(client, api_group, 'get_all_shared_links', **kwargs)
@@ -85,8 +80,6 @@ def get_my_shared_link(
     token: str | None = typer.Option(None, "--token"),
 ) -> None:
     """Retrieve current shared link"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if key is not None:
         kwargs['key'] = key
@@ -108,8 +101,6 @@ def get_shared_link_by_id(
     id: str,
 ) -> None:
     """Retrieve a shared link"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -124,8 +115,6 @@ def remove_shared_link(
     id: str,
 ) -> None:
     """Delete a shared link"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -140,11 +129,9 @@ def remove_shared_link_assets(
     id: str,
     key: str | None = typer.Option(None, "--key"),
     slug: str | None = typer.Option(None, "--slug"),
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Remove assets from a shared link"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if key is not None:
@@ -152,7 +139,6 @@ def remove_shared_link_assets(
     if slug is not None:
         kwargs['slug'] = slug
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.asset_ids_dto import AssetIdsDto
         asset_ids_dto = deserialize_request_body(json_data, AssetIdsDto)
@@ -167,15 +153,12 @@ def remove_shared_link_assets(
 def update_shared_link(
     ctx: typer.Context,
     id: str,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Update a shared link"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.shared_link_edit_dto import SharedLinkEditDto
         shared_link_edit_dto = deserialize_request_body(json_data, SharedLinkEditDto)

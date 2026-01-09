@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="Map operations", context_settings={"help_option_names": ["-h", "--help"]})
 
@@ -20,8 +19,6 @@ def get_map_markers(
     with_shared_albums: bool | None = typer.Option(None, "--with-shared-albums"),
 ) -> None:
     """Retrieve map markers"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if file_created_after is not None:
         kwargs['file_created_after'] = file_created_after
@@ -48,8 +45,6 @@ def reverse_geocode(
     lon: float = typer.Option(..., "--lon"),
 ) -> None:
     """Reverse geocode coordinates"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['lat'] = lat
     kwargs['lon'] = lon

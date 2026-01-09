@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
+import json
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="Server operations", context_settings={"help_option_names": ["-h", "--help"]})
 
@@ -14,8 +14,6 @@ def delete_server_license(
     ctx: typer.Context,
 ) -> None:
     """Delete server product key"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -28,8 +26,6 @@ def get_about_info(
     ctx: typer.Context,
 ) -> None:
     """Get server information"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -42,8 +38,6 @@ def get_apk_links(
     ctx: typer.Context,
 ) -> None:
     """Get APK links"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -56,8 +50,6 @@ def get_server_config(
     ctx: typer.Context,
 ) -> None:
     """Get config"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -70,8 +62,6 @@ def get_server_features(
     ctx: typer.Context,
 ) -> None:
     """Get features"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -84,8 +74,6 @@ def get_server_license(
     ctx: typer.Context,
 ) -> None:
     """Get product key"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -98,8 +86,6 @@ def get_server_statistics(
     ctx: typer.Context,
 ) -> None:
     """Get statistics"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -112,8 +98,6 @@ def get_server_version(
     ctx: typer.Context,
 ) -> None:
     """Get server version"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -126,8 +110,6 @@ def get_storage(
     ctx: typer.Context,
 ) -> None:
     """Get storage"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -140,8 +122,6 @@ def get_supported_media_types(
     ctx: typer.Context,
 ) -> None:
     """Get supported media types"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -154,8 +134,6 @@ def get_theme(
     ctx: typer.Context,
 ) -> None:
     """Get theme"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -168,8 +146,6 @@ def get_version_check(
     ctx: typer.Context,
 ) -> None:
     """Get version check status"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -182,8 +158,6 @@ def get_version_history(
     ctx: typer.Context,
 ) -> None:
     """Get version history"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -196,8 +170,6 @@ def ping_server(
     ctx: typer.Context,
 ) -> None:
     """Ping"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -208,14 +180,11 @@ def ping_server(
 @app.command("set-server-license")
 def set_server_license(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Set server product key"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.license_key_dto import LicenseKeyDto
         license_key_dto = deserialize_request_body(json_data, LicenseKeyDto)

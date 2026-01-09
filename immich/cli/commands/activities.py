@@ -2,24 +2,21 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
+import json
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="Activities operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("create-activity")
 def create_activity(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Create an activity"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.activity_create_dto import ActivityCreateDto
         activity_create_dto = deserialize_request_body(json_data, ActivityCreateDto)
@@ -36,8 +33,6 @@ def delete_activity(
     id: str,
 ) -> None:
     """Delete an activity"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -56,8 +51,6 @@ def get_activities(
     user_id: str | None = typer.Option(None, "--user-id"),
 ) -> None:
     """List all activities"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['album_id'] = album_id
     if asset_id is not None:
@@ -81,8 +74,6 @@ def get_activity_statistics(
     asset_id: str | None = typer.Option(None, "--asset-id"),
 ) -> None:
     """Retrieve activity statistics"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['album_id'] = album_id
     if asset_id is not None:

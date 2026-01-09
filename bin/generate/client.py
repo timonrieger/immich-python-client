@@ -2,7 +2,6 @@
 # requires-python = ">=3.11"
 # dependencies = [
 #   "openapi-generator-cli[jdk4py]==7.18.0",
-#   "requests",
 # ]
 # ///
 
@@ -12,11 +11,14 @@ import argparse
 import os
 import shutil
 import subprocess  # nosec: B404
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 
 def project_root() -> Path:
-    return Path(__file__).resolve().parents[1]
+    # This file lives at bin/generate/client.py
+    return Path(__file__).resolve().parents[2]
 
 
 def openapi_url(ref: str) -> str:
@@ -110,3 +112,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

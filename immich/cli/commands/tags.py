@@ -2,24 +2,21 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
+import json
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="Tags operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("bulk-tag-assets")
 def bulk_tag_assets(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Tag assets"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.tag_bulk_assets_dto import TagBulkAssetsDto
         tag_bulk_assets_dto = deserialize_request_body(json_data, TagBulkAssetsDto)
@@ -33,14 +30,11 @@ def bulk_tag_assets(
 @app.command("create-tag")
 def create_tag(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Create a tag"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.tag_create_dto import TagCreateDto
         tag_create_dto = deserialize_request_body(json_data, TagCreateDto)
@@ -57,8 +51,6 @@ def delete_tag(
     id: str,
 ) -> None:
     """Delete a tag"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -72,8 +64,6 @@ def get_all_tags(
     ctx: typer.Context,
 ) -> None:
     """Retrieve tags"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.tags
@@ -87,8 +77,6 @@ def get_tag_by_id(
     id: str,
 ) -> None:
     """Retrieve a tag"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -101,15 +89,12 @@ def get_tag_by_id(
 def tag_assets(
     ctx: typer.Context,
     id: str,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Tag assets"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.bulk_ids_dto import BulkIdsDto
         bulk_ids_dto = deserialize_request_body(json_data, BulkIdsDto)
@@ -124,15 +109,12 @@ def tag_assets(
 def untag_assets(
     ctx: typer.Context,
     id: str,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Untag assets"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.bulk_ids_dto import BulkIdsDto
         bulk_ids_dto = deserialize_request_body(json_data, BulkIdsDto)
@@ -147,15 +129,12 @@ def untag_assets(
 def update_tag(
     ctx: typer.Context,
     id: str,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Update a tag"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.tag_update_dto import TagUpdateDto
         tag_update_dto = deserialize_request_body(json_data, TagUpdateDto)
@@ -169,14 +148,11 @@ def update_tag(
 @app.command("upsert-tags")
 def upsert_tags(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Upsert tags"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.tag_upsert_dto import TagUpsertDto
         tag_upsert_dto = deserialize_request_body(json_data, TagUpsertDto)

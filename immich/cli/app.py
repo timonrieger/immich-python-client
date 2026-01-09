@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib
 import sys
 
 try:
@@ -31,8 +32,11 @@ app = typer.Typer(
 console = Console()
 stderr_console = Console(file=sys.stderr)
 
-# Track if apps have been attached to avoid re-attaching
-_apps_attached = False
+from immich.cli.commands import _MODULE_MAP
+
+for module_name, app_name in _MODULE_MAP.items():
+    module = importlib.import_module(f"immich.cli.commands.{module_name}")
+    app.add_typer(module.app, name=app_name)
 
 
 @app.callback(invoke_without_command=True)
@@ -69,28 +73,6 @@ def _callback(
         raise typer.Exit(1) from None
 
 
-def attach_generated_apps() -> None:
-    """Attach generated sub-apps to the root app."""
-    global _apps_attached
-    if _apps_attached:
-        return
-    
-    try:
-        from immich.cli.commands import APPS
-
-        for tag_name, sub_app in APPS.items():
-            if sub_app is not None:
-                app.add_typer(sub_app, name=tag_name)
-        _apps_attached = True
-    except (ImportError, AttributeError):
-        # Generated code not available - this is expected before first codegen run
-        pass
-
-
 def main() -> None:
     """Entry point for console script."""
-    # Attach generated apps lazily (only when CLI is invoked, not at import time)
-    # This speeds up module imports while still allowing completion to work
-    # Must be called before app() so Typer can introspect commands for help/completion
-    attach_generated_apps()
     app()

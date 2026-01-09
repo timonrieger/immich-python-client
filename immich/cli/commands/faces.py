@@ -2,24 +2,21 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
+import json
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="Faces operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("create-face")
 def create_face(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Create a face"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.asset_face_create_dto import AssetFaceCreateDto
         asset_face_create_dto = deserialize_request_body(json_data, AssetFaceCreateDto)
@@ -34,15 +31,12 @@ def create_face(
 def delete_face(
     ctx: typer.Context,
     id: str,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Delete a face"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.asset_face_delete_dto import AssetFaceDeleteDto
         asset_face_delete_dto = deserialize_request_body(json_data, AssetFaceDeleteDto)
@@ -59,8 +53,6 @@ def get_faces(
     id: str = typer.Option(..., "--id"),
 ) -> None:
     """Retrieve faces for asset"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -73,15 +65,12 @@ def get_faces(
 def reassign_faces_by_id(
     ctx: typer.Context,
     id: str,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Re-assign a face to another person"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.face_dto import FaceDto
         face_dto = deserialize_request_body(json_data, FaceDto)

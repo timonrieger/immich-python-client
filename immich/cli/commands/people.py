@@ -2,24 +2,21 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
+import json
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="People operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("create-person")
 def create_person(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Create a person"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.person_create_dto import PersonCreateDto
         person_create_dto = deserialize_request_body(json_data, PersonCreateDto)
@@ -33,14 +30,11 @@ def create_person(
 @app.command("delete-people")
 def delete_people(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Delete people"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.bulk_ids_dto import BulkIdsDto
         bulk_ids_dto = deserialize_request_body(json_data, BulkIdsDto)
@@ -57,8 +51,6 @@ def delete_person(
     id: str,
 ) -> None:
     """Delete person"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -77,8 +69,6 @@ def get_all_people(
     with_hidden: bool | None = typer.Option(None, "--with-hidden"),
 ) -> None:
     """Get all people"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if closest_asset_id is not None:
         kwargs['closest_asset_id'] = closest_asset_id
@@ -102,8 +92,6 @@ def get_person(
     id: str,
 ) -> None:
     """Get a person"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -118,8 +106,6 @@ def get_person_statistics(
     id: str,
 ) -> None:
     """Get person statistics"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -134,8 +120,6 @@ def get_person_thumbnail(
     id: str,
 ) -> None:
     """Get person thumbnail"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -148,15 +132,12 @@ def get_person_thumbnail(
 def merge_person(
     ctx: typer.Context,
     id: str,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Merge people"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.merge_person_dto import MergePersonDto
         merge_person_dto = deserialize_request_body(json_data, MergePersonDto)
@@ -171,15 +152,12 @@ def merge_person(
 def reassign_faces(
     ctx: typer.Context,
     id: str,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Reassign faces"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.asset_face_update_dto import AssetFaceUpdateDto
         asset_face_update_dto = deserialize_request_body(json_data, AssetFaceUpdateDto)
@@ -193,14 +171,11 @@ def reassign_faces(
 @app.command("update-people")
 def update_people(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Update people"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.people_update_dto import PeopleUpdateDto
         people_update_dto = deserialize_request_body(json_data, PeopleUpdateDto)
@@ -215,15 +190,12 @@ def update_people(
 def update_person(
     ctx: typer.Context,
     id: str,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Update person"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.person_update_dto import PersonUpdateDto
         person_update_dto = deserialize_request_body(json_data, PersonUpdateDto)
