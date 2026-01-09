@@ -6,6 +6,14 @@ This repository is **auto-generated** from the Immich OpenAPI specification.
 
 Pull requests are welcome! However, **modifications to auto-generated code will be rejected**.
 
+### PR checklist
+
+Before submitting a pull request, please ensure:
+
+1. Install [mise](https://mise.jdx.dev) if you haven't already
+2. Run `mise run ci:check` to verify all checks pass
+3. To see all available tasks, run `mise tasks ls`
+
 ### Auto-generated code restrictions
 
 The following directories contain auto-generated code and **must not be modified**:
