@@ -116,11 +116,11 @@ jobs:
       - name: Install mise
         uses: jdx/mise-action@146a28175021df8ca24f8ee1828cc2a60f980bd5 # v3
 
-      - name: Run CI (generate + lint)
+      - name: Generate client code
         if: steps.check_sync.outputs.sync_needed == 'true'
         env:
           IMMICH_OPENAPI_REF: ${{ steps.fetch_tag.outputs.latest_tag }}
-        run: mise run ci
+        run: mise run ci:gen
 
       - name: Update stored tag file
         if: steps.check_sync.outputs.sync_needed == 'true'

@@ -18,8 +18,8 @@ jobs:
       - name: Install mise
         uses: jdx/mise-action@146a28175021df8ca24f8ee1828cc2a60f980bd5 # v3
 
-      - name: Run pre-commit hooks
-        run: mise run lint
+      - name: Run CI
+        run: mise run ci:check
 
   test:
     runs-on: ubuntu-latest

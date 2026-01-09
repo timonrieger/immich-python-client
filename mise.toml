@@ -10,6 +10,10 @@ _.python.venv = { path = ".venv" }
 run = "uvx pre-commit run --all-files"
 description = "Run pre-commit hooks"
 
+[tasks.check]
+run = "uv run ty check"
+description = "Run type checking"
+
 [tasks.test]
 run = "uv run pytest tests/"
 description = "Run tests with pytest"
@@ -51,11 +55,18 @@ set -eu
 uv run bin/generate.py
 '''
 
-[tasks.ci]
-description = "Run generate then lint sequentially (CI helper)"
+[tasks."ci:gen"]
+description = "Run generate then lint sequentially"
 run = [
     { task = "generate" },
     { task = "lint" },
+]
+
+[tasks."ci:check"]
+description = "Run lint then check sequentially"
+run = [
+    { task = "lint" },
+    { task = "check" },
 ]
 
 [tasks.clean]
