@@ -12,14 +12,15 @@ app = typer.Typer(help="Workflows operations", context_settings={"help_option_na
 @app.command("create-workflow")
 def create_workflow(
     ctx: typer.Context,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Create a workflow"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.workflow_create_dto import WorkflowCreateDto
         workflow_create_dto = deserialize_request_body(json_data, WorkflowCreateDto)
         kwargs['workflow_create_dto'] = workflow_create_dto
@@ -36,7 +37,7 @@ def delete_workflow(
 ) -> None:
     """Delete a workflow"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -52,7 +53,7 @@ def get_workflow(
 ) -> None:
     """Retrieve a workflow"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -67,7 +68,7 @@ def get_workflows(
 ) -> None:
     """List all workflows"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.workflows
@@ -79,15 +80,16 @@ def get_workflows(
 def update_workflow(
     ctx: typer.Context,
     id: str,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Update a workflow"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.workflow_update_dto import WorkflowUpdateDto
         workflow_update_dto = deserialize_request_body(json_data, WorkflowUpdateDto)
         kwargs['workflow_update_dto'] = workflow_update_dto

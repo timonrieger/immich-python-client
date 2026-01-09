@@ -307,12 +307,12 @@ def generate_command_function(
         content_type, request_body_model, resolved_schema = request_body_info
         if content_type == "application/json":
             lines.append(
-                '    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),'
+                '    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),'
             )
         elif content_type == "multipart/form-data":
-            # Keep rule: requestBody => --json PATH for non-file fields
+            # Inline JSON for non-file fields
             lines.append(
-                '    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with multipart fields (non-file)"),'
+                '    json_str: str | None = typer.Option(None, "--json", help="Inline JSON with multipart fields (non-file)"),'
             )
             # Add file-part options for binary fields
             props = (
@@ -345,7 +345,7 @@ def generate_command_function(
     lines.append('    """' + operation.get("summary", operation_id) + '"""')
     lines.append("    from pathlib import Path")
     lines.append(
-        "    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command"
+        "    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command"
     )
 
     # Build kwargs
@@ -385,8 +385,9 @@ def generate_command_function(
         if content_type == "application/json":
             # Infer parameter name from model name (e.g., UserUpdateMeDto -> user_update_me_dto)
             body_param_name = to_python_ident(request_body_model)
-            lines.append("    if json_path is not None:")
-            lines.append("        json_data = load_json_file(json_path)")
+            lines.append("    if json_str is not None:")
+            lines.append("        import json")
+            lines.append("        json_data = json.loads(json_str)")
             # Model import path: convert ModelNameDto to model_name_dto.py
             model_module = to_snake_case(request_body_model)
             lines.append(
@@ -404,9 +405,8 @@ def generate_command_function(
                 else {}
             )
             required_props = set(resolved_schema.get("required", []) or [])
-            lines.append(
-                "    json_data = load_json_file(json_path) if json_path is not None else {}"
-            )
+            lines.append("    import json")
+            lines.append("    json_data = json.loads(json_str) if json_str is not None else {}")
             # Fail loudly if required non-file fields are missing
             lines.append("    missing: list[str] = []")
             for prop_name, prop_schema in sorted(props.items(), key=lambda kv: kv[0]):

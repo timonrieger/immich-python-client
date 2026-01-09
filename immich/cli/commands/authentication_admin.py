@@ -15,7 +15,7 @@ def unlink_all_o_auth_accounts_admin(
 ) -> None:
     """Unlink all OAuth accounts"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.authentication_admin

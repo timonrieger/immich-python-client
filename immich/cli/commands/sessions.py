@@ -12,14 +12,15 @@ app = typer.Typer(help="Sessions operations", context_settings={"help_option_nam
 @app.command("create-session")
 def create_session(
     ctx: typer.Context,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Create a session"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.session_create_dto import SessionCreateDto
         session_create_dto = deserialize_request_body(json_data, SessionCreateDto)
         kwargs['session_create_dto'] = session_create_dto
@@ -35,7 +36,7 @@ def delete_all_sessions(
 ) -> None:
     """Delete all sessions"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.sessions
@@ -50,7 +51,7 @@ def delete_session(
 ) -> None:
     """Delete a session"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -65,7 +66,7 @@ def get_sessions(
 ) -> None:
     """Retrieve sessions"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.sessions
@@ -80,7 +81,7 @@ def lock_session(
 ) -> None:
     """Lock a session"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -93,15 +94,16 @@ def lock_session(
 def update_session(
     ctx: typer.Context,
     id: str,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Update a session"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.session_update_dto import SessionUpdateDto
         session_update_dto = deserialize_request_body(json_data, SessionUpdateDto)
         kwargs['session_update_dto'] = session_update_dto

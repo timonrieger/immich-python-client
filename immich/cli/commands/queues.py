@@ -13,15 +13,16 @@ app = typer.Typer(help="Queues operations", context_settings={"help_option_names
 def empty_queue(
     ctx: typer.Context,
     name: str,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Empty a queue"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['name'] = name
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.queue_delete_dto import QueueDeleteDto
         queue_delete_dto = deserialize_request_body(json_data, QueueDeleteDto)
         kwargs['queue_delete_dto'] = queue_delete_dto
@@ -38,7 +39,7 @@ def get_queue(
 ) -> None:
     """Retrieve a queue"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['name'] = name
     client = ctx.obj['client']
@@ -55,7 +56,7 @@ def get_queue_jobs(
 ) -> None:
     """Retrieve queue jobs"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['name'] = name
     if status is not None:
@@ -72,7 +73,7 @@ def get_queues(
 ) -> None:
     """List all queues"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.queues
@@ -84,15 +85,16 @@ def get_queues(
 def update_queue(
     ctx: typer.Context,
     name: str,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Update a queue"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['name'] = name
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.queue_update_dto import QueueUpdateDto
         queue_update_dto = deserialize_request_body(json_data, QueueUpdateDto)
         kwargs['queue_update_dto'] = queue_update_dto

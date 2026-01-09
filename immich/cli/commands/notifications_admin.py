@@ -12,14 +12,15 @@ app = typer.Typer(help="Notifications (admin) operations", context_settings={"he
 @app.command("create-notification")
 def create_notification(
     ctx: typer.Context,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Create a notification"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.notification_create_dto import NotificationCreateDto
         notification_create_dto = deserialize_request_body(json_data, NotificationCreateDto)
         kwargs['notification_create_dto'] = notification_create_dto
@@ -33,15 +34,16 @@ def create_notification(
 def get_notification_template_admin(
     ctx: typer.Context,
     name: str,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Render email template"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['name'] = name
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.template_dto import TemplateDto
         template_dto = deserialize_request_body(json_data, TemplateDto)
         kwargs['template_dto'] = template_dto
@@ -54,14 +56,15 @@ def get_notification_template_admin(
 @app.command("send-test-email-admin")
 def send_test_email_admin(
     ctx: typer.Context,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Send test email"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.system_config_smtp_dto import SystemConfigSmtpDto
         system_config_smtp_dto = deserialize_request_body(json_data, SystemConfigSmtpDto)
         kwargs['system_config_smtp_dto'] = system_config_smtp_dto

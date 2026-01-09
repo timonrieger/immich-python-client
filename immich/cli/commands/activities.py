@@ -12,14 +12,15 @@ app = typer.Typer(help="Activities operations", context_settings={"help_option_n
 @app.command("create-activity")
 def create_activity(
     ctx: typer.Context,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Create an activity"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.activity_create_dto import ActivityCreateDto
         activity_create_dto = deserialize_request_body(json_data, ActivityCreateDto)
         kwargs['activity_create_dto'] = activity_create_dto
@@ -36,7 +37,7 @@ def delete_activity(
 ) -> None:
     """Delete an activity"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -56,7 +57,7 @@ def get_activities(
 ) -> None:
     """List all activities"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['album_id'] = album_id
     if asset_id is not None:
@@ -81,7 +82,7 @@ def get_activity_statistics(
 ) -> None:
     """Retrieve activity statistics"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['album_id'] = album_id
     if asset_id is not None:

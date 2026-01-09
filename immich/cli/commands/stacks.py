@@ -12,14 +12,15 @@ app = typer.Typer(help="Stacks operations", context_settings={"help_option_names
 @app.command("create-stack")
 def create_stack(
     ctx: typer.Context,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Create a stack"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.stack_create_dto import StackCreateDto
         stack_create_dto = deserialize_request_body(json_data, StackCreateDto)
         kwargs['stack_create_dto'] = stack_create_dto
@@ -36,7 +37,7 @@ def delete_stack(
 ) -> None:
     """Delete a stack"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -48,14 +49,15 @@ def delete_stack(
 @app.command("delete-stacks")
 def delete_stacks(
     ctx: typer.Context,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Delete stacks"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.bulk_ids_dto import BulkIdsDto
         bulk_ids_dto = deserialize_request_body(json_data, BulkIdsDto)
         kwargs['bulk_ids_dto'] = bulk_ids_dto
@@ -72,7 +74,7 @@ def get_stack(
 ) -> None:
     """Retrieve a stack"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -89,7 +91,7 @@ def remove_asset_from_stack(
 ) -> None:
     """Remove an asset from a stack"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['asset_id'] = asset_id
     kwargs['id'] = id
@@ -106,7 +108,7 @@ def search_stacks(
 ) -> None:
     """Retrieve stacks"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if primary_asset_id is not None:
         kwargs['primary_asset_id'] = primary_asset_id
@@ -120,15 +122,16 @@ def search_stacks(
 def update_stack(
     ctx: typer.Context,
     id: str,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Update a stack"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.stack_update_dto import StackUpdateDto
         stack_update_dto = deserialize_request_body(json_data, StackUpdateDto)
         kwargs['stack_update_dto'] = stack_update_dto

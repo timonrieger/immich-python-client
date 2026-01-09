@@ -15,7 +15,7 @@ def get_admin_onboarding(
 ) -> None:
     """Retrieve admin onboarding"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.system_metadata
@@ -29,7 +29,7 @@ def get_reverse_geocoding_state(
 ) -> None:
     """Retrieve reverse geocoding state"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.system_metadata
@@ -43,7 +43,7 @@ def get_version_check_state(
 ) -> None:
     """Retrieve version check state"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.system_metadata
@@ -54,14 +54,15 @@ def get_version_check_state(
 @app.command("update-admin-onboarding")
 def update_admin_onboarding(
     ctx: typer.Context,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Update admin onboarding"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.admin_onboarding_update_dto import AdminOnboardingUpdateDto
         admin_onboarding_update_dto = deserialize_request_body(json_data, AdminOnboardingUpdateDto)
         kwargs['admin_onboarding_update_dto'] = admin_onboarding_update_dto

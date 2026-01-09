@@ -12,14 +12,15 @@ app = typer.Typer(help="Users (admin) operations", context_settings={"help_optio
 @app.command("create-user-admin")
 def create_user_admin(
     ctx: typer.Context,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Create a user"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.user_admin_create_dto import UserAdminCreateDto
         user_admin_create_dto = deserialize_request_body(json_data, UserAdminCreateDto)
         kwargs['user_admin_create_dto'] = user_admin_create_dto
@@ -33,15 +34,16 @@ def create_user_admin(
 def delete_user_admin(
     ctx: typer.Context,
     id: str,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Delete a user"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.user_admin_delete_dto import UserAdminDeleteDto
         user_admin_delete_dto = deserialize_request_body(json_data, UserAdminDeleteDto)
         kwargs['user_admin_delete_dto'] = user_admin_delete_dto
@@ -58,7 +60,7 @@ def get_user_admin(
 ) -> None:
     """Retrieve a user"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -74,7 +76,7 @@ def get_user_preferences_admin(
 ) -> None:
     """Retrieve user preferences"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -90,7 +92,7 @@ def get_user_sessions_admin(
 ) -> None:
     """Retrieve user sessions"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -109,7 +111,7 @@ def get_user_statistics_admin(
 ) -> None:
     """Retrieve user statistics"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if is_favorite is not None:
@@ -131,7 +133,7 @@ def restore_user_admin(
 ) -> None:
     """Restore a deleted user"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -148,7 +150,7 @@ def search_users_admin(
 ) -> None:
     """Search users"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if id is not None:
         kwargs['id'] = id
@@ -164,15 +166,16 @@ def search_users_admin(
 def update_user_admin(
     ctx: typer.Context,
     id: str,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Update a user"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.user_admin_update_dto import UserAdminUpdateDto
         user_admin_update_dto = deserialize_request_body(json_data, UserAdminUpdateDto)
         kwargs['user_admin_update_dto'] = user_admin_update_dto
@@ -186,15 +189,16 @@ def update_user_admin(
 def update_user_preferences_admin(
     ctx: typer.Context,
     id: str,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Update user preferences"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.user_preferences_update_dto import UserPreferencesUpdateDto
         user_preferences_update_dto = deserialize_request_body(json_data, UserPreferencesUpdateDto)
         kwargs['user_preferences_update_dto'] = user_preferences_update_dto
