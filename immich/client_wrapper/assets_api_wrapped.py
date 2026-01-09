@@ -194,7 +194,7 @@ class AssetsApiWrapped(AssetsApi):
         :param delete_duplicates: Whether to delete duplicate files locally.
         :param dry_run: If True, simulate uploads without actually uploading.
 
-        :return: UploadResult with uploaded assets, duplicates, failures, and statistics.
+        :return: UploadResult with uploaded assets, rejected files, failures, and statistics.
         """
         server_api = ServerApi(self.api_client)
         albums_api = AlbumsApi(self.api_client)
@@ -203,19 +203,19 @@ class AssetsApiWrapped(AssetsApi):
         if not files:
             return UploadResult(
                 uploaded=[],
-                duplicates=[],
+                rejected=[],
                 failed=[],
-                stats=UploadStats(total=0, uploaded=0, duplicates=0, failed=0),
+                stats=UploadStats(total=0, uploaded=0, rejected=0, failed=0),
             )
 
-        new_files, checked_duplicates = await check_dupes(
+        new_files, checked_rejected = await check_dupes(
             files=files,
             assets_api=self,
             check_duplicates=check_duplicates,
             show_progress=show_progress,
         )
 
-        uploaded, actual_duplicates, failed = await upload_files(
+        uploaded, actual_rejected, failed = await upload_files(
             files=new_files,
             assets_api=self,
             concurrency=concurrency,
@@ -228,13 +228,13 @@ class AssetsApiWrapped(AssetsApi):
             uploaded=uploaded, album_name=album_name, albums_api=albums_api
         )
 
-        # we can either check pre-upload duplicates or on-upload duplicates, so we return the appropriate list
+        # we can either check pre-upload rejected files or on-upload rejected files, so we return the appropriate list
         # alternative would be to use both lists and deduplicate by asset_id, however adds overhead and assumes the API returned different results
-        duplicates = checked_duplicates if check_duplicates else actual_duplicates
+        rejected = checked_rejected if check_duplicates else actual_rejected
 
         await delete_files(
             uploaded=uploaded,
-            duplicates=duplicates,
+            rejected=rejected,
             delete_after_upload=delete_after_upload,
             delete_duplicates=delete_duplicates,
             include_sidecars=include_sidecars,
@@ -243,12 +243,12 @@ class AssetsApiWrapped(AssetsApi):
 
         return UploadResult(
             uploaded=uploaded,
-            duplicates=duplicates,
+            rejected=rejected,
             failed=failed,
             stats=UploadStats(
                 total=len(files),
                 uploaded=len(uploaded),
-                duplicates=len(duplicates),
+                rejected=len(rejected),
                 failed=len(failed),
             ),
         )

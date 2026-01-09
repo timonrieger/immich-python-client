@@ -33,12 +33,12 @@ BATCH_SIZE = 5000
 class UploadStats(BaseModel):
     total: int
     uploaded: int
-    duplicates: int
+    rejected: int
     failed: int
 
 
-class DuplicateEntry(BaseModel):
-    """Represents a duplicate file that already exists in Immich."""
+class RejectedEntry(BaseModel):
+    """Represents a file that was rejected during upload (check)."""
 
     filepath: Path = Field(
         ..., description="The path to the local file that was rejected."
@@ -46,7 +46,7 @@ class DuplicateEntry(BaseModel):
     asset_id: Optional[str] = Field(
         None, description="The ID of the asset. Set if reason is 'duplicate'."
     )
-    reason: Optional[Literal["duplicate", "is_trashed", "unsupported_format"]] = Field(
+    reason: Optional[Literal["duplicate", "unsupported_format"]] = Field(
         None, description="The reason for the rejection."
     )
 
@@ -75,7 +75,7 @@ class UploadResult(BaseModel):
     uploaded: list[UploadedEntry] = Field(
         ..., description="The assets that were uploaded."
     )
-    duplicates: list[DuplicateEntry] = Field(
+    rejected: list[RejectedEntry] = Field(
         ..., description="The files that were rejected."
     )
     failed: list[FailedEntry] = Field(
@@ -134,7 +134,7 @@ async def check_duplicates(
     assets_api: AssetsApi,
     check_duplicates: bool = True,
     show_progress: bool = True,
-) -> tuple[list[Path], list[DuplicateEntry]]:
+) -> tuple[list[Path], list[RejectedEntry]]:
     if not check_duplicates:
         return files, []
 
@@ -147,7 +147,7 @@ async def check_duplicates(
     pbar.close()
 
     new_files: list[Path] = []
-    duplicates: list[DuplicateEntry] = []
+    rejected: list[RejectedEntry] = []
 
     check_pbar = tqdm.tqdm(
         total=len(files), desc="Checking duplicates", disable=not show_progress
@@ -167,18 +167,18 @@ async def check_duplicates(
             if result.action == "accept":
                 new_files.append(filepath)
             else:
-                duplicates.append(
-                    DuplicateEntry(
+                rejected.append(
+                    RejectedEntry(
                         filepath=filepath,
                         asset_id=result.asset_id,
-                        reason=result.reason or (result.is_trashed and "is_trashed"),
+                        reason=result.reason,
                     )
                 )
 
         check_pbar.update(len(batch))
     check_pbar.close()
 
-    return new_files, duplicates
+    return new_files, rejected
 
 
 def find_sidecar(filepath: Path) -> Optional[Path]:
@@ -247,7 +247,7 @@ async def upload_files(
     show_progress: bool = True,
     include_sidecars: bool = True,
     dry_run: bool = False,
-) -> tuple[list[UploadedEntry], list[DuplicateEntry], list[FailedEntry]]:
+) -> tuple[list[UploadedEntry], list[RejectedEntry], list[FailedEntry]]:
     if not files:
         return [], [], []
 
@@ -262,7 +262,7 @@ async def upload_files(
 
     semaphore = asyncio.Semaphore(concurrency)
     uploaded: list[UploadedEntry] = []
-    duplicates: list[DuplicateEntry] = []
+    rejected: list[RejectedEntry] = []
     failed: list[FailedEntry] = []
 
     async def upload_with_semaphore(filepath: Path) -> None:
@@ -276,8 +276,8 @@ async def upload_files(
                         UploadedEntry(asset=response.data, filepath=filepath)
                     )
                 elif response.status_code == 200:
-                    duplicates.append(
-                        DuplicateEntry(filepath=filepath, asset_id=response.data.id)
+                    rejected.append(
+                        RejectedEntry(filepath=filepath, asset_id=response.data.id)
                     )
                 if not dry_run:
                     pbar.update(filepath.stat().st_size)
@@ -288,12 +288,12 @@ async def upload_files(
                 else:
                     msg = str(e)
                 failed.append(FailedEntry(filepath=filepath, error=msg))
-                logger.exception(f"Failed to upload {filepath}: {msg}")
+                logger.error(f"Failed to upload {filepath}: {msg}")
 
     await asyncio.gather(*[upload_with_semaphore(f) for f in files])
     pbar.close()
 
-    return uploaded, duplicates, failed
+    return uploaded, rejected, failed
 
 
 async def update_albums(
@@ -325,7 +325,7 @@ async def update_albums(
 
 async def delete_files(
     uploaded: list[UploadedEntry],
-    duplicates: list[DuplicateEntry],
+    rejected: list[RejectedEntry],
     delete_after_upload: bool = False,
     delete_duplicates: bool = False,
     include_sidecars: bool = True,
@@ -337,8 +337,9 @@ async def delete_files(
             to_delete.append(entry.filepath)
 
     if delete_duplicates:
-        for entry in duplicates:
-            to_delete.append(entry.filepath)
+        for entry in rejected:
+            if entry.reason == "duplicate":
+                to_delete.append(entry.filepath)
 
     for filepath in to_delete:
         main_deleted = True
