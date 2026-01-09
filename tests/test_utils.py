@@ -515,7 +515,7 @@ async def test_download_file_handles_no_content_length(tmp_path: Path) -> None:
     out_dir.mkdir()
 
     content_data = b"no length"
-    headers = {}  # No Content-Length
+    headers: dict[str, str] = {}  # No Content-Length
 
     async def make_request(headers_arg):
         return MockResponse(headers, content_data=content_data)

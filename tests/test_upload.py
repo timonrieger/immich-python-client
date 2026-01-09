@@ -25,19 +25,10 @@ def mock_server_api():
 
 
 @pytest.mark.asyncio
-async def test_scan_files_single_file_str(mock_server_api, tmp_path: Path) -> None:
+async def test_scan_files_single_file(mock_server_api, tmp_path: Path) -> None:
     test_file = tmp_path / "test.jpg"
     test_file.write_bytes(b"test")
-    result = await scan_files(str(test_file), mock_server_api)
-    assert len(result) == 1
-    assert result[0] == test_file.resolve()
-
-
-@pytest.mark.asyncio
-async def test_scan_files_single_file_path(mock_server_api, tmp_path: Path) -> None:
-    test_file = tmp_path / "test.jpg"
-    test_file.write_bytes(b"test")
-    result = await scan_files(test_file, mock_server_api)
+    result = await scan_files([test_file], mock_server_api)
     assert len(result) == 1
     assert result[0] == test_file.resolve()
 
@@ -54,17 +45,6 @@ async def test_scan_files_list_of_files(mock_server_api, tmp_path: Path) -> None
 
 
 @pytest.mark.asyncio
-async def test_scan_files_list_of_strings(mock_server_api, tmp_path: Path) -> None:
-    file1 = tmp_path / "test1.jpg"
-    file2 = tmp_path / "test2.png"
-    file1.write_bytes(b"test1")
-    file2.write_bytes(b"test2")
-    result = await scan_files([str(file1), str(file2)], mock_server_api)
-    assert len(result) == 2
-    assert set(result) == {file1.resolve(), file2.resolve()}
-
-
-@pytest.mark.asyncio
 async def test_scan_files_directory_recursive(mock_server_api, tmp_path: Path) -> None:
     subdir = tmp_path / "subdir"
     subdir.mkdir()
@@ -74,7 +54,7 @@ async def test_scan_files_directory_recursive(mock_server_api, tmp_path: Path) -
     file1.write_bytes(b"test1")
     file2.write_bytes(b"test2")
     file3.write_bytes(b"test3")
-    result = await scan_files(tmp_path, mock_server_api)
+    result = await scan_files([tmp_path], mock_server_api)
     assert len(result) == 3
     assert set(result) == {file1.resolve(), file2.resolve(), file3.resolve()}
 
@@ -85,7 +65,7 @@ async def test_scan_files_unsupported_extension(
 ) -> None:
     test_file = tmp_path / "test.txt"
     test_file.write_bytes(b"test")
-    result = await scan_files(test_file, mock_server_api)
+    result = await scan_files([test_file], mock_server_api)
     assert len(result) == 0
 
 
@@ -95,7 +75,7 @@ async def test_scan_files_ignore_pattern_file(mock_server_api, tmp_path: Path) -
     file2 = tmp_path / "ignore.jpg"
     file1.write_bytes(b"test1")
     file2.write_bytes(b"test2")
-    result = await scan_files(tmp_path, mock_server_api, ignore_pattern="ignore.jpg")
+    result = await scan_files([tmp_path], mock_server_api, ignore_pattern="ignore.jpg")
     assert len(result) == 1
     assert result[0] == file1.resolve()
 
@@ -108,7 +88,7 @@ async def test_scan_files_ignore_pattern_single_file(
     file2 = tmp_path / "ignore.jpg"
     file1.write_bytes(b"test1")
     file2.write_bytes(b"test2")
-    result = await scan_files(file2, mock_server_api, ignore_pattern="ignore.jpg")
+    result = await scan_files([file2], mock_server_api, ignore_pattern="ignore.jpg")
     assert len(result) == 0
 
 
@@ -122,7 +102,7 @@ async def test_scan_files_ignore_pattern_wildcard(
     file1.write_bytes(b"test1")
     file2.write_bytes(b"test2")
     file3.write_bytes(b"test3")
-    result = await scan_files(tmp_path, mock_server_api, ignore_pattern="ignore.jpg")
+    result = await scan_files([tmp_path], mock_server_api, ignore_pattern="ignore.jpg")
     assert len(result) == 2
     assert set(result) == {file1.resolve(), file3.resolve()}
 
@@ -137,7 +117,7 @@ async def test_scan_files_ignore_pattern_directory(
     file2 = subdir / "test2.jpg"
     file1.write_bytes(b"test1")
     file2.write_bytes(b"test2")
-    result = await scan_files(tmp_path, mock_server_api, ignore_pattern="subdir/*")
+    result = await scan_files([tmp_path], mock_server_api, ignore_pattern="subdir/*")
     assert len(result) == 1
     assert result[0] == file1.resolve()
 
@@ -148,7 +128,7 @@ async def test_scan_files_exclude_hidden_files(mock_server_api, tmp_path: Path) 
     file2 = tmp_path / ".hidden.jpg"
     file1.write_bytes(b"test1")
     file2.write_bytes(b"test2")
-    result = await scan_files(tmp_path, mock_server_api, include_hidden=False)
+    result = await scan_files([tmp_path], mock_server_api, include_hidden=False)
     assert len(result) == 1
     assert result[0] == file1.resolve()
 
@@ -159,7 +139,7 @@ async def test_scan_files_include_hidden_files(mock_server_api, tmp_path: Path) 
     file2 = tmp_path / ".hidden.jpg"
     file1.write_bytes(b"test1")
     file2.write_bytes(b"test2")
-    result = await scan_files(tmp_path, mock_server_api, include_hidden=True)
+    result = await scan_files([tmp_path], mock_server_api, include_hidden=True)
     assert len(result) == 2
     assert set(result) == {file1.resolve(), file2.resolve()}
 
@@ -194,7 +174,7 @@ async def test_scan_files_mixed_file_and_directory(
 
 @pytest.mark.asyncio
 async def test_scan_files_empty_directory(mock_server_api, tmp_path: Path) -> None:
-    result = await scan_files(tmp_path, mock_server_api)
+    result = await scan_files([tmp_path], mock_server_api)
     assert len(result) == 0
 
 
@@ -204,7 +184,7 @@ async def test_scan_files_video_extensions(mock_server_api, tmp_path: Path) -> N
     file2 = tmp_path / "test.mov"
     file1.write_bytes(b"test1")
     file2.write_bytes(b"test2")
-    result = await scan_files(tmp_path, mock_server_api)
+    result = await scan_files([tmp_path], mock_server_api)
     assert len(result) == 2
     assert set(result) == {file1.resolve(), file2.resolve()}
 
@@ -226,7 +206,7 @@ async def test_scan_files_file_with_ignore_pattern_no_match(
 ) -> None:
     file1 = tmp_path / "test.jpg"
     file1.write_bytes(b"test1")
-    result = await scan_files(file1, mock_server_api, ignore_pattern="other.jpg")
+    result = await scan_files([file1], mock_server_api, ignore_pattern="other.jpg")
     assert len(result) == 1
     assert result[0] == file1.resolve()
 
@@ -239,5 +219,5 @@ async def test_scan_files_directory_with_only_unsupported_files(
     file2 = tmp_path / "test.doc"
     file1.write_bytes(b"test1")
     file2.write_bytes(b"test2")
-    result = await scan_files(tmp_path, mock_server_api)
+    result = await scan_files([tmp_path], mock_server_api)
     assert len(result) == 0

@@ -37,6 +37,9 @@ class UploadStats(BaseModel):
     failed: int
 
 
+_REJECTED_REASONS = Literal["duplicate", "unsupported_format"]
+
+
 class RejectedEntry(BaseModel):
     """Represents a file that was rejected during upload (check)."""
 
@@ -46,7 +49,7 @@ class RejectedEntry(BaseModel):
     asset_id: Optional[str] = Field(
         None, description="The ID of the asset. Set if reason is 'duplicate'."
     )
-    reason: Optional[Literal["duplicate", "unsupported_format"]] = Field(
+    reason: Optional[_REJECTED_REASONS] = Field(
         None, description="The reason for the rejection."
     )
 
@@ -85,21 +88,17 @@ class UploadResult(BaseModel):
 
 
 async def scan_files(
-    paths: Path | list[Path] | str | list[str],
+    paths: list[Path],
     server_api: ServerApi,
     ignore_pattern: Optional[str] = None,
     include_hidden: bool = False,
 ) -> list[Path]:
-    if isinstance(paths, (str, Path)):
-        paths = [paths]
-    paths = [Path(p) for p in paths]
-
     media_types = await server_api.get_supported_media_types()
     extensions = set(media_types.image + media_types.video)
 
     files: list[Path] = []
     for path in paths:
-        path = Path(path).resolve()
+        path = path.resolve()
         if path.is_file():
             if path.suffix.lower() in extensions:
                 if ignore_pattern and fnmatch.fnmatch(str(path), f"*{ignore_pattern}"):
@@ -171,7 +170,7 @@ async def check_duplicates(
                     RejectedEntry(
                         filepath=filepath,
                         asset_id=result.asset_id,
-                        reason=result.reason,
+                        reason=cast(_REJECTED_REASONS, result.reason),
                     )
                 )
 
@@ -319,7 +318,7 @@ async def update_albums(
     for i in range(0, len(asset_ids), 1000):
         batch = asset_ids[i : i + 1000]
         await albums_api.add_assets_to_album(
-            id=album_id, bulk_ids_dto=BulkIdsDto(ids=batch)
+            id=UUID(album_id), bulk_ids_dto=BulkIdsDto(ids=batch)
         )
 
 
@@ -333,13 +332,14 @@ async def delete_files(
 ) -> None:
     to_delete: list[Path] = []
     if delete_after_upload:
-        for entry in uploaded:
-            to_delete.append(entry.filepath)
+        for _ in uploaded:
+            to_delete.append(_.filepath)
 
     if delete_duplicates:
-        for entry in rejected:
-            if entry.reason == "duplicate":
-                to_delete.append(entry.filepath)
+        for _ in rejected:
+            # mypy false positive
+            if _.reason == "duplicate":  # type: ignore[attr-defined]
+                to_delete.append(_.filepath)
 
     for filepath in to_delete:
         main_deleted = True

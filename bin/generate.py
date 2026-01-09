@@ -13,6 +13,7 @@ import os
 import shutil
 import subprocess  # nosec: B404
 from pathlib import Path
+import requests  # type: ignore[import-untyped]
 
 
 def project_root() -> Path:
@@ -66,8 +67,6 @@ def main() -> int:
     root = project_root()
     out_dir = root / "immich"
     client_dir = out_dir / "client"
-
-    import requests  # type: ignore[import-not-found]
 
     url = openapi_url(args.ref)
     print(f"Generating Immich client from ref: {args.ref}")

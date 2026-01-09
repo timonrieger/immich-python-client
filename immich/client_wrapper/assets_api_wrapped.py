@@ -199,7 +199,10 @@ class AssetsApiWrapped(AssetsApi):
         server_api = ServerApi(self.api_client)
         albums_api = AlbumsApi(self.api_client)
 
-        files = await scan_files(paths, server_api, ignore_pattern, include_hidden)
+        _paths = [paths] if isinstance(paths, (str, Path)) else paths
+        _paths = [Path(p) for p in _paths]
+
+        files = await scan_files(_paths, server_api, ignore_pattern, include_hidden)
         if not files:
             return UploadResult(
                 uploaded=[],
