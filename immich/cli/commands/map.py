@@ -6,9 +6,11 @@ import json
 from pathlib import Path
 import typer
 
-from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command, set_nested
 
-app = typer.Typer(help='Map endpoints include supplemental functionality related to geolocation, such as reverse geocoding and retrieving map markers for assets with geolocation data.. https://api.immich.app/endpoints/map', context_settings={'help_option_names': ['-h', '--help']})
+app = typer.Typer(help="""Map endpoints include supplemental functionality related to geolocation, such as reverse geocoding and retrieving map markers for assets with geolocation data.
+
+Docs: https://api.immich.app/endpoints/map""", context_settings={'help_option_names': ['-h', '--help']})
 
 @app.command("get-map-markers")
 def get_map_markers(
@@ -20,7 +22,10 @@ def get_map_markers(
     with_partners: bool | None = typer.Option(None, "--with-partners"),
     with_shared_albums: bool | None = typer.Option(None, "--with-shared-albums"),
 ) -> None:
-    """Retrieve map markers"""
+    """Retrieve map markers
+
+Docs: https://api.immich.app/endpoints/map/getMapMarkers
+    """
     kwargs = {}
     if file_created_after is not None:
         kwargs['file_created_after'] = file_created_after
@@ -46,7 +51,10 @@ def reverse_geocode(
     lat: float = typer.Option(..., "--lat"),
     lon: float = typer.Option(..., "--lon"),
 ) -> None:
-    """Reverse geocode coordinates"""
+    """Reverse geocode coordinates
+
+Docs: https://api.immich.app/endpoints/map/reverseGeocode
+    """
     kwargs = {}
     kwargs['lat'] = lat
     kwargs['lon'] = lon

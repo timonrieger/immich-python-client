@@ -23,6 +23,21 @@ def load_file_bytes(path: Path) -> tuple[str, bytes]:
         sys.exit(1)
 
 
+def set_nested(d: dict[str, Any], path: list[str], value: Any) -> None:
+    """Set a nested dictionary value using a path list.
+    
+    Example: set_nested({}, ['user', 'name'], 'John') -> {'user': {'name': 'John'}}
+    """
+    current = d
+    for part in path[:-1]:
+        if part not in current:
+            current[part] = {}
+        elif not isinstance(current[part], dict):
+            current[part] = {}
+        current = current[part]
+    current[path[-1]] = value
+
+
 def deserialize_request_body(json_data: dict[str, Any], model_class: type[Any]) -> Any:
     """Deserialize JSON data into Pydantic model."""
     try:

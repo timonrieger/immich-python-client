@@ -6,15 +6,20 @@ import json
 from pathlib import Path
 import typer
 
-from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command, set_nested
 
-app = typer.Typer(help='Administrative endpoints related to authentication.. https://api.immich.app/endpoints/authentication-admin', context_settings={'help_option_names': ['-h', '--help']})
+app = typer.Typer(help="""Administrative endpoints related to authentication.
+
+Docs: https://api.immich.app/endpoints/authentication-admin""", context_settings={'help_option_names': ['-h', '--help']})
 
 @app.command("unlink-all-o-auth-accounts-admin")
 def unlink_all_o_auth_accounts_admin(
     ctx: typer.Context,
 ) -> None:
-    """Unlink all OAuth accounts"""
+    """Unlink all OAuth accounts
+
+Docs: https://api.immich.app/endpoints/authentication-admin/unlinkAllOAuthAccountsAdmin
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.authentication_admin

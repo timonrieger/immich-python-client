@@ -6,16 +6,21 @@ import json
 from pathlib import Path
 import typer
 
-from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command, set_nested
 
-app = typer.Typer(help='A plugin is an installed module that makes filters and actions available for the workflow feature.. https://api.immich.app/endpoints/plugins', context_settings={'help_option_names': ['-h', '--help']})
+app = typer.Typer(help="""A plugin is an installed module that makes filters and actions available for the workflow feature.
+
+Docs: https://api.immich.app/endpoints/plugins""", context_settings={'help_option_names': ['-h', '--help']})
 
 @app.command("get-plugin")
 def get_plugin(
     ctx: typer.Context,
     id: str,
 ) -> None:
-    """Retrieve a plugin"""
+    """Retrieve a plugin
+
+Docs: https://api.immich.app/endpoints/plugins/getPlugin
+    """
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -28,7 +33,10 @@ def get_plugin(
 def get_plugin_triggers(
     ctx: typer.Context,
 ) -> None:
-    """List all plugin triggers"""
+    """List all plugin triggers
+
+Docs: https://api.immich.app/endpoints/plugins/getPluginTriggers
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.plugins
@@ -40,7 +48,10 @@ def get_plugin_triggers(
 def get_plugins(
     ctx: typer.Context,
 ) -> None:
-    """List all plugins"""
+    """List all plugins
+
+Docs: https://api.immich.app/endpoints/plugins/getPlugins
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.plugins

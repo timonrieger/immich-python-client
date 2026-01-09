@@ -11,7 +11,6 @@ from __future__ import annotations
 import argparse
 import keyword
 import os
-import re
 import shutil
 import urllib3
 from pathlib import Path
@@ -79,8 +78,12 @@ def python_type_from_schema(
                     return python_type_from_schema(resolved, spec=None)
             # Avoid typing.Any in CLI signatures: Typer/Click rejects it.
             return "str"
+        # No type and no $ref - treat as complex/unknown, return str
+        return "str"
 
-    schema_type = schema["type"]
+    schema_type = schema.get("type")
+    if schema_type is None:
+        return "str"
     if schema_type == "string":
         if "format" in schema:
             fmt = schema["format"]
@@ -122,18 +125,122 @@ def resolve_schema_ref(spec: dict[str, Any], ref: str) -> dict[str, Any]:
     return cur
 
 
+def is_complex_type(schema: dict[str, Any], spec: dict[str, Any] | None = None) -> bool:
+    """Check if schema represents a complex type (object, array-of-object, oneOf/anyOf, etc.)."""
+    if "$ref" in schema:
+        if spec is not None:
+            resolved = resolve_schema_ref(spec, schema["$ref"])
+            return is_complex_type(resolved, spec=None)
+        return True  # Unknown ref, treat as complex
+    
+    schema_type = schema.get("type")
+    if schema_type == "object":
+        return True
+    if schema_type == "array":
+        items = schema.get("items", {})
+        if "$ref" in items:
+            return True
+        if items.get("type") == "object":
+            return True
+        return is_complex_type(items, spec)
+    
+    # oneOf, anyOf, allOf are complex
+    if any(key in schema for key in ["oneOf", "anyOf", "allOf"]):
+        return True
+    
+    # additionalProperties indicates object-like structure
+    if "additionalProperties" in schema:
+        return True
+    
+    return False
+
+
+def flatten_schema(
+    schema: dict[str, Any],
+    spec: dict[str, Any],
+    path: list[str] | None = None,
+    required: set[str] | None = None,
+) -> list[tuple[list[str], dict[str, Any], bool]]:
+    """Flatten a schema into leaf entries with dotted paths.
+    
+    Returns list of (path_parts, schema, is_required) tuples.
+    """
+    if path is None:
+        path = []
+    if required is None:
+        required = set()
+    
+    # Resolve $ref
+    if "$ref" in schema:
+        schema = resolve_schema_ref(spec, schema["$ref"])
+    
+    # Handle oneOf/anyOf/allOf - treat as complex, return single entry
+    if any(key in schema for key in ["oneOf", "anyOf", "allOf"]):
+        return [(path, schema, len(path) == 0 or path[-1] in required)]
+    
+    schema_type = schema.get("type")
+    
+    # Primitive or enum - leaf node
+    if schema_type in ("string", "integer", "number", "boolean") or "enum" in schema:
+        return [(path, schema, len(path) == 0 or (path and path[-1] in required))]
+    
+    # Array of primitives - leaf node
+    if schema_type == "array":
+        items = schema.get("items", {})
+        if not is_complex_type(items, spec):
+            return [(path, schema, len(path) == 0 or (path and path[-1] in required))]
+        # Array of objects - treat as complex
+        return [(path, schema, len(path) == 0 or (path and path[-1] in required))]
+    
+    # Object - recurse into properties
+    if schema_type == "object":
+        props = schema.get("properties", {})
+        if not props:
+            # Empty object or additionalProperties - treat as complex
+            return [(path, schema, len(path) == 0 or (path and path[-1] in required))]
+        
+        required_props = set(schema.get("required", []) or [])
+        results: list[tuple[list[str], dict[str, Any], bool]] = []
+        
+        for prop_name, prop_schema in props.items():
+            if not isinstance(prop_schema, dict):
+                continue
+            new_path = path + [prop_name]
+            new_required = required | required_props
+            results.extend(flatten_schema(prop_schema, spec, new_path, new_required))
+        
+        return results
+    
+    # Fallback: treat as complex
+    return [(path, schema, len(path) == 0 or (path and path[-1] in required))]
+
+
+def option_name_for_path(path_parts: list[str]) -> str:
+    """Generate dotted option name from path parts, e.g. ['user', 'name'] -> '--user.name'."""
+    return "--" + ".".join(path_parts)
+
+
+def python_triple_quoted_str(value: str) -> str:
+    """Return a Python triple-quoted string literal for generated source code."""
+    # Avoid accidental termination of the literal.
+    safe = value.replace('"""', '\\"""')
+    return f'"""{safe}"""'
+
+
 def get_request_body_info(
     operation: dict[str, Any], spec: dict[str, Any]
-) -> tuple[str, str, dict[str, Any]] | None:
-    """Return (content_type, model_name, resolved_schema) for requestBody."""
+) -> tuple[str, str, dict[str, Any], bool] | None:
+    """Return (content_type, model_name, resolved_schema, is_required) for requestBody."""
     if "requestBody" not in operation:
         return None
 
-    content = operation["requestBody"].get("content", {})
+    request_body = operation["requestBody"]
+    is_required = request_body.get("required", False)
+    content = request_body.get("content", {})
     if "application/json" in content:
         schema = content.get("application/json", {}).get("schema", {})
         ref = schema["$ref"]
-        return ("application/json", ref.split("/")[-1], resolve_schema_ref(spec, ref))
+        return ("application/json", ref.split("/")[-1], resolve_schema_ref(spec, ref), is_required)
     if "multipart/form-data" in content:
         schema = content.get("multipart/form-data", {}).get("schema", {})
         ref = schema["$ref"]
@@ -141,6 +248,7 @@ def get_request_body_info(
             "multipart/form-data",
             ref.split("/")[-1],
             resolve_schema_ref(spec, ref),
+            is_required,
         )
     return None
 
@@ -149,6 +257,7 @@ def generate_command_function(
     operation: dict[str, Any],
     spec: dict[str, Any],
     tag_attr: str,
+    tag: str,
 ) -> str:
     """Generate a Typer command function for an operation."""
     operation_id = operation["operationId"]
@@ -178,10 +287,15 @@ def generate_command_function(
     # Python's "non-default follows default" SyntaxError.
     lines.append("    ctx: typer.Context,")
 
+    # Track Python argument names to avoid duplicate arguments in the generated
+    # function signature (e.g. path param `id` colliding with body field `id`).
+    used_param_names: set[str] = {"ctx"}
+
     # Path parameters (required positional)
     for param in sorted(path_params, key=lambda p: p["name"]):
         openapi_name = param["name"]
         param_name = to_python_ident(openapi_name)
+        used_param_names.add(param_name)
         schema = param.get("schema", {"type": "string"})
         param_type = python_type_from_schema(schema, spec)
         required = param.get("required", False)
@@ -190,13 +304,26 @@ def generate_command_function(
         else:
             lines.append(f"    {param_name}: {param_type} | None = None,")
 
+    # Track all option names for collision detection
+    used_option_names: set[str] = set()
+
     # Query parameters (optional flags)
     for param in sorted(query_params, key=lambda p: p["name"]):
         openapi_name = param["name"]
         param_name = to_python_ident(openapi_name)
+        used_param_names.add(param_name)
         schema = param.get("schema", {"type": "string"})
         param_type = python_type_from_schema(schema, spec)
         flag_name = to_kebab_case(openapi_name)
+        full_opt_name = f"--{flag_name}"
+        
+        # Check for collisions
+        if full_opt_name in used_option_names:
+            raise ValueError(
+                f"Option name collision in {operation_id}: '{full_opt_name}' already used (query param)"
+            )
+        used_option_names.add(full_opt_name)
+        
         required = param.get("required", False)
         if required:
             lines.append(
@@ -211,9 +338,19 @@ def generate_command_function(
     for param in sorted(header_params, key=lambda p: p["name"]):
         openapi_name = param["name"]
         param_name = to_python_ident(openapi_name)
+        used_param_names.add(param_name)
         schema = param.get("schema", {"type": "string"})
         param_type = python_type_from_schema(schema, spec)
         flag_name = to_kebab_case(openapi_name)
+        full_opt_name = f"--{flag_name}"
+        
+        # Check for collisions
+        if full_opt_name in used_option_names:
+            raise ValueError(
+                f"Option name collision in {operation_id}: '{full_opt_name}' already used (header param)"
+            )
+        used_option_names.add(full_opt_name)
+        
         required = param.get("required", False)
         if required:
             lines.append(
@@ -223,16 +360,93 @@ def generate_command_function(
             lines.append(
                 f'    {param_name}: {param_type} | None = typer.Option(None, "--{flag_name}"),'
             )
-
+    
     # Request body options
+    body_flags: list[tuple[list[str], dict[str, Any], bool, str, str]] = []  # (path, schema, required, param_name, opt_name)
+    
     if request_body_info:
-        content_type, request_body_model, resolved_schema = request_body_info
+        content_type, request_body_model, resolved_schema, body_required = request_body_info
         if content_type == "application/json":
+            # Keep --json for backward compatibility
+            if "--json" in used_option_names:
+                raise ValueError(
+                    f"Option name collision in {operation_id}: '--json' already used"
+                )
+            used_option_names.add("--json")
             lines.append(
                 '    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),'
             )
+            used_param_names.add("json_str")
+            
+            # Flatten schema and generate dotted flags
+            flattened = flatten_schema(resolved_schema, spec)
+            for path_parts, leaf_schema, is_required in flattened:
+                opt_name = option_name_for_path(path_parts)
+                
+                # Check for collisions
+                if opt_name in used_option_names:
+                    raise ValueError(
+                        f"Option name collision in {operation_id}: '{opt_name}' already used. "
+                        f"Path: {'.'.join(path_parts)}"
+                    )
+                used_option_names.add(opt_name)
+                
+                # Generate Python parameter name from path
+                base_param_name = "_".join(to_python_ident(part) for part in path_parts)
+                param_name = base_param_name
+
+                # Avoid collisions with existing signature args (e.g. `id`)
+                if param_name in used_param_names:
+                    param_name = f"body_{param_name}"
+
+                # Ensure uniqueness across both existing args and other body args
+                counter = 1
+                while (
+                    param_name in used_param_names
+                    or any(existing[3] == param_name for existing in body_flags)
+                ):
+                    candidate = f"{base_param_name}_{counter}"
+                    param_name = (
+                        f"body_{candidate}" if candidate in used_param_names else candidate
+                    )
+                    counter += 1
+
+                used_param_names.add(param_name)
+                
+                # Determine type
+                # leaf_schema is already resolved in flatten_schema, so pass spec=None
+                # to avoid re-resolving and handle schemas without explicit type
+                param_type = python_type_from_schema(leaf_schema, spec=None)
+                is_complex = is_complex_type(leaf_schema, spec)
+                
+                body_flags.append((path_parts, leaf_schema, is_required, param_name, opt_name))
+                
+                # Emit Typer option
+                if is_required:
+                    if is_complex:
+                        lines.append(
+                            f'    {param_name}: {param_type} = typer.Option(..., "{opt_name}", help="JSON string for {".".join(path_parts)}"),'
+                        )
+                    else:
+                        lines.append(
+                            f'    {param_name}: {param_type} = typer.Option(..., "{opt_name}"),'
+                        )
+                else:
+                    if is_complex:
+                        lines.append(
+                            f'    {param_name}: {param_type} | None = typer.Option(None, "{opt_name}", help="JSON string for {".".join(path_parts)}"),'
+                        )
+                    else:
+                        lines.append(
+                            f'    {param_name}: {param_type} | None = typer.Option(None, "{opt_name}"),'
+                        )
         elif content_type == "multipart/form-data":
             # Inline JSON for non-file fields
+            if "--json" in used_option_names:
+                raise ValueError(
+                    f"Option name collision in {operation_id}: '--json' already used"
+                )
+            used_option_names.add("--json")
             lines.append(
                 '    json_str: str | None = typer.Option(None, "--json", help="Inline JSON with multipart fields (non-file)"),'
             )
@@ -252,6 +466,15 @@ def generate_command_function(
                 ):
                     arg_name = to_python_ident(prop_name)
                     opt_name = to_kebab_case(prop_name)
+                    full_opt_name = f"--{opt_name}"
+                    
+                    # Check for collisions
+                    if full_opt_name in used_option_names:
+                        raise ValueError(
+                            f"Option name collision in {operation_id}: '{full_opt_name}' already used"
+                        )
+                    used_option_names.add(full_opt_name)
+                    
                     if prop_name in required_props:
                         lines.append(
                             f'    {arg_name}: Path = typer.Option(..., "--{opt_name}", help="File to upload for {prop_name}"),'
@@ -264,7 +487,9 @@ def generate_command_function(
     lines.append(") -> None:")
 
     # Function body
-    lines.append('    """' + operation.get("summary", operation_id) + '"""')
+    summary = operation.get("summary", operation_id)
+    doc_url = f"https://api.immich.app/endpoints/{inflection.parameterize(tag)}/{operation_id}"
+    lines.append(f'    """{summary}\n\nDocs: {doc_url}\n    """')
 
     # Build kwargs
     lines.append("    kwargs = {}")
@@ -299,12 +524,32 @@ def generate_command_function(
 
     # Handle request body
     if request_body_info:
-        content_type, request_body_model, resolved_schema = request_body_info
+        content_type, request_body_model, resolved_schema, body_required = request_body_info
         if content_type == "application/json":
             body_param_name = to_python_ident(request_body_model)
+            model_module = to_snake_case(request_body_model)
+            
+            # Check mutual exclusion: --json and dotted flags cannot both be used
+            if body_flags:
+                body_flag_params = [param_name for _, _, _, param_name, _ in body_flags]
+                lines.append("    # Check mutual exclusion between --json and dotted flags")
+                lines.append(f"    has_json = json_str is not None")
+                lines.append(f"    has_flags = any([{', '.join(body_flag_params)}])")
+                lines.append("    if has_json and has_flags:")
+                lines.append(
+                    '        raise SystemExit("Error: Cannot use both --json and dotted body flags together. Use one or the other.")'
+                )
+                
+                # Check if body is required but not provided
+                if body_required:
+                    lines.append("    if not has_json and not has_flags:")
+                    lines.append(
+                        '        raise SystemExit("Error: Request body is required. Provide --json or use dotted body flags.")'
+                    )
+            
+            # Handle --json path (backward compatibility)
             lines.append("    if json_str is not None:")
             lines.append("        json_data = json.loads(json_str)")
-            model_module = to_snake_case(request_body_model)
             lines.append(
                 f"        from immich.client.models.{model_module} import {request_body_model}"
             )
@@ -312,6 +557,50 @@ def generate_command_function(
                 f"        {body_param_name} = deserialize_request_body(json_data, {request_body_model})"
             )
             lines.append(f"        kwargs['{body_param_name}'] = {body_param_name}")
+            
+            # Handle dotted flags path
+            if body_flags:
+                lines.append("    elif any([")
+                body_flag_params = [param_name for _, _, _, param_name, _ in body_flags]
+                lines.append("        " + ",\n        ".join(body_flag_params) + ",")
+                lines.append("    ]):")
+                lines.append("        # Build body from dotted flags")
+                lines.append("        json_data = {}")
+                
+                for path_parts, leaf_schema, is_required, param_name, opt_name in body_flags:
+                    is_complex = is_complex_type(leaf_schema, spec)
+                    
+                    if is_required:
+                        if is_complex:
+                            lines.append(f"        if {param_name} is None:")
+                            lines.append(
+                                f'            raise SystemExit("Error: --{opt_name.lstrip("--")} is required")'
+                            )
+                            lines.append(f"        value_{param_name} = json.loads({param_name})")
+                            lines.append(f"        set_nested(json_data, {path_parts!r}, value_{param_name})")
+                        else:
+                            lines.append(f"        if {param_name} is None:")
+                            lines.append(
+                                f'            raise SystemExit("Error: --{opt_name.lstrip("--")} is required")'
+                            )
+                            lines.append(f"        set_nested(json_data, {path_parts!r}, {param_name})")
+                    else:
+                        lines.append(f"        if {param_name} is not None:")
+                        if is_complex:
+                            lines.append(f"            value_{param_name} = json.loads({param_name})")
+                            lines.append(f"            set_nested(json_data, {path_parts!r}, value_{param_name})")
+                        else:
+                            lines.append(f"            set_nested(json_data, {path_parts!r}, {param_name})")
+                
+                # Validate and create model
+                lines.append("        if json_data:")
+                lines.append(
+                    f"            from immich.client.models.{model_module} import {request_body_model}"
+                )
+                lines.append(
+                    f"            {body_param_name} = deserialize_request_body(json_data, {request_body_model})"
+                )
+                lines.append(f"            kwargs['{body_param_name}'] = {body_param_name}")
         elif content_type == "multipart/form-data":
             props = (
                 resolved_schema.get("properties", {})
@@ -376,6 +665,8 @@ def generate_tag_app(
     """Generate a Typer app module for a tag."""
     tag_attr = to_snake_case(tag)
     tag_description = next(t for t in spec["tags"] if t["name"] == tag)["description"]
+    tag_slug = inflection.parameterize(tag)
+    tag_help = f"{tag_description}\n\nDocs: https://api.immich.app/endpoints/{tag_slug}"
 
     lines = [
         '"""Generated CLI commands for '
@@ -388,9 +679,9 @@ def generate_tag_app(
         "from pathlib import Path",
         "import typer",
         "",
-        "from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command",
+        "from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command, set_nested",
         "",
-        f"app = typer.Typer(help='{tag_description} https://api.immich.app/endpoints/{inflection.parameterize(tag)}', context_settings={{'help_option_names': ['-h', '--help']}})",
+        f"app = typer.Typer(help={python_triple_quoted_str(tag_help)}, context_settings={{'help_option_names': ['-h', '--help']}})",
         "",
     ]
 
@@ -398,7 +689,7 @@ def generate_tag_app(
     for path, method, operation in sorted(
         operations, key=lambda x: x[2].get("operationId", "")
     ):
-        func_code = generate_command_function(operation, spec, tag_attr)
+        func_code = generate_command_function(operation, spec, tag_attr, tag)
         lines.append(func_code)
         lines.append("")
 

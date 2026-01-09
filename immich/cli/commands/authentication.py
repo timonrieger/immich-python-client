@@ -6,22 +6,56 @@ import json
 from pathlib import Path
 import typer
 
-from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command, set_nested
 
-app = typer.Typer(help='Endpoints related to user authentication, including OAuth.. https://api.immich.app/endpoints/authentication', context_settings={'help_option_names': ['-h', '--help']})
+app = typer.Typer(help="""Endpoints related to user authentication, including OAuth.
+
+Docs: https://api.immich.app/endpoints/authentication""", context_settings={'help_option_names': ['-h', '--help']})
 
 @app.command("change-password")
 def change_password(
     ctx: typer.Context,
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
+    invalidate_sessions: bool | None = typer.Option(None, "--invalidateSessions"),
+    new_password: str = typer.Option(..., "--newPassword"),
+    password: str = typer.Option(..., "--password"),
 ) -> None:
-    """Change password"""
+    """Change password
+
+Docs: https://api.immich.app/endpoints/authentication/changePassword
+    """
     kwargs = {}
+    # Check mutual exclusion between --json and dotted flags
+    has_json = json_str is not None
+    has_flags = any([invalidate_sessions, new_password, password])
+    if has_json and has_flags:
+        raise SystemExit("Error: Cannot use both --json and dotted body flags together. Use one or the other.")
+    if not has_json and not has_flags:
+        raise SystemExit("Error: Request body is required. Provide --json or use dotted body flags.")
     if json_str is not None:
         json_data = json.loads(json_str)
         from immich.client.models.change_password_dto import ChangePasswordDto
         change_password_dto = deserialize_request_body(json_data, ChangePasswordDto)
         kwargs['change_password_dto'] = change_password_dto
+    elif any([
+        invalidate_sessions,
+        new_password,
+        password,
+    ]):
+        # Build body from dotted flags
+        json_data = {}
+        if invalidate_sessions is not None:
+            set_nested(json_data, ['invalidateSessions'], invalidate_sessions)
+        if new_password is None:
+            raise SystemExit("Error: --newPassword is required")
+        set_nested(json_data, ['newPassword'], new_password)
+        if password is None:
+            raise SystemExit("Error: --password is required")
+        set_nested(json_data, ['password'], password)
+        if json_data:
+            from immich.client.models.change_password_dto import ChangePasswordDto
+            change_password_dto = deserialize_request_body(json_data, ChangePasswordDto)
+            kwargs['change_password_dto'] = change_password_dto
     client = ctx.obj['client']
     api_group = client.authentication
     result = run_command(client, api_group, 'change_password', **kwargs)
@@ -32,14 +66,45 @@ def change_password(
 def change_pin_code(
     ctx: typer.Context,
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
+    new_pin_code: str = typer.Option(..., "--newPinCode"),
+    password: str | None = typer.Option(None, "--password"),
+    pin_code: str | None = typer.Option(None, "--pinCode"),
 ) -> None:
-    """Change pin code"""
+    """Change pin code
+
+Docs: https://api.immich.app/endpoints/authentication/changePinCode
+    """
     kwargs = {}
+    # Check mutual exclusion between --json and dotted flags
+    has_json = json_str is not None
+    has_flags = any([new_pin_code, password, pin_code])
+    if has_json and has_flags:
+        raise SystemExit("Error: Cannot use both --json and dotted body flags together. Use one or the other.")
+    if not has_json and not has_flags:
+        raise SystemExit("Error: Request body is required. Provide --json or use dotted body flags.")
     if json_str is not None:
         json_data = json.loads(json_str)
         from immich.client.models.pin_code_change_dto import PinCodeChangeDto
         pin_code_change_dto = deserialize_request_body(json_data, PinCodeChangeDto)
         kwargs['pin_code_change_dto'] = pin_code_change_dto
+    elif any([
+        new_pin_code,
+        password,
+        pin_code,
+    ]):
+        # Build body from dotted flags
+        json_data = {}
+        if new_pin_code is None:
+            raise SystemExit("Error: --newPinCode is required")
+        set_nested(json_data, ['newPinCode'], new_pin_code)
+        if password is not None:
+            set_nested(json_data, ['password'], password)
+        if pin_code is not None:
+            set_nested(json_data, ['pinCode'], pin_code)
+        if json_data:
+            from immich.client.models.pin_code_change_dto import PinCodeChangeDto
+            pin_code_change_dto = deserialize_request_body(json_data, PinCodeChangeDto)
+            kwargs['pin_code_change_dto'] = pin_code_change_dto
     client = ctx.obj['client']
     api_group = client.authentication
     result = run_command(client, api_group, 'change_pin_code', **kwargs)
@@ -50,14 +115,45 @@ def change_pin_code(
 def finish_o_auth(
     ctx: typer.Context,
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
+    code_verifier: str | None = typer.Option(None, "--codeVerifier"),
+    state: str | None = typer.Option(None, "--state"),
+    url: str = typer.Option(..., "--url"),
 ) -> None:
-    """Finish OAuth"""
+    """Finish OAuth
+
+Docs: https://api.immich.app/endpoints/authentication/finishOAuth
+    """
     kwargs = {}
+    # Check mutual exclusion between --json and dotted flags
+    has_json = json_str is not None
+    has_flags = any([code_verifier, state, url])
+    if has_json and has_flags:
+        raise SystemExit("Error: Cannot use both --json and dotted body flags together. Use one or the other.")
+    if not has_json and not has_flags:
+        raise SystemExit("Error: Request body is required. Provide --json or use dotted body flags.")
     if json_str is not None:
         json_data = json.loads(json_str)
         from immich.client.models.o_auth_callback_dto import OAuthCallbackDto
         o_auth_callback_dto = deserialize_request_body(json_data, OAuthCallbackDto)
         kwargs['o_auth_callback_dto'] = o_auth_callback_dto
+    elif any([
+        code_verifier,
+        state,
+        url,
+    ]):
+        # Build body from dotted flags
+        json_data = {}
+        if code_verifier is not None:
+            set_nested(json_data, ['codeVerifier'], code_verifier)
+        if state is not None:
+            set_nested(json_data, ['state'], state)
+        if url is None:
+            raise SystemExit("Error: --url is required")
+        set_nested(json_data, ['url'], url)
+        if json_data:
+            from immich.client.models.o_auth_callback_dto import OAuthCallbackDto
+            o_auth_callback_dto = deserialize_request_body(json_data, OAuthCallbackDto)
+            kwargs['o_auth_callback_dto'] = o_auth_callback_dto
     client = ctx.obj['client']
     api_group = client.authentication
     result = run_command(client, api_group, 'finish_o_auth', **kwargs)
@@ -68,7 +164,10 @@ def finish_o_auth(
 def get_auth_status(
     ctx: typer.Context,
 ) -> None:
-    """Retrieve auth status"""
+    """Retrieve auth status
+
+Docs: https://api.immich.app/endpoints/authentication/getAuthStatus
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.authentication
@@ -80,14 +179,45 @@ def get_auth_status(
 def link_o_auth_account(
     ctx: typer.Context,
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
+    code_verifier: str | None = typer.Option(None, "--codeVerifier"),
+    state: str | None = typer.Option(None, "--state"),
+    url: str = typer.Option(..., "--url"),
 ) -> None:
-    """Link OAuth account"""
+    """Link OAuth account
+
+Docs: https://api.immich.app/endpoints/authentication/linkOAuthAccount
+    """
     kwargs = {}
+    # Check mutual exclusion between --json and dotted flags
+    has_json = json_str is not None
+    has_flags = any([code_verifier, state, url])
+    if has_json and has_flags:
+        raise SystemExit("Error: Cannot use both --json and dotted body flags together. Use one or the other.")
+    if not has_json and not has_flags:
+        raise SystemExit("Error: Request body is required. Provide --json or use dotted body flags.")
     if json_str is not None:
         json_data = json.loads(json_str)
         from immich.client.models.o_auth_callback_dto import OAuthCallbackDto
         o_auth_callback_dto = deserialize_request_body(json_data, OAuthCallbackDto)
         kwargs['o_auth_callback_dto'] = o_auth_callback_dto
+    elif any([
+        code_verifier,
+        state,
+        url,
+    ]):
+        # Build body from dotted flags
+        json_data = {}
+        if code_verifier is not None:
+            set_nested(json_data, ['codeVerifier'], code_verifier)
+        if state is not None:
+            set_nested(json_data, ['state'], state)
+        if url is None:
+            raise SystemExit("Error: --url is required")
+        set_nested(json_data, ['url'], url)
+        if json_data:
+            from immich.client.models.o_auth_callback_dto import OAuthCallbackDto
+            o_auth_callback_dto = deserialize_request_body(json_data, OAuthCallbackDto)
+            kwargs['o_auth_callback_dto'] = o_auth_callback_dto
     client = ctx.obj['client']
     api_group = client.authentication
     result = run_command(client, api_group, 'link_o_auth_account', **kwargs)
@@ -98,7 +228,10 @@ def link_o_auth_account(
 def lock_auth_session(
     ctx: typer.Context,
 ) -> None:
-    """Lock auth session"""
+    """Lock auth session
+
+Docs: https://api.immich.app/endpoints/authentication/lockAuthSession
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.authentication
@@ -110,14 +243,42 @@ def lock_auth_session(
 def login(
     ctx: typer.Context,
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
+    email: str = typer.Option(..., "--email"),
+    password: str = typer.Option(..., "--password"),
 ) -> None:
-    """Login"""
+    """Login
+
+Docs: https://api.immich.app/endpoints/authentication/login
+    """
     kwargs = {}
+    # Check mutual exclusion between --json and dotted flags
+    has_json = json_str is not None
+    has_flags = any([email, password])
+    if has_json and has_flags:
+        raise SystemExit("Error: Cannot use both --json and dotted body flags together. Use one or the other.")
+    if not has_json and not has_flags:
+        raise SystemExit("Error: Request body is required. Provide --json or use dotted body flags.")
     if json_str is not None:
         json_data = json.loads(json_str)
         from immich.client.models.login_credential_dto import LoginCredentialDto
         login_credential_dto = deserialize_request_body(json_data, LoginCredentialDto)
         kwargs['login_credential_dto'] = login_credential_dto
+    elif any([
+        email,
+        password,
+    ]):
+        # Build body from dotted flags
+        json_data = {}
+        if email is None:
+            raise SystemExit("Error: --email is required")
+        set_nested(json_data, ['email'], email)
+        if password is None:
+            raise SystemExit("Error: --password is required")
+        set_nested(json_data, ['password'], password)
+        if json_data:
+            from immich.client.models.login_credential_dto import LoginCredentialDto
+            login_credential_dto = deserialize_request_body(json_data, LoginCredentialDto)
+            kwargs['login_credential_dto'] = login_credential_dto
     client = ctx.obj['client']
     api_group = client.authentication
     result = run_command(client, api_group, 'login', **kwargs)
@@ -128,7 +289,10 @@ def login(
 def logout(
     ctx: typer.Context,
 ) -> None:
-    """Logout"""
+    """Logout
+
+Docs: https://api.immich.app/endpoints/authentication/logout
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.authentication
@@ -140,7 +304,10 @@ def logout(
 def redirect_o_auth_to_mobile(
     ctx: typer.Context,
 ) -> None:
-    """Redirect OAuth to mobile"""
+    """Redirect OAuth to mobile
+
+Docs: https://api.immich.app/endpoints/authentication/redirectOAuthToMobile
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.authentication
@@ -152,14 +319,40 @@ def redirect_o_auth_to_mobile(
 def reset_pin_code(
     ctx: typer.Context,
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
+    password: str | None = typer.Option(None, "--password"),
+    pin_code: str | None = typer.Option(None, "--pinCode"),
 ) -> None:
-    """Reset pin code"""
+    """Reset pin code
+
+Docs: https://api.immich.app/endpoints/authentication/resetPinCode
+    """
     kwargs = {}
+    # Check mutual exclusion between --json and dotted flags
+    has_json = json_str is not None
+    has_flags = any([password, pin_code])
+    if has_json and has_flags:
+        raise SystemExit("Error: Cannot use both --json and dotted body flags together. Use one or the other.")
+    if not has_json and not has_flags:
+        raise SystemExit("Error: Request body is required. Provide --json or use dotted body flags.")
     if json_str is not None:
         json_data = json.loads(json_str)
         from immich.client.models.pin_code_reset_dto import PinCodeResetDto
         pin_code_reset_dto = deserialize_request_body(json_data, PinCodeResetDto)
         kwargs['pin_code_reset_dto'] = pin_code_reset_dto
+    elif any([
+        password,
+        pin_code,
+    ]):
+        # Build body from dotted flags
+        json_data = {}
+        if password is not None:
+            set_nested(json_data, ['password'], password)
+        if pin_code is not None:
+            set_nested(json_data, ['pinCode'], pin_code)
+        if json_data:
+            from immich.client.models.pin_code_reset_dto import PinCodeResetDto
+            pin_code_reset_dto = deserialize_request_body(json_data, PinCodeResetDto)
+            kwargs['pin_code_reset_dto'] = pin_code_reset_dto
     client = ctx.obj['client']
     api_group = client.authentication
     result = run_command(client, api_group, 'reset_pin_code', **kwargs)
@@ -170,14 +363,37 @@ def reset_pin_code(
 def setup_pin_code(
     ctx: typer.Context,
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
+    pin_code: str = typer.Option(..., "--pinCode"),
 ) -> None:
-    """Setup pin code"""
+    """Setup pin code
+
+Docs: https://api.immich.app/endpoints/authentication/setupPinCode
+    """
     kwargs = {}
+    # Check mutual exclusion between --json and dotted flags
+    has_json = json_str is not None
+    has_flags = any([pin_code])
+    if has_json and has_flags:
+        raise SystemExit("Error: Cannot use both --json and dotted body flags together. Use one or the other.")
+    if not has_json and not has_flags:
+        raise SystemExit("Error: Request body is required. Provide --json or use dotted body flags.")
     if json_str is not None:
         json_data = json.loads(json_str)
         from immich.client.models.pin_code_setup_dto import PinCodeSetupDto
         pin_code_setup_dto = deserialize_request_body(json_data, PinCodeSetupDto)
         kwargs['pin_code_setup_dto'] = pin_code_setup_dto
+    elif any([
+        pin_code,
+    ]):
+        # Build body from dotted flags
+        json_data = {}
+        if pin_code is None:
+            raise SystemExit("Error: --pinCode is required")
+        set_nested(json_data, ['pinCode'], pin_code)
+        if json_data:
+            from immich.client.models.pin_code_setup_dto import PinCodeSetupDto
+            pin_code_setup_dto = deserialize_request_body(json_data, PinCodeSetupDto)
+            kwargs['pin_code_setup_dto'] = pin_code_setup_dto
     client = ctx.obj['client']
     api_group = client.authentication
     result = run_command(client, api_group, 'setup_pin_code', **kwargs)
@@ -188,14 +404,47 @@ def setup_pin_code(
 def sign_up_admin(
     ctx: typer.Context,
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
+    email: str = typer.Option(..., "--email"),
+    name: str = typer.Option(..., "--name"),
+    password: str = typer.Option(..., "--password"),
 ) -> None:
-    """Register admin"""
+    """Register admin
+
+Docs: https://api.immich.app/endpoints/authentication/signUpAdmin
+    """
     kwargs = {}
+    # Check mutual exclusion between --json and dotted flags
+    has_json = json_str is not None
+    has_flags = any([email, name, password])
+    if has_json and has_flags:
+        raise SystemExit("Error: Cannot use both --json and dotted body flags together. Use one or the other.")
+    if not has_json and not has_flags:
+        raise SystemExit("Error: Request body is required. Provide --json or use dotted body flags.")
     if json_str is not None:
         json_data = json.loads(json_str)
         from immich.client.models.sign_up_dto import SignUpDto
         sign_up_dto = deserialize_request_body(json_data, SignUpDto)
         kwargs['sign_up_dto'] = sign_up_dto
+    elif any([
+        email,
+        name,
+        password,
+    ]):
+        # Build body from dotted flags
+        json_data = {}
+        if email is None:
+            raise SystemExit("Error: --email is required")
+        set_nested(json_data, ['email'], email)
+        if name is None:
+            raise SystemExit("Error: --name is required")
+        set_nested(json_data, ['name'], name)
+        if password is None:
+            raise SystemExit("Error: --password is required")
+        set_nested(json_data, ['password'], password)
+        if json_data:
+            from immich.client.models.sign_up_dto import SignUpDto
+            sign_up_dto = deserialize_request_body(json_data, SignUpDto)
+            kwargs['sign_up_dto'] = sign_up_dto
     client = ctx.obj['client']
     api_group = client.authentication
     result = run_command(client, api_group, 'sign_up_admin', **kwargs)
@@ -206,14 +455,45 @@ def sign_up_admin(
 def start_o_auth(
     ctx: typer.Context,
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
+    code_challenge: str | None = typer.Option(None, "--codeChallenge"),
+    redirect_uri: str = typer.Option(..., "--redirectUri"),
+    state: str | None = typer.Option(None, "--state"),
 ) -> None:
-    """Start OAuth"""
+    """Start OAuth
+
+Docs: https://api.immich.app/endpoints/authentication/startOAuth
+    """
     kwargs = {}
+    # Check mutual exclusion between --json and dotted flags
+    has_json = json_str is not None
+    has_flags = any([code_challenge, redirect_uri, state])
+    if has_json and has_flags:
+        raise SystemExit("Error: Cannot use both --json and dotted body flags together. Use one or the other.")
+    if not has_json and not has_flags:
+        raise SystemExit("Error: Request body is required. Provide --json or use dotted body flags.")
     if json_str is not None:
         json_data = json.loads(json_str)
         from immich.client.models.o_auth_config_dto import OAuthConfigDto
         o_auth_config_dto = deserialize_request_body(json_data, OAuthConfigDto)
         kwargs['o_auth_config_dto'] = o_auth_config_dto
+    elif any([
+        code_challenge,
+        redirect_uri,
+        state,
+    ]):
+        # Build body from dotted flags
+        json_data = {}
+        if code_challenge is not None:
+            set_nested(json_data, ['codeChallenge'], code_challenge)
+        if redirect_uri is None:
+            raise SystemExit("Error: --redirectUri is required")
+        set_nested(json_data, ['redirectUri'], redirect_uri)
+        if state is not None:
+            set_nested(json_data, ['state'], state)
+        if json_data:
+            from immich.client.models.o_auth_config_dto import OAuthConfigDto
+            o_auth_config_dto = deserialize_request_body(json_data, OAuthConfigDto)
+            kwargs['o_auth_config_dto'] = o_auth_config_dto
     client = ctx.obj['client']
     api_group = client.authentication
     result = run_command(client, api_group, 'start_o_auth', **kwargs)
@@ -224,7 +504,10 @@ def start_o_auth(
 def unlink_o_auth_account(
     ctx: typer.Context,
 ) -> None:
-    """Unlink OAuth account"""
+    """Unlink OAuth account
+
+Docs: https://api.immich.app/endpoints/authentication/unlinkOAuthAccount
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.authentication
@@ -236,14 +519,40 @@ def unlink_o_auth_account(
 def unlock_auth_session(
     ctx: typer.Context,
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
+    password: str | None = typer.Option(None, "--password"),
+    pin_code: str | None = typer.Option(None, "--pinCode"),
 ) -> None:
-    """Unlock auth session"""
+    """Unlock auth session
+
+Docs: https://api.immich.app/endpoints/authentication/unlockAuthSession
+    """
     kwargs = {}
+    # Check mutual exclusion between --json and dotted flags
+    has_json = json_str is not None
+    has_flags = any([password, pin_code])
+    if has_json and has_flags:
+        raise SystemExit("Error: Cannot use both --json and dotted body flags together. Use one or the other.")
+    if not has_json and not has_flags:
+        raise SystemExit("Error: Request body is required. Provide --json or use dotted body flags.")
     if json_str is not None:
         json_data = json.loads(json_str)
         from immich.client.models.session_unlock_dto import SessionUnlockDto
         session_unlock_dto = deserialize_request_body(json_data, SessionUnlockDto)
         kwargs['session_unlock_dto'] = session_unlock_dto
+    elif any([
+        password,
+        pin_code,
+    ]):
+        # Build body from dotted flags
+        json_data = {}
+        if password is not None:
+            set_nested(json_data, ['password'], password)
+        if pin_code is not None:
+            set_nested(json_data, ['pinCode'], pin_code)
+        if json_data:
+            from immich.client.models.session_unlock_dto import SessionUnlockDto
+            session_unlock_dto = deserialize_request_body(json_data, SessionUnlockDto)
+            kwargs['session_unlock_dto'] = session_unlock_dto
     client = ctx.obj['client']
     api_group = client.authentication
     result = run_command(client, api_group, 'unlock_auth_session', **kwargs)
@@ -254,7 +563,10 @@ def unlock_auth_session(
 def validate_access_token(
     ctx: typer.Context,
 ) -> None:
-    """Validate access token"""
+    """Validate access token
+
+Docs: https://api.immich.app/endpoints/authentication/validateAccessToken
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.authentication

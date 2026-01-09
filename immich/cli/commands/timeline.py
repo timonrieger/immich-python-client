@@ -6,9 +6,11 @@ import json
 from pathlib import Path
 import typer
 
-from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command, set_nested
 
-app = typer.Typer(help='Specialized endpoints related to the timeline implementation used in the web application. External applications or tools should not use or rely on these endpoints, as they are subject to change without notice.. https://api.immich.app/endpoints/timeline', context_settings={'help_option_names': ['-h', '--help']})
+app = typer.Typer(help="""Specialized endpoints related to the timeline implementation used in the web application. External applications or tools should not use or rely on these endpoints, as they are subject to change without notice.
+
+Docs: https://api.immich.app/endpoints/timeline""", context_settings={'help_option_names': ['-h', '--help']})
 
 @app.command("get-time-bucket")
 def get_time_bucket(
@@ -28,7 +30,10 @@ def get_time_bucket(
     with_partners: bool | None = typer.Option(None, "--with-partners"),
     with_stacked: bool | None = typer.Option(None, "--with-stacked"),
 ) -> None:
-    """Get time bucket"""
+    """Get time bucket
+
+Docs: https://api.immich.app/endpoints/timeline/getTimeBucket
+    """
     kwargs = {}
     if album_id is not None:
         kwargs['album_id'] = album_id
@@ -80,7 +85,10 @@ def get_time_buckets(
     with_partners: bool | None = typer.Option(None, "--with-partners"),
     with_stacked: bool | None = typer.Option(None, "--with-stacked"),
 ) -> None:
-    """Get time buckets"""
+    """Get time buckets
+
+Docs: https://api.immich.app/endpoints/timeline/getTimeBuckets
+    """
     kwargs = {}
     if album_id is not None:
         kwargs['album_id'] = album_id

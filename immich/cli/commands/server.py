@@ -6,15 +6,20 @@ import json
 from pathlib import Path
 import typer
 
-from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command, set_nested
 
-app = typer.Typer(help='Information about the current server deployment, including version and build information, available features, supported media types, and more.. https://api.immich.app/endpoints/server', context_settings={'help_option_names': ['-h', '--help']})
+app = typer.Typer(help="""Information about the current server deployment, including version and build information, available features, supported media types, and more.
+
+Docs: https://api.immich.app/endpoints/server""", context_settings={'help_option_names': ['-h', '--help']})
 
 @app.command("delete-server-license")
 def delete_server_license(
     ctx: typer.Context,
 ) -> None:
-    """Delete server product key"""
+    """Delete server product key
+
+Docs: https://api.immich.app/endpoints/server/deleteServerLicense
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -26,7 +31,10 @@ def delete_server_license(
 def get_about_info(
     ctx: typer.Context,
 ) -> None:
-    """Get server information"""
+    """Get server information
+
+Docs: https://api.immich.app/endpoints/server/getAboutInfo
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -38,7 +46,10 @@ def get_about_info(
 def get_apk_links(
     ctx: typer.Context,
 ) -> None:
-    """Get APK links"""
+    """Get APK links
+
+Docs: https://api.immich.app/endpoints/server/getApkLinks
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -50,7 +61,10 @@ def get_apk_links(
 def get_server_config(
     ctx: typer.Context,
 ) -> None:
-    """Get config"""
+    """Get config
+
+Docs: https://api.immich.app/endpoints/server/getServerConfig
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -62,7 +76,10 @@ def get_server_config(
 def get_server_features(
     ctx: typer.Context,
 ) -> None:
-    """Get features"""
+    """Get features
+
+Docs: https://api.immich.app/endpoints/server/getServerFeatures
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -74,7 +91,10 @@ def get_server_features(
 def get_server_license(
     ctx: typer.Context,
 ) -> None:
-    """Get product key"""
+    """Get product key
+
+Docs: https://api.immich.app/endpoints/server/getServerLicense
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -86,7 +106,10 @@ def get_server_license(
 def get_server_statistics(
     ctx: typer.Context,
 ) -> None:
-    """Get statistics"""
+    """Get statistics
+
+Docs: https://api.immich.app/endpoints/server/getServerStatistics
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -98,7 +121,10 @@ def get_server_statistics(
 def get_server_version(
     ctx: typer.Context,
 ) -> None:
-    """Get server version"""
+    """Get server version
+
+Docs: https://api.immich.app/endpoints/server/getServerVersion
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -110,7 +136,10 @@ def get_server_version(
 def get_storage(
     ctx: typer.Context,
 ) -> None:
-    """Get storage"""
+    """Get storage
+
+Docs: https://api.immich.app/endpoints/server/getStorage
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -122,7 +151,10 @@ def get_storage(
 def get_supported_media_types(
     ctx: typer.Context,
 ) -> None:
-    """Get supported media types"""
+    """Get supported media types
+
+Docs: https://api.immich.app/endpoints/server/getSupportedMediaTypes
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -134,7 +166,10 @@ def get_supported_media_types(
 def get_theme(
     ctx: typer.Context,
 ) -> None:
-    """Get theme"""
+    """Get theme
+
+Docs: https://api.immich.app/endpoints/server/getTheme
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -146,7 +181,10 @@ def get_theme(
 def get_version_check(
     ctx: typer.Context,
 ) -> None:
-    """Get version check status"""
+    """Get version check status
+
+Docs: https://api.immich.app/endpoints/server/getVersionCheck
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -158,7 +196,10 @@ def get_version_check(
 def get_version_history(
     ctx: typer.Context,
 ) -> None:
-    """Get version history"""
+    """Get version history
+
+Docs: https://api.immich.app/endpoints/server/getVersionHistory
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -170,7 +211,10 @@ def get_version_history(
 def ping_server(
     ctx: typer.Context,
 ) -> None:
-    """Ping"""
+    """Ping
+
+Docs: https://api.immich.app/endpoints/server/pingServer
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.server
@@ -182,14 +226,42 @@ def ping_server(
 def set_server_license(
     ctx: typer.Context,
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
+    activation_key: str = typer.Option(..., "--activationKey"),
+    license_key: str = typer.Option(..., "--licenseKey"),
 ) -> None:
-    """Set server product key"""
+    """Set server product key
+
+Docs: https://api.immich.app/endpoints/server/setServerLicense
+    """
     kwargs = {}
+    # Check mutual exclusion between --json and dotted flags
+    has_json = json_str is not None
+    has_flags = any([activation_key, license_key])
+    if has_json and has_flags:
+        raise SystemExit("Error: Cannot use both --json and dotted body flags together. Use one or the other.")
+    if not has_json and not has_flags:
+        raise SystemExit("Error: Request body is required. Provide --json or use dotted body flags.")
     if json_str is not None:
         json_data = json.loads(json_str)
         from immich.client.models.license_key_dto import LicenseKeyDto
         license_key_dto = deserialize_request_body(json_data, LicenseKeyDto)
         kwargs['license_key_dto'] = license_key_dto
+    elif any([
+        activation_key,
+        license_key,
+    ]):
+        # Build body from dotted flags
+        json_data = {}
+        if activation_key is None:
+            raise SystemExit("Error: --activationKey is required")
+        set_nested(json_data, ['activationKey'], activation_key)
+        if license_key is None:
+            raise SystemExit("Error: --licenseKey is required")
+        set_nested(json_data, ['licenseKey'], license_key)
+        if json_data:
+            from immich.client.models.license_key_dto import LicenseKeyDto
+            license_key_dto = deserialize_request_body(json_data, LicenseKeyDto)
+            kwargs['license_key_dto'] = license_key_dto
     client = ctx.obj['client']
     api_group = client.server
     result = run_command(client, api_group, 'set_server_license', **kwargs)

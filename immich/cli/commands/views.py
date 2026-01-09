@@ -6,16 +6,21 @@ import json
 from pathlib import Path
 import typer
 
-from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command, set_nested
 
-app = typer.Typer(help='Endpoints for specialized views, such as the folder view.. https://api.immich.app/endpoints/views', context_settings={'help_option_names': ['-h', '--help']})
+app = typer.Typer(help="""Endpoints for specialized views, such as the folder view.
+
+Docs: https://api.immich.app/endpoints/views""", context_settings={'help_option_names': ['-h', '--help']})
 
 @app.command("get-assets-by-original-path")
 def get_assets_by_original_path(
     ctx: typer.Context,
     path: str = typer.Option(..., "--path"),
 ) -> None:
-    """Retrieve assets by original path"""
+    """Retrieve assets by original path
+
+Docs: https://api.immich.app/endpoints/views/getAssetsByOriginalPath
+    """
     kwargs = {}
     kwargs['path'] = path
     client = ctx.obj['client']
@@ -28,7 +33,10 @@ def get_assets_by_original_path(
 def get_unique_original_paths(
     ctx: typer.Context,
 ) -> None:
-    """Retrieve unique paths"""
+    """Retrieve unique paths
+
+Docs: https://api.immich.app/endpoints/views/getUniqueOriginalPaths
+    """
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.views

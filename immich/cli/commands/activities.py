@@ -6,22 +6,61 @@ import json
 from pathlib import Path
 import typer
 
-from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command, set_nested
 
-app = typer.Typer(help='An activity is a like or a comment made by a user on an asset or album.. https://api.immich.app/endpoints/activities', context_settings={'help_option_names': ['-h', '--help']})
+app = typer.Typer(help="""An activity is a like or a comment made by a user on an asset or album.
+
+Docs: https://api.immich.app/endpoints/activities""", context_settings={'help_option_names': ['-h', '--help']})
 
 @app.command("create-activity")
 def create_activity(
     ctx: typer.Context,
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
+    album_id: str = typer.Option(..., "--albumId"),
+    asset_id: str | None = typer.Option(None, "--assetId"),
+    comment: str | None = typer.Option(None, "--comment"),
+    type: str = typer.Option(..., "--type", help="JSON string for type"),
 ) -> None:
-    """Create an activity"""
+    """Create an activity
+
+Docs: https://api.immich.app/endpoints/activities/createActivity
+    """
     kwargs = {}
+    # Check mutual exclusion between --json and dotted flags
+    has_json = json_str is not None
+    has_flags = any([album_id, asset_id, comment, type])
+    if has_json and has_flags:
+        raise SystemExit("Error: Cannot use both --json and dotted body flags together. Use one or the other.")
+    if not has_json and not has_flags:
+        raise SystemExit("Error: Request body is required. Provide --json or use dotted body flags.")
     if json_str is not None:
         json_data = json.loads(json_str)
         from immich.client.models.activity_create_dto import ActivityCreateDto
         activity_create_dto = deserialize_request_body(json_data, ActivityCreateDto)
         kwargs['activity_create_dto'] = activity_create_dto
+    elif any([
+        album_id,
+        asset_id,
+        comment,
+        type,
+    ]):
+        # Build body from dotted flags
+        json_data = {}
+        if album_id is None:
+            raise SystemExit("Error: --albumId is required")
+        set_nested(json_data, ['albumId'], album_id)
+        if asset_id is not None:
+            set_nested(json_data, ['assetId'], asset_id)
+        if comment is not None:
+            set_nested(json_data, ['comment'], comment)
+        if type is None:
+            raise SystemExit("Error: --type is required")
+        value_type = json.loads(type)
+        set_nested(json_data, ['type'], value_type)
+        if json_data:
+            from immich.client.models.activity_create_dto import ActivityCreateDto
+            activity_create_dto = deserialize_request_body(json_data, ActivityCreateDto)
+            kwargs['activity_create_dto'] = activity_create_dto
     client = ctx.obj['client']
     api_group = client.activities
     result = run_command(client, api_group, 'create_activity', **kwargs)
@@ -33,7 +72,10 @@ def delete_activity(
     ctx: typer.Context,
     id: str,
 ) -> None:
-    """Delete an activity"""
+    """Delete an activity
+
+Docs: https://api.immich.app/endpoints/activities/deleteActivity
+    """
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -51,7 +93,10 @@ def get_activities(
     type: str | None = typer.Option(None, "--type"),
     user_id: str | None = typer.Option(None, "--user-id"),
 ) -> None:
-    """List all activities"""
+    """List all activities
+
+Docs: https://api.immich.app/endpoints/activities/getActivities
+    """
     kwargs = {}
     kwargs['album_id'] = album_id
     if asset_id is not None:
@@ -74,7 +119,10 @@ def get_activity_statistics(
     album_id: str = typer.Option(..., "--album-id"),
     asset_id: str | None = typer.Option(None, "--asset-id"),
 ) -> None:
-    """Retrieve activity statistics"""
+    """Retrieve activity statistics
+
+Docs: https://api.immich.app/endpoints/activities/getActivityStatistics
+    """
     kwargs = {}
     kwargs['album_id'] = album_id
     if asset_id is not None:
