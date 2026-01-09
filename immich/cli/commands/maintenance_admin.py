@@ -2,24 +2,21 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
+import json
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="Maintenance (admin) operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("maintenance-login")
 def maintenance_login(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Log into maintenance mode"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.maintenance_login_dto import MaintenanceLoginDto
         maintenance_login_dto = deserialize_request_body(json_data, MaintenanceLoginDto)
@@ -33,14 +30,11 @@ def maintenance_login(
 @app.command("set-maintenance-mode")
 def set_maintenance_mode(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Set maintenance mode"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.set_maintenance_mode_dto import SetMaintenanceModeDto
         set_maintenance_mode_dto = deserialize_request_body(json_data, SetMaintenanceModeDto)

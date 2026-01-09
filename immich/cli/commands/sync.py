@@ -2,24 +2,21 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
+import json
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="Sync operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("delete-sync-ack")
 def delete_sync_ack(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Delete acknowledgements"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.sync_ack_delete_dto import SyncAckDeleteDto
         sync_ack_delete_dto = deserialize_request_body(json_data, SyncAckDeleteDto)
@@ -33,14 +30,11 @@ def delete_sync_ack(
 @app.command("get-delta-sync")
 def get_delta_sync(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Get delta sync for user"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.asset_delta_sync_dto import AssetDeltaSyncDto
         asset_delta_sync_dto = deserialize_request_body(json_data, AssetDeltaSyncDto)
@@ -54,14 +48,11 @@ def get_delta_sync(
 @app.command("get-full-sync-for-user")
 def get_full_sync_for_user(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Get full sync for user"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.asset_full_sync_dto import AssetFullSyncDto
         asset_full_sync_dto = deserialize_request_body(json_data, AssetFullSyncDto)
@@ -77,8 +68,6 @@ def get_sync_ack(
     ctx: typer.Context,
 ) -> None:
     """Retrieve acknowledgements"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.sync
@@ -89,14 +78,11 @@ def get_sync_ack(
 @app.command("get-sync-stream")
 def get_sync_stream(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Stream sync changes"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.sync_stream_dto import SyncStreamDto
         sync_stream_dto = deserialize_request_body(json_data, SyncStreamDto)
@@ -110,14 +96,11 @@ def get_sync_stream(
 @app.command("send-sync-ack")
 def send_sync_ack(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Acknowledge changes"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.sync_ack_set_dto import SyncAckSetDto
         sync_ack_set_dto = deserialize_request_body(json_data, SyncAckSetDto)

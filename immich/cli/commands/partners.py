@@ -2,24 +2,21 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
+import json
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="Partners operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("create-partner")
 def create_partner(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Create a partner"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.partner_create_dto import PartnerCreateDto
         partner_create_dto = deserialize_request_body(json_data, PartnerCreateDto)
@@ -36,8 +33,6 @@ def create_partner_deprecated(
     id: str,
 ) -> None:
     """Create a partner"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -52,8 +47,6 @@ def get_partners(
     direction: str = typer.Option(..., "--direction"),
 ) -> None:
     """Retrieve partners"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['direction'] = direction
     client = ctx.obj['client']
@@ -68,8 +61,6 @@ def remove_partner(
     id: str,
 ) -> None:
     """Remove a partner"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -82,15 +73,12 @@ def remove_partner(
 def update_partner(
     ctx: typer.Context,
     id: str,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Update a partner"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.partner_update_dto import PartnerUpdateDto
         partner_update_dto = deserialize_request_body(json_data, PartnerUpdateDto)

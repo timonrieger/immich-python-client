@@ -2,24 +2,21 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
+import json
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="API keys operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("create-api-key")
 def create_api_key(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Create an API key"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.api_key_create_dto import APIKeyCreateDto
         api_key_create_dto = deserialize_request_body(json_data, APIKeyCreateDto)
@@ -36,8 +33,6 @@ def delete_api_key(
     id: str,
 ) -> None:
     """Delete an API key"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -52,8 +47,6 @@ def get_api_key(
     id: str,
 ) -> None:
     """Retrieve an API key"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -67,8 +60,6 @@ def get_api_keys(
     ctx: typer.Context,
 ) -> None:
     """List all API keys"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.api_keys
@@ -81,8 +72,6 @@ def get_my_api_key(
     ctx: typer.Context,
 ) -> None:
     """Retrieve the current API key"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.api_keys
@@ -94,15 +83,12 @@ def get_my_api_key(
 def update_api_key(
     ctx: typer.Context,
     id: str,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Update an API key"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.api_key_update_dto import APIKeyUpdateDto
         api_key_update_dto = deserialize_request_body(json_data, APIKeyUpdateDto)

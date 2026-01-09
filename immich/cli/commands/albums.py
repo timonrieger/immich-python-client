@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
+import json
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="Albums operations", context_settings={"help_option_names": ["-h", "--help"]})
 
@@ -15,11 +15,9 @@ def add_assets_to_album(
     id: str,
     key: str | None = typer.Option(None, "--key"),
     slug: str | None = typer.Option(None, "--slug"),
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Add assets to an album"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if key is not None:
@@ -27,7 +25,6 @@ def add_assets_to_album(
     if slug is not None:
         kwargs['slug'] = slug
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.bulk_ids_dto import BulkIdsDto
         bulk_ids_dto = deserialize_request_body(json_data, BulkIdsDto)
@@ -43,18 +40,15 @@ def add_assets_to_albums(
     ctx: typer.Context,
     key: str | None = typer.Option(None, "--key"),
     slug: str | None = typer.Option(None, "--slug"),
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Add assets to albums"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if key is not None:
         kwargs['key'] = key
     if slug is not None:
         kwargs['slug'] = slug
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.albums_add_assets_dto import AlbumsAddAssetsDto
         albums_add_assets_dto = deserialize_request_body(json_data, AlbumsAddAssetsDto)
@@ -69,15 +63,12 @@ def add_assets_to_albums(
 def add_users_to_album(
     ctx: typer.Context,
     id: str,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Share album with users"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.add_users_dto import AddUsersDto
         add_users_dto = deserialize_request_body(json_data, AddUsersDto)
@@ -91,14 +82,11 @@ def add_users_to_album(
 @app.command("create-album")
 def create_album(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Create an album"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.create_album_dto import CreateAlbumDto
         create_album_dto = deserialize_request_body(json_data, CreateAlbumDto)
@@ -115,8 +103,6 @@ def delete_album(
     id: str,
 ) -> None:
     """Delete an album"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -134,8 +120,6 @@ def get_album_info(
     without_assets: bool | None = typer.Option(None, "--without-assets"),
 ) -> None:
     """Retrieve an album"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if key is not None:
@@ -155,8 +139,6 @@ def get_album_statistics(
     ctx: typer.Context,
 ) -> None:
     """Retrieve album statistics"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.albums
@@ -171,8 +153,6 @@ def get_all_albums(
     shared: bool | None = typer.Option(None, "--shared"),
 ) -> None:
     """List all albums"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if asset_id is not None:
         kwargs['asset_id'] = asset_id
@@ -188,15 +168,12 @@ def get_all_albums(
 def remove_asset_from_album(
     ctx: typer.Context,
     id: str,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Remove assets from an album"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.bulk_ids_dto import BulkIdsDto
         bulk_ids_dto = deserialize_request_body(json_data, BulkIdsDto)
@@ -214,8 +191,6 @@ def remove_user_from_album(
     user_id: str,
 ) -> None:
     """Remove user from album"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     kwargs['user_id'] = user_id
@@ -229,15 +204,12 @@ def remove_user_from_album(
 def update_album_info(
     ctx: typer.Context,
     id: str,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Update an album"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.update_album_dto import UpdateAlbumDto
         update_album_dto = deserialize_request_body(json_data, UpdateAlbumDto)
@@ -253,16 +225,13 @@ def update_album_user(
     ctx: typer.Context,
     id: str,
     user_id: str,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Update user role"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     kwargs['user_id'] = user_id
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.update_album_user_dto import UpdateAlbumUserDto
         update_album_user_dto = deserialize_request_body(json_data, UpdateAlbumUserDto)

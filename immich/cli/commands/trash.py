@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
+import json
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="Trash operations", context_settings={"help_option_names": ["-h", "--help"]})
 
@@ -14,8 +14,6 @@ def empty_trash(
     ctx: typer.Context,
 ) -> None:
     """Empty trash"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.trash
@@ -26,14 +24,11 @@ def empty_trash(
 @app.command("restore-assets")
 def restore_assets(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Restore assets"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.bulk_ids_dto import BulkIdsDto
         bulk_ids_dto = deserialize_request_body(json_data, BulkIdsDto)
@@ -49,8 +44,6 @@ def restore_trash(
     ctx: typer.Context,
 ) -> None:
     """Restore trash"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.trash

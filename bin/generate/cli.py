@@ -1,5 +1,6 @@
-#!/usr/bin/env python3
-"""Generate Typer CLI commands from OpenAPI specification."""
+# /// script
+# requires-python = ">=3.11"
+# ///
 
 from __future__ import annotations
 
@@ -17,7 +18,8 @@ from typing import Any
 
 def project_root() -> Path:
     """Get project root directory."""
-    return Path(__file__).resolve().parents[1]
+    # This file lives at bin/generate/cli.py
+    return Path(__file__).resolve().parents[2]
 
 
 def openapi_url(ref: str) -> str:
@@ -26,23 +28,6 @@ def openapi_url(ref: str) -> str:
         "https://raw.githubusercontent.com/immich-app/immich/"
         f"{ref}/open-api/immich-openapi-specs.json"
     )
-
-
-def fetch_openapi_spec_json(url: str) -> dict[str, Any]:
-    """Fetch and parse OpenAPI JSON from a URL."""
-    req = urllib.request.Request(url, headers={"User-Agent": "immich-cli-codegen"})
-    try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            data = resp.read()
-    except urllib.error.HTTPError as e:
-        raise RuntimeError(f"Failed to fetch OpenAPI spec (status={e.code})") from e
-    except urllib.error.URLError as e:
-        raise RuntimeError(f"Failed to fetch OpenAPI spec: {e.reason}") from e
-
-    try:
-        return json.loads(data.decode("utf-8"))
-    except json.JSONDecodeError as e:
-        raise RuntimeError(f"Invalid JSON in OpenAPI spec: {e}") from e
 
 
 def to_snake_case(name: str) -> str:
@@ -343,10 +328,6 @@ def generate_command_function(
 
     # Function body
     lines.append('    """' + operation.get("summary", operation_id) + '"""')
-    lines.append("    from pathlib import Path")
-    lines.append(
-        "    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command"
-    )
 
     # Build kwargs
     lines.append("    kwargs = {}")
@@ -386,7 +367,6 @@ def generate_command_function(
             # Infer parameter name from model name (e.g., UserUpdateMeDto -> user_update_me_dto)
             body_param_name = to_python_ident(request_body_model)
             lines.append("    if json_str is not None:")
-            lines.append("        import json")
             lines.append("        json_data = json.loads(json_str)")
             # Model import path: convert ModelNameDto to model_name_dto.py
             model_module = to_snake_case(request_body_model)
@@ -405,7 +385,6 @@ def generate_command_function(
                 else {}
             )
             required_props = set(resolved_schema.get("required", []) or [])
-            lines.append("    import json")
             lines.append("    json_data = json.loads(json_str) if json_str is not None else {}")
             # Fail loudly if required non-file fields are missing
             lines.append("    missing: list[str] = []")
@@ -421,9 +400,7 @@ def generate_command_function(
                 if is_binary:
                     # File fields come from dedicated CLI options
                     if prop_name in required_props:
-                        lines.append(
-                            f"    kwargs['{snake}'] = load_file_bytes({snake})"
-                        )
+                        lines.append(f"    kwargs['{snake}'] = load_file_bytes({snake})")
                     else:
                         lines.append(f"    if {snake} is not None:")
                         lines.append(
@@ -432,9 +409,7 @@ def generate_command_function(
                 else:
                     # Prefer original OpenAPI key, fallback to snake_case key
                     lines.append(f"    if '{prop_name}' in json_data:")
-                    lines.append(
-                        f"        kwargs['{snake}'] = json_data['{prop_name}']"
-                    )
+                    lines.append(f"        kwargs['{snake}'] = json_data['{prop_name}']")
                     lines.append(f"    elif '{snake}' in json_data:")
                     lines.append(f"        kwargs['{snake}'] = json_data['{snake}']")
                     if prop_name in required_props:
@@ -454,9 +429,7 @@ def generate_command_function(
 
     # Call method
     method_name = to_snake_case(operation_id)
-    lines.append(
-        f"    result = run_command(client, api_group, '{method_name}', **kwargs)"
-    )
+    lines.append(f"    result = run_command(client, api_group, '{method_name}', **kwargs)")
 
     # Print result
     lines.append("    format_mode = ctx.obj.get('format', 'pretty')")
@@ -472,21 +445,61 @@ def generate_tag_app(
     tag_snake = to_snake_case(tag)
     tag_attr = tag_snake  # This should match AsyncClient attribute
 
-    lines = [
+    # Determine which imports are needed
+    needs_json = False
+    needs_path = False
+    
+    for path, method, operation in operations:
+        request_body_info = get_request_body_info(operation, spec)
+        if request_body_info:
+            needs_json = True
+            content_type, _, resolved_schema = request_body_info
+            if content_type == "multipart/form-data":
+                props = (
+                    resolved_schema.get("properties", {})
+                    if isinstance(resolved_schema, dict)
+                    else {}
+                )
+                for prop_schema in props.values():
+                    if isinstance(prop_schema, dict):
+                        if (
+                            prop_schema.get("type") == "string"
+                            and prop_schema.get("format") == "binary"
+                        ):
+                            needs_path = True
+                            break
+                if needs_path:
+                    break
+
+    # Build imports list conditionally
+    import_lines = [
         '"""Generated CLI commands for '
         + tag
         + ' tag (auto-generated, do not edit)."""',
         "",
         "from __future__ import annotations",
         "",
-        "from pathlib import Path",
-        "from typing import Any",
+    ]
+    
+    stdlib_imports = []
+    if needs_json:
+        stdlib_imports.append("import json")
+    if needs_path:
+        stdlib_imports.append("from pathlib import Path")
+    
+    if stdlib_imports:
+        import_lines.extend(stdlib_imports)
+    
+    import_lines.extend([
         "import typer",
-        "from typer import Context",
+        "",
+        "from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command",
         "",
         f'app = typer.Typer(help="{tag} operations", context_settings={{"help_option_names": ["-h", "--help"]}})',
         "",
-    ]
+    ])
+    
+    lines = import_lines
 
     # Generate command for each operation
     for path, method, operation in sorted(
@@ -518,10 +531,21 @@ def main() -> int:
     url = openapi_url(args.ref)
     print(f"Fetching OpenAPI spec from: {url}")
 
+    req = urllib.request.Request(url, headers={"User-Agent": "immich-cli-codegen"})
     try:
-        spec = fetch_openapi_spec_json(url)
-    except RuntimeError as e:
-        print(f"Error: {e}", file=__import__("sys").stderr)
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            data = resp.read()
+    except urllib.error.HTTPError as e:
+        print(f"Error: Failed to fetch OpenAPI spec (status={e.code})", file=__import__("sys").stderr)
+        return 1
+    except urllib.error.URLError as e:
+        print(f"Error: Failed to fetch OpenAPI spec: {e.reason}", file=__import__("sys").stderr)
+        return 1
+
+    try:
+        spec = json.loads(data.decode("utf-8"))
+    except json.JSONDecodeError as e:
+        print(f"Error: Invalid JSON in OpenAPI spec: {e}", file=__import__("sys").stderr)
         return 1
 
     # Validate and group operations
@@ -532,11 +556,7 @@ def main() -> int:
             if method not in ["get", "post", "put", "patch", "delete"]:
                 continue
 
-            try:
-                validate_operation(operation, path, method)
-            except ValueError as e:
-                print(f"Error: {e}", file=__import__("sys").stderr)
-                return 1
+            validate_operation(operation, path, method)
 
             # Group by first tag
             tags = operation.get("tags", [])
@@ -566,40 +586,10 @@ def main() -> int:
     # The __init__.py file uses lazy imports for faster shell completion.
     # If you need to regenerate it, manually update the _MODULE_MAP in __init__.py
     # with any new tags from apps_dict.
-    #
-    # # Generate __init__.py
-    # init_lines = [
-    #     '"""Generated CLI commands (auto-generated, do not edit)."""',
-    #     "",
-    #     "from __future__ import annotations",
-    #     "",
-    #     "from typing import Any",
-    #     "import typer",
-    #     "",
-    # ]
-    #
-    # # Import apps
-    # for tag_cli, module_path in sorted(apps_dict.items()):
-    #     # module_path ends with <tag_snake>
-    #     tag_snake = module_path.rsplit(".", 1)[-1]
-    #     init_lines.append(f"from immich.cli.commands import {tag_snake}")
-    #
-    # init_lines.append("")
-    # init_lines.append("APPS: dict[str, typer.Typer] = {")
-    #
-    # for tag_cli, module_path in sorted(apps_dict.items()):
-    #     tag_snake = module_path.rsplit(".", 1)[-1]
-    #     init_lines.append(f'    "{tag_cli}": {tag_snake}.app,')
-    #
-    # init_lines.append("}")
-    #
-    # init_file = generated_dir / "__init__.py"
-    # init_file.write_text("\n".join(init_lines), encoding="utf-8")
 
     print(f"Generated CLI commands for {len(operations_by_tag)} tags")
-    print(f"Output directory: {commands_dir}")
-    return 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

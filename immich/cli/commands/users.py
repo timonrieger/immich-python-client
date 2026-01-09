@@ -2,24 +2,22 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
-from typing import Any
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="Users operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("create-profile-image")
 def create_profile_image(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON with multipart fields (non-file)\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON with multipart fields (non-file)"),
     file: Path = typer.Option(..., "--file", help="File to upload for file"),
 ) -> None:
     """Create user profile image"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
-    import json
     json_data = json.loads(json_str) if json_str is not None else {}
     missing: list[str] = []
     kwargs['file'] = load_file_bytes(file)
@@ -36,8 +34,6 @@ def delete_profile_image(
     ctx: typer.Context,
 ) -> None:
     """Delete user profile image"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.users
@@ -50,8 +46,6 @@ def delete_user_license(
     ctx: typer.Context,
 ) -> None:
     """Delete user product key"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.users
@@ -64,8 +58,6 @@ def delete_user_onboarding(
     ctx: typer.Context,
 ) -> None:
     """Delete user onboarding"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.users
@@ -78,8 +70,6 @@ def get_my_preferences(
     ctx: typer.Context,
 ) -> None:
     """Get my preferences"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.users
@@ -92,8 +82,6 @@ def get_my_user(
     ctx: typer.Context,
 ) -> None:
     """Get current user"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.users
@@ -107,8 +95,6 @@ def get_profile_image(
     id: str,
 ) -> None:
     """Retrieve user profile image"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -123,8 +109,6 @@ def get_user(
     id: str,
 ) -> None:
     """Retrieve a user"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -138,8 +122,6 @@ def get_user_license(
     ctx: typer.Context,
 ) -> None:
     """Retrieve user product key"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.users
@@ -152,8 +134,6 @@ def get_user_onboarding(
     ctx: typer.Context,
 ) -> None:
     """Retrieve user onboarding"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.users
@@ -166,8 +146,6 @@ def search_users(
     ctx: typer.Context,
 ) -> None:
     """Get all users"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.users
@@ -178,14 +156,11 @@ def search_users(
 @app.command("set-user-license")
 def set_user_license(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Set user product key"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.license_key_dto import LicenseKeyDto
         license_key_dto = deserialize_request_body(json_data, LicenseKeyDto)
@@ -199,14 +174,11 @@ def set_user_license(
 @app.command("set-user-onboarding")
 def set_user_onboarding(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Update user onboarding"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.onboarding_dto import OnboardingDto
         onboarding_dto = deserialize_request_body(json_data, OnboardingDto)
@@ -220,14 +192,11 @@ def set_user_onboarding(
 @app.command("update-my-preferences")
 def update_my_preferences(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Update my preferences"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.user_preferences_update_dto import UserPreferencesUpdateDto
         user_preferences_update_dto = deserialize_request_body(json_data, UserPreferencesUpdateDto)
@@ -241,14 +210,11 @@ def update_my_preferences(
 @app.command("update-my-user")
 def update_my_user(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Update current user"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.user_update_me_dto import UserUpdateMeDto
         user_update_me_dto = deserialize_request_body(json_data, UserUpdateMeDto)

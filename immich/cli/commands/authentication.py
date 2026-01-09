@@ -2,24 +2,21 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
+import json
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="Authentication operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("change-password")
 def change_password(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Change password"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.change_password_dto import ChangePasswordDto
         change_password_dto = deserialize_request_body(json_data, ChangePasswordDto)
@@ -33,14 +30,11 @@ def change_password(
 @app.command("change-pin-code")
 def change_pin_code(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Change pin code"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.pin_code_change_dto import PinCodeChangeDto
         pin_code_change_dto = deserialize_request_body(json_data, PinCodeChangeDto)
@@ -54,14 +48,11 @@ def change_pin_code(
 @app.command("finish-o-auth")
 def finish_o_auth(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Finish OAuth"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.o_auth_callback_dto import OAuthCallbackDto
         o_auth_callback_dto = deserialize_request_body(json_data, OAuthCallbackDto)
@@ -77,8 +68,6 @@ def get_auth_status(
     ctx: typer.Context,
 ) -> None:
     """Retrieve auth status"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.authentication
@@ -89,14 +78,11 @@ def get_auth_status(
 @app.command("link-o-auth-account")
 def link_o_auth_account(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Link OAuth account"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.o_auth_callback_dto import OAuthCallbackDto
         o_auth_callback_dto = deserialize_request_body(json_data, OAuthCallbackDto)
@@ -112,8 +98,6 @@ def lock_auth_session(
     ctx: typer.Context,
 ) -> None:
     """Lock auth session"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.authentication
@@ -124,14 +108,11 @@ def lock_auth_session(
 @app.command("login")
 def login(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Login"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.login_credential_dto import LoginCredentialDto
         login_credential_dto = deserialize_request_body(json_data, LoginCredentialDto)
@@ -147,8 +128,6 @@ def logout(
     ctx: typer.Context,
 ) -> None:
     """Logout"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.authentication
@@ -161,8 +140,6 @@ def redirect_o_auth_to_mobile(
     ctx: typer.Context,
 ) -> None:
     """Redirect OAuth to mobile"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.authentication
@@ -173,14 +150,11 @@ def redirect_o_auth_to_mobile(
 @app.command("reset-pin-code")
 def reset_pin_code(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Reset pin code"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.pin_code_reset_dto import PinCodeResetDto
         pin_code_reset_dto = deserialize_request_body(json_data, PinCodeResetDto)
@@ -194,14 +168,11 @@ def reset_pin_code(
 @app.command("setup-pin-code")
 def setup_pin_code(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Setup pin code"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.pin_code_setup_dto import PinCodeSetupDto
         pin_code_setup_dto = deserialize_request_body(json_data, PinCodeSetupDto)
@@ -215,14 +186,11 @@ def setup_pin_code(
 @app.command("sign-up-admin")
 def sign_up_admin(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Register admin"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.sign_up_dto import SignUpDto
         sign_up_dto = deserialize_request_body(json_data, SignUpDto)
@@ -236,14 +204,11 @@ def sign_up_admin(
 @app.command("start-o-auth")
 def start_o_auth(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Start OAuth"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.o_auth_config_dto import OAuthConfigDto
         o_auth_config_dto = deserialize_request_body(json_data, OAuthConfigDto)
@@ -259,8 +224,6 @@ def unlink_o_auth_account(
     ctx: typer.Context,
 ) -> None:
     """Unlink OAuth account"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.authentication
@@ -271,14 +234,11 @@ def unlink_o_auth_account(
 @app.command("unlock-auth-session")
 def unlock_auth_session(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Unlock auth session"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.session_unlock_dto import SessionUnlockDto
         session_unlock_dto = deserialize_request_body(json_data, SessionUnlockDto)
@@ -294,8 +254,6 @@ def validate_access_token(
     ctx: typer.Context,
 ) -> None:
     """Validate access token"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.authentication

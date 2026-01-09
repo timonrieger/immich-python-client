@@ -2,24 +2,21 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
+import json
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="Notifications (admin) operations", context_settings={"help_option_names": ["-h", "--help"]})
 
 @app.command("create-notification")
 def create_notification(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Create a notification"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.notification_create_dto import NotificationCreateDto
         notification_create_dto = deserialize_request_body(json_data, NotificationCreateDto)
@@ -34,15 +31,12 @@ def create_notification(
 def get_notification_template_admin(
     ctx: typer.Context,
     name: str,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Render email template"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['name'] = name
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.template_dto import TemplateDto
         template_dto = deserialize_request_body(json_data, TemplateDto)
@@ -56,14 +50,11 @@ def get_notification_template_admin(
 @app.command("send-test-email-admin")
 def send_test_email_admin(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Send test email"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.system_config_smtp_dto import SystemConfigSmtpDto
         system_config_smtp_dto = deserialize_request_body(json_data, SystemConfigSmtpDto)

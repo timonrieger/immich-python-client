@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
+import json
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="Search operations", context_settings={"help_option_names": ["-h", "--help"]})
 
@@ -14,8 +14,6 @@ def get_assets_by_city(
     ctx: typer.Context,
 ) -> None:
     """Retrieve assets by city"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.search
@@ -28,8 +26,6 @@ def get_explore_data(
     ctx: typer.Context,
 ) -> None:
     """Retrieve explore data"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.search
@@ -49,8 +45,6 @@ def get_search_suggestions(
     type: str = typer.Option(..., "--type"),
 ) -> None:
     """Retrieve search suggestions"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if country is not None:
         kwargs['country'] = country
@@ -74,14 +68,11 @@ def get_search_suggestions(
 @app.command("search-asset-statistics")
 def search_asset_statistics(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Search asset statistics"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.statistics_search_dto import StatisticsSearchDto
         statistics_search_dto = deserialize_request_body(json_data, StatisticsSearchDto)
@@ -95,14 +86,11 @@ def search_asset_statistics(
 @app.command("search-assets")
 def search_assets(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Search assets by metadata"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.metadata_search_dto import MetadataSearchDto
         metadata_search_dto = deserialize_request_body(json_data, MetadataSearchDto)
@@ -150,8 +138,6 @@ def search_large_assets(
     with_exif: bool | None = typer.Option(None, "--with-exif"),
 ) -> None:
     """Search large assets"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if album_ids is not None:
         kwargs['album_ids'] = album_ids
@@ -230,8 +216,6 @@ def search_person(
     with_hidden: bool | None = typer.Option(None, "--with-hidden"),
 ) -> None:
     """Search people"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['name'] = name
     if with_hidden is not None:
@@ -248,8 +232,6 @@ def search_places(
     name: str = typer.Option(..., "--name"),
 ) -> None:
     """Search places"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['name'] = name
     client = ctx.obj['client']
@@ -261,14 +243,11 @@ def search_places(
 @app.command("search-random")
 def search_random(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Search random assets"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.random_search_dto import RandomSearchDto
         random_search_dto = deserialize_request_body(json_data, RandomSearchDto)
@@ -282,14 +261,11 @@ def search_random(
 @app.command("search-smart")
 def search_smart(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Smart asset search"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.smart_search_dto import SmartSearchDto
         smart_search_dto = deserialize_request_body(json_data, SmartSearchDto)

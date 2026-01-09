@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="Timeline operations", context_settings={"help_option_names": ["-h", "--help"]})
 
@@ -28,8 +27,6 @@ def get_time_bucket(
     with_stacked: bool | None = typer.Option(None, "--with-stacked"),
 ) -> None:
     """Get time bucket"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if album_id is not None:
         kwargs['album_id'] = album_id
@@ -82,8 +79,6 @@ def get_time_buckets(
     with_stacked: bool | None = typer.Option(None, "--with-stacked"),
 ) -> None:
     """Get time buckets"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if album_id is not None:
         kwargs['album_id'] = album_id

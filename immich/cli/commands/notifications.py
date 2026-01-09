@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
+import json
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="Notifications operations", context_settings={"help_option_names": ["-h", "--help"]})
 
@@ -15,8 +15,6 @@ def delete_notification(
     id: str,
 ) -> None:
     """Delete a notification"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -28,14 +26,11 @@ def delete_notification(
 @app.command("delete-notifications")
 def delete_notifications(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Delete notifications"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.notification_delete_all_dto import NotificationDeleteAllDto
         notification_delete_all_dto = deserialize_request_body(json_data, NotificationDeleteAllDto)
@@ -52,8 +47,6 @@ def get_notification(
     id: str,
 ) -> None:
     """Get a notification"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -71,8 +64,6 @@ def get_notifications(
     unread: bool | None = typer.Option(None, "--unread"),
 ) -> None:
     """Retrieve notifications"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if id is not None:
         kwargs['id'] = id
@@ -92,15 +83,12 @@ def get_notifications(
 def update_notification(
     ctx: typer.Context,
     id: str,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Update a notification"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.notification_update_dto import NotificationUpdateDto
         notification_update_dto = deserialize_request_body(json_data, NotificationUpdateDto)
@@ -114,14 +102,11 @@ def update_notification(
 @app.command("update-notifications")
 def update_notifications(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Update notifications"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.notification_update_all_dto import NotificationUpdateAllDto
         notification_update_all_dto = deserialize_request_body(json_data, NotificationUpdateAllDto)

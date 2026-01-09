@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="Authentication (admin) operations", context_settings={"help_option_names": ["-h", "--help"]})
 
@@ -14,8 +13,6 @@ def unlink_all_o_auth_accounts_admin(
     ctx: typer.Context,
 ) -> None:
     """Unlink all OAuth accounts"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.authentication_admin

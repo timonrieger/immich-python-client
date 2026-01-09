@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
+import json
 import typer
-from typer import Context
+
+from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
 
 app = typer.Typer(help="System config operations", context_settings={"help_option_names": ["-h", "--help"]})
 
@@ -14,8 +14,6 @@ def get_config(
     ctx: typer.Context,
 ) -> None:
     """Get system configuration"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.system_config
@@ -28,8 +26,6 @@ def get_config_defaults(
     ctx: typer.Context,
 ) -> None:
     """Get system configuration defaults"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.system_config
@@ -42,8 +38,6 @@ def get_storage_template_options(
     ctx: typer.Context,
 ) -> None:
     """Get storage template options"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.system_config
@@ -54,14 +48,11 @@ def get_storage_template_options(
 @app.command("update-config")
 def update_config(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
+    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
 ) -> None:
     """Update system configuration"""
-    from pathlib import Path
-    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if json_str is not None:
-        import json
         json_data = json.loads(json_str)
         from immich.client.models.system_config_dto import SystemConfigDto
         system_config_dto = deserialize_request_body(json_data, SystemConfigDto)
