@@ -445,61 +445,22 @@ def generate_tag_app(
     tag_snake = to_snake_case(tag)
     tag_attr = tag_snake  # This should match AsyncClient attribute
 
-    # Determine which imports are needed
-    needs_json = False
-    needs_path = False
-    
-    for path, method, operation in operations:
-        request_body_info = get_request_body_info(operation, spec)
-        if request_body_info:
-            needs_json = True
-            content_type, _, resolved_schema = request_body_info
-            if content_type == "multipart/form-data":
-                props = (
-                    resolved_schema.get("properties", {})
-                    if isinstance(resolved_schema, dict)
-                    else {}
-                )
-                for prop_schema in props.values():
-                    if isinstance(prop_schema, dict):
-                        if (
-                            prop_schema.get("type") == "string"
-                            and prop_schema.get("format") == "binary"
-                        ):
-                            needs_path = True
-                            break
-                if needs_path:
-                    break
-
-    # Build imports list conditionally
-    import_lines = [
+    lines = [
         '"""Generated CLI commands for '
         + tag
         + ' tag (auto-generated, do not edit)."""',
         "",
         "from __future__ import annotations",
         "",
-    ]
-    
-    stdlib_imports = []
-    if needs_json:
-        stdlib_imports.append("import json")
-    if needs_path:
-        stdlib_imports.append("from pathlib import Path")
-    
-    if stdlib_imports:
-        import_lines.extend(stdlib_imports)
-    
-    import_lines.extend([
+        "import json",
+        "from pathlib import Path",
         "import typer",
         "",
         "from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command",
         "",
         f'app = typer.Typer(help="{tag} operations", context_settings={{"help_option_names": ["-h", "--help"]}})',
         "",
-    ])
-    
-    lines = import_lines
+    ]
 
     # Generate command for each operation
     for path, method, operation in sorted(
