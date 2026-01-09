@@ -3736,6 +3736,7 @@ class AssetsApi:
 
         _response_types_map: Dict[str, Optional[str]] = {
             "200": "AssetMediaResponseDto",
+            "201": "AssetMediaResponseDto",
         }
         response_data = await self.api_client.call_api(
             *_param, _request_timeout=_request_timeout
@@ -3837,6 +3838,7 @@ class AssetsApi:
 
         _response_types_map: Dict[str, Optional[str]] = {
             "200": "AssetMediaResponseDto",
+            "201": "AssetMediaResponseDto",
         }
         response_data = await self.api_client.call_api(
             *_param, _request_timeout=_request_timeout
@@ -3938,6 +3940,7 @@ class AssetsApi:
 
         _response_types_map: Dict[str, Optional[str]] = {
             "200": "AssetMediaResponseDto",
+            "201": "AssetMediaResponseDto",
         }
         response_data = await self.api_client.call_api(
             *_param, _request_timeout=_request_timeout
@@ -5066,8 +5069,6 @@ class AssetsApi:
         device_id: StrictStr,
         file_created_at: datetime,
         file_modified_at: datetime,
-        # NOTE: just a temporary fix to allow empty metadata, should be fixed in the next upstream release, see https://github.com/immich-app/immich/pull/25144
-        metadata: Optional[List[AssetMetadataUpsertItemDto]] = None,
         key: Optional[StrictStr] = None,
         slug: Optional[StrictStr] = None,
         x_immich_checksum: Annotated[
@@ -5110,8 +5111,6 @@ class AssetsApi:
         :type file_created_at: datetime
         :param file_modified_at: (required)
         :type file_modified_at: datetime
-        :param metadata: (required)
-        :type metadata: List[AssetMetadataUpsertItemDto]
         :param key:
         :type key: str
         :param slug:
@@ -5126,6 +5125,8 @@ class AssetsApi:
         :type is_favorite: bool
         :param live_photo_video_id:
         :type live_photo_video_id: UUID
+        :param metadata:
+        :type metadata: List[AssetMetadataUpsertItemDto]
         :param sidecar_data:
         :type sidecar_data: bytearray
         :param visibility:
@@ -5158,7 +5159,6 @@ class AssetsApi:
             device_id=device_id,
             file_created_at=file_created_at,
             file_modified_at=file_modified_at,
-            metadata=metadata,
             key=key,
             slug=slug,
             x_immich_checksum=x_immich_checksum,
@@ -5166,6 +5166,7 @@ class AssetsApi:
             filename=filename,
             is_favorite=is_favorite,
             live_photo_video_id=live_photo_video_id,
+            metadata=metadata,
             sidecar_data=sidecar_data,
             visibility=visibility,
             _request_auth=_request_auth,
@@ -5175,6 +5176,7 @@ class AssetsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
+            "200": "AssetMediaResponseDto",
             "201": "AssetMediaResponseDto",
         }
         response_data = await self.api_client.call_api(
@@ -5194,7 +5196,6 @@ class AssetsApi:
         device_id: StrictStr,
         file_created_at: datetime,
         file_modified_at: datetime,
-        metadata: Optional[List[AssetMetadataUpsertItemDto]] = None,
         key: Optional[StrictStr] = None,
         slug: Optional[StrictStr] = None,
         x_immich_checksum: Annotated[
@@ -5207,6 +5208,7 @@ class AssetsApi:
         filename: Optional[StrictStr] = None,
         is_favorite: Optional[StrictBool] = None,
         live_photo_video_id: Optional[UUID] = None,
+        metadata: Optional[List[AssetMetadataUpsertItemDto]] = None,
         sidecar_data: Optional[
             Union[StrictBytes, StrictStr, Tuple[StrictStr, StrictBytes]]
         ] = None,
@@ -5237,8 +5239,6 @@ class AssetsApi:
         :type file_created_at: datetime
         :param file_modified_at: (required)
         :type file_modified_at: datetime
-        :param metadata: (required)
-        :type metadata: Optional[List[AssetMetadataUpsertItemDto]]
         :param key:
         :type key: str
         :param slug:
@@ -5253,6 +5253,8 @@ class AssetsApi:
         :type is_favorite: bool
         :param live_photo_video_id:
         :type live_photo_video_id: UUID
+        :param metadata:
+        :type metadata: List[AssetMetadataUpsertItemDto]
         :param sidecar_data:
         :type sidecar_data: bytearray
         :param visibility:
@@ -5285,7 +5287,6 @@ class AssetsApi:
             device_id=device_id,
             file_created_at=file_created_at,
             file_modified_at=file_modified_at,
-            metadata=metadata,
             key=key,
             slug=slug,
             x_immich_checksum=x_immich_checksum,
@@ -5293,6 +5294,7 @@ class AssetsApi:
             filename=filename,
             is_favorite=is_favorite,
             live_photo_video_id=live_photo_video_id,
+            metadata=metadata,
             sidecar_data=sidecar_data,
             visibility=visibility,
             _request_auth=_request_auth,
@@ -5302,6 +5304,7 @@ class AssetsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
+            "200": "AssetMediaResponseDto",
             "201": "AssetMediaResponseDto",
         }
         response_data = await self.api_client.call_api(
@@ -5321,7 +5324,6 @@ class AssetsApi:
         device_id: StrictStr,
         file_created_at: datetime,
         file_modified_at: datetime,
-        metadata: Optional[List[AssetMetadataUpsertItemDto]] = None,
         key: Optional[StrictStr] = None,
         slug: Optional[StrictStr] = None,
         x_immich_checksum: Annotated[
@@ -5334,6 +5336,7 @@ class AssetsApi:
         filename: Optional[StrictStr] = None,
         is_favorite: Optional[StrictBool] = None,
         live_photo_video_id: Optional[UUID] = None,
+        metadata: Optional[List[AssetMetadataUpsertItemDto]] = None,
         sidecar_data: Optional[
             Union[StrictBytes, StrictStr, Tuple[StrictStr, StrictBytes]]
         ] = None,
@@ -5364,8 +5367,6 @@ class AssetsApi:
         :type file_created_at: datetime
         :param file_modified_at: (required)
         :type file_modified_at: datetime
-        :param metadata: (required)
-        :type metadata: Optional[List[AssetMetadataUpsertItemDto]]
         :param key:
         :type key: str
         :param slug:
@@ -5380,6 +5381,8 @@ class AssetsApi:
         :type is_favorite: bool
         :param live_photo_video_id:
         :type live_photo_video_id: UUID
+        :param metadata:
+        :type metadata: List[AssetMetadataUpsertItemDto]
         :param sidecar_data:
         :type sidecar_data: bytearray
         :param visibility:
@@ -5412,7 +5415,6 @@ class AssetsApi:
             device_id=device_id,
             file_created_at=file_created_at,
             file_modified_at=file_modified_at,
-            metadata=metadata,
             key=key,
             slug=slug,
             x_immich_checksum=x_immich_checksum,
@@ -5420,6 +5422,7 @@ class AssetsApi:
             filename=filename,
             is_favorite=is_favorite,
             live_photo_video_id=live_photo_video_id,
+            metadata=metadata,
             sidecar_data=sidecar_data,
             visibility=visibility,
             _request_auth=_request_auth,
@@ -5429,6 +5432,7 @@ class AssetsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
+            "200": "AssetMediaResponseDto",
             "201": "AssetMediaResponseDto",
         }
         response_data = await self.api_client.call_api(
@@ -5443,7 +5447,6 @@ class AssetsApi:
         device_id,
         file_created_at,
         file_modified_at,
-        metadata,
         key,
         slug,
         x_immich_checksum,
@@ -5451,6 +5454,7 @@ class AssetsApi:
         filename,
         is_favorite,
         live_photo_video_id,
+        metadata,
         sidecar_data,
         visibility,
         _request_auth,
