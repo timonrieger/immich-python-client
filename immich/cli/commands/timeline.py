@@ -29,7 +29,7 @@ def get_time_bucket(
 ) -> None:
     """Get time bucket"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if album_id is not None:
         kwargs['album_id'] = album_id
@@ -83,7 +83,7 @@ def get_time_buckets(
 ) -> None:
     """Get time buckets"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if album_id is not None:
         kwargs['album_id'] = album_id

@@ -12,14 +12,15 @@ app = typer.Typer(help="Jobs operations", context_settings={"help_option_names":
 @app.command("create-job")
 def create_job(
     ctx: typer.Context,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Create a manual job"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.job_create_dto import JobCreateDto
         job_create_dto = deserialize_request_body(json_data, JobCreateDto)
         kwargs['job_create_dto'] = job_create_dto
@@ -35,7 +36,7 @@ def get_queues_legacy(
 ) -> None:
     """Retrieve queue counts and status"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.jobs
@@ -47,15 +48,16 @@ def get_queues_legacy(
 def run_queue_command_legacy(
     ctx: typer.Context,
     name: str,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Run jobs"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['name'] = name
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.queue_command_dto import QueueCommandDto
         queue_command_dto = deserialize_request_body(json_data, QueueCommandDto)
         kwargs['queue_command_dto'] = queue_command_dto

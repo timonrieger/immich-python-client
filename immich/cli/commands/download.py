@@ -14,18 +14,19 @@ def download_archive(
     ctx: typer.Context,
     key: str | None = typer.Option(None, "--key"),
     slug: str | None = typer.Option(None, "--slug"),
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Download asset archive"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if key is not None:
         kwargs['key'] = key
     if slug is not None:
         kwargs['slug'] = slug
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.asset_ids_dto import AssetIdsDto
         asset_ids_dto = deserialize_request_body(json_data, AssetIdsDto)
         kwargs['asset_ids_dto'] = asset_ids_dto
@@ -40,18 +41,19 @@ def get_download_info(
     ctx: typer.Context,
     key: str | None = typer.Option(None, "--key"),
     slug: str | None = typer.Option(None, "--slug"),
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Retrieve download information"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if key is not None:
         kwargs['key'] = key
     if slug is not None:
         kwargs['slug'] = slug
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.download_info_dto import DownloadInfoDto
         download_info_dto = deserialize_request_body(json_data, DownloadInfoDto)
         kwargs['download_info_dto'] = download_info_dto

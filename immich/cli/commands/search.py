@@ -15,7 +15,7 @@ def get_assets_by_city(
 ) -> None:
     """Retrieve assets by city"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.search
@@ -29,7 +29,7 @@ def get_explore_data(
 ) -> None:
     """Retrieve explore data"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     client = ctx.obj['client']
     api_group = client.search
@@ -50,7 +50,7 @@ def get_search_suggestions(
 ) -> None:
     """Retrieve search suggestions"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if country is not None:
         kwargs['country'] = country
@@ -74,14 +74,15 @@ def get_search_suggestions(
 @app.command("search-asset-statistics")
 def search_asset_statistics(
     ctx: typer.Context,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Search asset statistics"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.statistics_search_dto import StatisticsSearchDto
         statistics_search_dto = deserialize_request_body(json_data, StatisticsSearchDto)
         kwargs['statistics_search_dto'] = statistics_search_dto
@@ -94,14 +95,15 @@ def search_asset_statistics(
 @app.command("search-assets")
 def search_assets(
     ctx: typer.Context,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Search assets by metadata"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.metadata_search_dto import MetadataSearchDto
         metadata_search_dto = deserialize_request_body(json_data, MetadataSearchDto)
         kwargs['metadata_search_dto'] = metadata_search_dto
@@ -149,7 +151,7 @@ def search_large_assets(
 ) -> None:
     """Search large assets"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if album_ids is not None:
         kwargs['album_ids'] = album_ids
@@ -229,7 +231,7 @@ def search_person(
 ) -> None:
     """Search people"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['name'] = name
     if with_hidden is not None:
@@ -247,7 +249,7 @@ def search_places(
 ) -> None:
     """Search places"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['name'] = name
     client = ctx.obj['client']
@@ -259,14 +261,15 @@ def search_places(
 @app.command("search-random")
 def search_random(
     ctx: typer.Context,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Search random assets"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.random_search_dto import RandomSearchDto
         random_search_dto = deserialize_request_body(json_data, RandomSearchDto)
         kwargs['random_search_dto'] = random_search_dto
@@ -279,14 +282,15 @@ def search_random(
 @app.command("search-smart")
 def search_smart(
     ctx: typer.Context,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Smart asset search"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.smart_search_dto import SmartSearchDto
         smart_search_dto = deserialize_request_body(json_data, SmartSearchDto)
         kwargs['smart_search_dto'] = smart_search_dto

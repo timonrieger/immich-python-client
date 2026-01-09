@@ -11,27 +11,7 @@ from typing import Any
 from immich import AsyncClient
 from immich.client.exceptions import ApiException
 from pydantic import ValidationError
-
-try:
-    from rich import print_json
-    from rich.console import Console
-except ImportError:
-    # Fallback if rich not available (shouldn't happen with cli extra)
-    print_json = None
-    Console = None
-
-
-def load_json_file(path: Path) -> dict[str, Any]:
-    """Load and parse JSON file."""
-    try:
-        content = path.read_text(encoding="utf-8")
-        return json.loads(content)
-    except json.JSONDecodeError as e:
-        print(f"Error: Invalid JSON in {path}: {e}", file=sys.stderr)
-        sys.exit(1)
-    except Exception as e:
-        print(f"Error: Failed to read {path}: {e}", file=sys.stderr)
-        sys.exit(1)
+from rich import print_json
 
 
 def load_file_bytes(path: Path) -> tuple[str, bytes]:

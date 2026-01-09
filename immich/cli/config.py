@@ -22,8 +22,7 @@ def get_base_url() -> str:
 def get_auth() -> tuple[Optional[str], Optional[str], Optional[str]]:
     """Get auth credentials from environment.
 
-    Returns:
-        Tuple of (api_key, bearer_token, cookie)
+    :return: Tuple of (api_key, bearer_token, cookie)
     """
     api_key = os.environ.get("IMMICH_API_KEY")
     bearer_token = os.environ.get("IMMICH_BEARER_TOKEN")

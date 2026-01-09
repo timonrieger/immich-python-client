@@ -21,7 +21,7 @@ def get_map_markers(
 ) -> None:
     """Retrieve map markers"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if file_created_after is not None:
         kwargs['file_created_after'] = file_created_after
@@ -49,7 +49,7 @@ def reverse_geocode(
 ) -> None:
     """Reverse geocode coordinates"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['lat'] = lat
     kwargs['lon'] = lon

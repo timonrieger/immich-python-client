@@ -15,19 +15,20 @@ def add_shared_link_assets(
     id: str,
     key: str | None = typer.Option(None, "--key"),
     slug: str | None = typer.Option(None, "--slug"),
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Add assets to a shared link"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if key is not None:
         kwargs['key'] = key
     if slug is not None:
         kwargs['slug'] = slug
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.asset_ids_dto import AssetIdsDto
         asset_ids_dto = deserialize_request_body(json_data, AssetIdsDto)
         kwargs['asset_ids_dto'] = asset_ids_dto
@@ -40,14 +41,15 @@ def add_shared_link_assets(
 @app.command("create-shared-link")
 def create_shared_link(
     ctx: typer.Context,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Create a shared link"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.shared_link_create_dto import SharedLinkCreateDto
         shared_link_create_dto = deserialize_request_body(json_data, SharedLinkCreateDto)
         kwargs['shared_link_create_dto'] = shared_link_create_dto
@@ -64,7 +66,7 @@ def get_all_shared_links(
 ) -> None:
     """Retrieve all shared links"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if album_id is not None:
         kwargs['album_id'] = album_id
@@ -84,7 +86,7 @@ def get_my_shared_link(
 ) -> None:
     """Retrieve current shared link"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     if key is not None:
         kwargs['key'] = key
@@ -107,7 +109,7 @@ def get_shared_link_by_id(
 ) -> None:
     """Retrieve a shared link"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -123,7 +125,7 @@ def remove_shared_link(
 ) -> None:
     """Delete a shared link"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     client = ctx.obj['client']
@@ -138,19 +140,20 @@ def remove_shared_link_assets(
     id: str,
     key: str | None = typer.Option(None, "--key"),
     slug: str | None = typer.Option(None, "--slug"),
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Remove assets from a shared link"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
     if key is not None:
         kwargs['key'] = key
     if slug is not None:
         kwargs['slug'] = slug
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.asset_ids_dto import AssetIdsDto
         asset_ids_dto = deserialize_request_body(json_data, AssetIdsDto)
         kwargs['asset_ids_dto'] = asset_ids_dto
@@ -164,15 +167,16 @@ def remove_shared_link_assets(
 def update_shared_link(
     ctx: typer.Context,
     id: str,
-    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with request body"),
+    json_str: str | None = typer.Option(None, \"--json\", help=\"Inline JSON request body\"),
 ) -> None:
     """Update a shared link"""
     from pathlib import Path
-    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command
+    from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command
     kwargs = {}
     kwargs['id'] = id
-    if json_path is not None:
-        json_data = load_json_file(json_path)
+    if json_str is not None:
+        import json
+        json_data = json.loads(json_str)
         from immich.client.models.shared_link_edit_dto import SharedLinkEditDto
         shared_link_edit_dto = deserialize_request_body(json_data, SharedLinkEditDto)
         kwargs['shared_link_edit_dto'] = shared_link_edit_dto
