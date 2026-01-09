@@ -4,77 +4,99 @@ from __future__ import annotations
 
 from typing import Any
 import typer
+import importlib
 
-from immich.cli.generated.apps import activities
-from immich.cli.generated.apps import albums
-from immich.cli.generated.apps import api_keys
-from immich.cli.generated.apps import assets
-from immich.cli.generated.apps import authentication
-from immich.cli.generated.apps import authentication_admin
-from immich.cli.generated.apps import download
-from immich.cli.generated.apps import duplicates
-from immich.cli.generated.apps import faces
-from immich.cli.generated.apps import jobs
-from immich.cli.generated.apps import libraries
-from immich.cli.generated.apps import maintenance_admin
-from immich.cli.generated.apps import map
-from immich.cli.generated.apps import memories
-from immich.cli.generated.apps import notifications
-from immich.cli.generated.apps import notifications_admin
-from immich.cli.generated.apps import partners
-from immich.cli.generated.apps import people
-from immich.cli.generated.apps import plugins
-from immich.cli.generated.apps import queues
-from immich.cli.generated.apps import search
-from immich.cli.generated.apps import server
-from immich.cli.generated.apps import sessions
-from immich.cli.generated.apps import shared_links
-from immich.cli.generated.apps import stacks
-from immich.cli.generated.apps import sync
-from immich.cli.generated.apps import system_config
-from immich.cli.generated.apps import system_metadata
-from immich.cli.generated.apps import tags
-from immich.cli.generated.apps import timeline
-from immich.cli.generated.apps import trash
-from immich.cli.generated.apps import users
-from immich.cli.generated.apps import users_admin
-from immich.cli.generated.apps import views
-from immich.cli.generated.apps import workflows
-
-APPS: dict[str, typer.Typer] = {
-    "activities": activities.app,
-    "albums": albums.app,
-    "api-keys": api_keys.app,
-    "assets": assets.app,
-    "authentication": authentication.app,
-    "authentication-admin": authentication_admin.app,
-    "download": download.app,
-    "duplicates": duplicates.app,
-    "faces": faces.app,
-    "jobs": jobs.app,
-    "libraries": libraries.app,
-    "maintenance-admin": maintenance_admin.app,
-    "map": map.app,
-    "memories": memories.app,
-    "notifications": notifications.app,
-    "notifications-admin": notifications_admin.app,
-    "partners": partners.app,
-    "people": people.app,
-    "plugins": plugins.app,
-    "queues": queues.app,
-    "search": search.app,
-    "server": server.app,
-    "sessions": sessions.app,
-    "shared-links": shared_links.app,
-    "stacks": stacks.app,
-    "sync": sync.app,
-    "system-config": system_config.app,
-    "system-metadata": system_metadata.app,
-    "tags": tags.app,
-    "timeline": timeline.app,
-    "trash": trash.app,
-    "users": users.app,
-    "users-admin": users_admin.app,
-    "views": views.app,
-    "workflows": workflows.app,
+# Module name to app name mapping
+_MODULE_MAP: dict[str, str] = {
+    "activities": "activities",
+    "albums": "albums",
+    "api_keys": "api-keys",
+    "assets": "assets",
+    "authentication": "authentication",
+    "authentication_admin": "authentication-admin",
+    "download": "download",
+    "duplicates": "duplicates",
+    "faces": "faces",
+    "jobs": "jobs",
+    "libraries": "libraries",
+    "maintenance_admin": "maintenance-admin",
+    "map": "map",
+    "memories": "memories",
+    "notifications": "notifications",
+    "notifications_admin": "notifications-admin",
+    "partners": "partners",
+    "people": "people",
+    "plugins": "plugins",
+    "queues": "queues",
+    "search": "search",
+    "server": "server",
+    "sessions": "sessions",
+    "shared_links": "shared-links",
+    "stacks": "stacks",
+    "sync": "sync",
+    "system_config": "system-config",
+    "system_metadata": "system-metadata",
+    "tags": "tags",
+    "timeline": "timeline",
+    "trash": "trash",
+    "users": "users",
+    "users_admin": "users-admin",
+    "views": "views",
+    "workflows": "workflows",
 }
+
+_imported_modules: dict[str, Any] = {}
+_APPS_CACHE: dict[str, typer.Typer] | None = None
+
+
+def _lazy_import(module_name: str) -> Any:
+    """Lazy import a module, caching the result."""
+    if module_name not in _imported_modules:
+        _imported_modules[module_name] = importlib.import_module(
+            f"immich.cli.commands.{module_name}"
+        )
+    return _imported_modules[module_name]
+
+
+def _get_apps() -> dict[str, typer.Typer]:
+    """Get all apps, using lazy imports."""
+    global _APPS_CACHE
+    if _APPS_CACHE is not None:
+        return _APPS_CACHE
+
+    _APPS_CACHE = {}
+    for module_name, app_name in _MODULE_MAP.items():
+        module = _lazy_import(module_name)
+        _APPS_CACHE[app_name] = module.app
+    return _APPS_CACHE
+
+
+class _AppsDict:
+    """Lazy dict-like wrapper for APPS that imports modules on demand."""
+
+    def __getitem__(self, key: str) -> typer.Typer:
+        return _get_apps()[key]
+
+    def __contains__(self, key: str) -> bool:
+        return key in _get_apps()
+
+    def items(self):
+        return _get_apps().items()
+
+    def keys(self):
+        return _get_apps().keys()
+
+    def values(self):
+        return _get_apps().values()
+
+    def __iter__(self):
+        return iter(_get_apps())
+
+    def get(self, key: str, default: Any = None) -> Any:
+        return _get_apps().get(key, default)
+
+    def __len__(self) -> int:
+        return len(_get_apps())
+
+
+APPS: dict[str, typer.Typer] = _AppsDict()  # type: ignore[assignment]

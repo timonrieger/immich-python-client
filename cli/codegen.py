@@ -27,6 +27,7 @@ def openapi_url(ref: str) -> str:
         f"{ref}/open-api/immich-openapi-specs.json"
     )
 
+
 def fetch_openapi_spec_json(url: str) -> dict[str, Any]:
     """Fetch and parse OpenAPI JSON from a URL."""
     req = urllib.request.Request(url, headers={"User-Agent": "immich-cli-codegen"})
@@ -63,6 +64,7 @@ def to_kebab_case(name: str) -> str:
     snake = to_snake_case(name)
     return snake.replace("_", "-")
 
+
 def to_python_ident(name: str) -> str:
     """Convert an OpenAPI name into a safe Python identifier.
 
@@ -80,7 +82,9 @@ def to_python_ident(name: str) -> str:
     return ident
 
 
-def python_type_from_schema(schema: dict[str, Any], spec: dict[str, Any] | None = None) -> str:
+def python_type_from_schema(
+    schema: dict[str, Any], spec: dict[str, Any] | None = None
+) -> str:
     """Convert OpenAPI schema to Python type hint."""
     if "type" not in schema:
         # Reference or complex type
@@ -209,7 +213,11 @@ def get_request_body_info(
     if "multipart/form-data" in content:
         schema = content.get("multipart/form-data", {}).get("schema", {})
         ref = schema["$ref"]
-        return ("multipart/form-data", ref.split("/")[-1], resolve_schema_ref(spec, ref))
+        return (
+            "multipart/form-data",
+            ref.split("/")[-1],
+            resolve_schema_ref(spec, ref),
+        )
     return None
 
 
@@ -270,11 +278,11 @@ def generate_command_function(
         required = param.get("required", False)
         if required:
             lines.append(
-                f"    {param_name}: {param_type} = typer.Option(..., \"--{flag_name}\"),"
+                f'    {param_name}: {param_type} = typer.Option(..., "--{flag_name}"),'
             )
         else:
             lines.append(
-                f"    {param_name}: {param_type} | None = typer.Option(None, \"--{flag_name}\"),"
+                f'    {param_name}: {param_type} | None = typer.Option(None, "--{flag_name}"),'
             )
 
     # Header parameters (optional flags)
@@ -287,11 +295,11 @@ def generate_command_function(
         required = param.get("required", False)
         if required:
             lines.append(
-                f"    {param_name}: {param_type} = typer.Option(..., \"--{flag_name}\"),"
+                f'    {param_name}: {param_type} = typer.Option(..., "--{flag_name}"),'
             )
         else:
             lines.append(
-                f"    {param_name}: {param_type} | None = typer.Option(None, \"--{flag_name}\"),"
+                f'    {param_name}: {param_type} | None = typer.Option(None, "--{flag_name}"),'
             )
 
     # Request body options
@@ -307,12 +315,19 @@ def generate_command_function(
                 '    json_path: Path | None = typer.Option(None, "--json", help="Path to JSON file with multipart fields (non-file)"),'
             )
             # Add file-part options for binary fields
-            props = resolved_schema.get("properties", {}) if isinstance(resolved_schema, dict) else {}
+            props = (
+                resolved_schema.get("properties", {})
+                if isinstance(resolved_schema, dict)
+                else {}
+            )
             required_props = set(resolved_schema.get("required", []) or [])
             for prop_name, prop_schema in sorted(props.items(), key=lambda kv: kv[0]):
                 if not isinstance(prop_schema, dict):
                     continue
-                if prop_schema.get("type") == "string" and prop_schema.get("format") == "binary":
+                if (
+                    prop_schema.get("type") == "string"
+                    and prop_schema.get("format") == "binary"
+                ):
                     arg_name = to_python_ident(prop_name)
                     opt_name = to_kebab_case(prop_name)
                     if prop_name in required_props:
@@ -329,7 +344,9 @@ def generate_command_function(
     # Function body
     lines.append('    """' + operation.get("summary", operation_id) + '"""')
     lines.append("    from pathlib import Path")
-    lines.append("    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command")
+    lines.append(
+        "    from immich.cli.runtime import load_json_file, load_file_bytes, deserialize_request_body, print_response, run_command"
+    )
 
     # Build kwargs
     lines.append("    kwargs = {}")
@@ -404,7 +421,9 @@ def generate_command_function(
                 if is_binary:
                     # File fields come from dedicated CLI options
                     if prop_name in required_props:
-                        lines.append(f"    kwargs['{snake}'] = load_file_bytes({snake})")
+                        lines.append(
+                            f"    kwargs['{snake}'] = load_file_bytes({snake})"
+                        )
                     else:
                         lines.append(f"    if {snake} is not None:")
                         lines.append(
@@ -425,7 +444,7 @@ def generate_command_function(
             lines.append(
                 "        raise SystemExit("
                 "\"Error: missing required multipart fields: \" + ', '.join(missing) + "
-                "\". Provide them via --json and/or file options.\""
+                '". Provide them via --json and/or file options."'
                 ")"
             )
 
@@ -435,7 +454,9 @@ def generate_command_function(
 
     # Call method
     method_name = to_snake_case(operation_id)
-    lines.append(f"    result = run_command(client, api_group, '{method_name}', **kwargs)")
+    lines.append(
+        f"    result = run_command(client, api_group, '{method_name}', **kwargs)"
+    )
 
     # Print result
     lines.append("    format_mode = ctx.obj.get('format', 'pretty')")
@@ -452,7 +473,9 @@ def generate_tag_app(
     tag_attr = tag_snake  # This should match AsyncClient attribute
 
     lines = [
-        '"""Generated CLI commands for ' + tag + ' tag (auto-generated, do not edit)."""',
+        '"""Generated CLI commands for '
+        + tag
+        + ' tag (auto-generated, do not edit)."""',
         "",
         "from __future__ import annotations",
         "",
@@ -461,12 +484,14 @@ def generate_tag_app(
         "import typer",
         "from typer import Context",
         "",
-        f"app = typer.Typer(help=\"{tag} operations\", context_settings={{\"help_option_names\": [\"-h\", \"--help\"]}})",
+        f'app = typer.Typer(help="{tag} operations", context_settings={{"help_option_names": ["-h", "--help"]}})',
         "",
     ]
 
     # Generate command for each operation
-    for path, method, operation in sorted(operations, key=lambda x: x[2].get("operationId", "")):
+    for path, method, operation in sorted(
+        operations, key=lambda x: x[2].get("operationId", "")
+    ):
         func_code = generate_command_function(operation, path, method, spec, tag_attr)
         lines.append(func_code)
         lines.append("")
@@ -487,8 +512,7 @@ def main() -> int:
     args = parser.parse_args()
 
     root = project_root()
-    generated_dir = root / "immich" / "cli" / "generated"
-    apps_dir = generated_dir / "apps"
+    commands_dir = root / "immich" / "cli" / "commands"
 
     # Fetch OpenAPI spec
     url = openapi_url(args.ref)
@@ -521,11 +545,10 @@ def main() -> int:
                 operations_by_tag[tag] = []
             operations_by_tag[tag].append((path, method, operation))
 
-    # Clean and recreate generated directory
-    if generated_dir.exists():
-        shutil.rmtree(generated_dir)
-    generated_dir.mkdir(parents=True, exist_ok=True)
-    apps_dir.mkdir(parents=True, exist_ok=True)
+    # Clean and recreate commands directory
+    if commands_dir.exists():
+        shutil.rmtree(commands_dir)
+    commands_dir.mkdir(parents=True, exist_ok=True)
 
     # Generate app modules
     apps_dict: dict[str, str] = {}
@@ -534,45 +557,49 @@ def main() -> int:
         tag_snake = to_snake_case(tag)
         app_content = generate_tag_app(tag, operations, spec)
 
-        app_file = apps_dir / f"{tag_snake}.py"
+        app_file = commands_dir / f"{tag_snake}.py"
         app_file.write_text(app_content, encoding="utf-8")
         # Use a CLI-safe group name (no spaces/parentheses)
-        apps_dict[to_kebab_case(tag)] = f"immich.cli.generated.apps.{tag_snake}"
+        apps_dict[to_kebab_case(tag)] = f"immich.cli.commands.{tag_snake}"
 
-    # Generate __init__.py
-    init_lines = [
-        '"""Generated CLI commands (auto-generated, do not edit)."""',
-        "",
-        "from __future__ import annotations",
-        "",
-        "from typing import Any",
-        "import typer",
-        "",
-    ]
-
-    # Import apps
-    for tag_cli, module_path in sorted(apps_dict.items()):
-        # module_path ends with <tag_snake>
-        tag_snake = module_path.rsplit(".", 1)[-1]
-        init_lines.append(f"from immich.cli.generated.apps import {tag_snake}")
-
-    init_lines.append("")
-    init_lines.append("APPS: dict[str, typer.Typer] = {")
-
-    for tag_cli, module_path in sorted(apps_dict.items()):
-        tag_snake = module_path.rsplit(".", 1)[-1]
-        init_lines.append(f'    "{tag_cli}": {tag_snake}.app,')
-
-    init_lines.append("}")
-
-    init_file = generated_dir / "__init__.py"
-    init_file.write_text("\n".join(init_lines), encoding="utf-8")
+    # Skip generating __init__.py to preserve manual lazy import optimization
+    # The __init__.py file uses lazy imports for faster shell completion.
+    # If you need to regenerate it, manually update the _MODULE_MAP in __init__.py
+    # with any new tags from apps_dict.
+    #
+    # # Generate __init__.py
+    # init_lines = [
+    #     '"""Generated CLI commands (auto-generated, do not edit)."""',
+    #     "",
+    #     "from __future__ import annotations",
+    #     "",
+    #     "from typing import Any",
+    #     "import typer",
+    #     "",
+    # ]
+    #
+    # # Import apps
+    # for tag_cli, module_path in sorted(apps_dict.items()):
+    #     # module_path ends with <tag_snake>
+    #     tag_snake = module_path.rsplit(".", 1)[-1]
+    #     init_lines.append(f"from immich.cli.commands import {tag_snake}")
+    #
+    # init_lines.append("")
+    # init_lines.append("APPS: dict[str, typer.Typer] = {")
+    #
+    # for tag_cli, module_path in sorted(apps_dict.items()):
+    #     tag_snake = module_path.rsplit(".", 1)[-1]
+    #     init_lines.append(f'    "{tag_cli}": {tag_snake}.app,')
+    #
+    # init_lines.append("}")
+    #
+    # init_file = generated_dir / "__init__.py"
+    # init_file.write_text("\n".join(init_lines), encoding="utf-8")
 
     print(f"Generated CLI commands for {len(operations_by_tag)} tags")
-    print(f"Output directory: {generated_dir}")
+    print(f"Output directory: {commands_dir}")
     return 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
