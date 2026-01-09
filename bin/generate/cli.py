@@ -10,15 +10,13 @@ import keyword
 import os
 import re
 import shutil
-import urllib.error
-import urllib.request
+import urllib3
 from pathlib import Path
 from typing import Any
 
 
 def project_root() -> Path:
     """Get project root directory."""
-    # This file lives at bin/generate/cli.py
     return Path(__file__).resolve().parents[2]
 
 
@@ -94,7 +92,6 @@ def python_type_from_schema(
                     return python_type_from_schema(resolved, spec=None)
             # Avoid typing.Any in CLI signatures: Typer/Click rejects it.
             return "str"
-        return "Any"
 
     schema_type = schema["type"]
     if schema_type == "string":
@@ -364,11 +361,9 @@ def generate_command_function(
     if request_body_info:
         content_type, request_body_model, resolved_schema = request_body_info
         if content_type == "application/json":
-            # Infer parameter name from model name (e.g., UserUpdateMeDto -> user_update_me_dto)
             body_param_name = to_python_ident(request_body_model)
             lines.append("    if json_str is not None:")
             lines.append("        json_data = json.loads(json_str)")
-            # Model import path: convert ModelNameDto to model_name_dto.py
             model_module = to_snake_case(request_body_model)
             lines.append(
                 f"        from immich.client.models.{model_module} import {request_body_model}"
@@ -378,7 +373,6 @@ def generate_command_function(
             )
             lines.append(f"        kwargs['{body_param_name}'] = {body_param_name}")
         elif content_type == "multipart/form-data":
-            # Load json fields (non-file) and merge into kwargs using snake_case keys
             props = (
                 resolved_schema.get("properties", {})
                 if isinstance(resolved_schema, dict)
@@ -386,12 +380,10 @@ def generate_command_function(
             )
             required_props = set(resolved_schema.get("required", []) or [])
             lines.append("    json_data = json.loads(json_str) if json_str is not None else {}")
-            # Fail loudly if required non-file fields are missing
             lines.append("    missing: list[str] = []")
             for prop_name, prop_schema in sorted(props.items(), key=lambda kv: kv[0]):
                 if not isinstance(prop_schema, dict):
                     continue
-                snake = to_snake_case(prop_name)
                 snake = to_python_ident(prop_name)
                 is_binary = (
                     prop_schema.get("type") == "string"
@@ -492,22 +484,8 @@ def main() -> int:
     url = openapi_url(args.ref)
     print(f"Fetching OpenAPI spec from: {url}")
 
-    req = urllib.request.Request(url, headers={"User-Agent": "immich-cli-codegen"})
-    try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            data = resp.read()
-    except urllib.error.HTTPError as e:
-        print(f"Error: Failed to fetch OpenAPI spec (status={e.code})", file=__import__("sys").stderr)
-        return 1
-    except urllib.error.URLError as e:
-        print(f"Error: Failed to fetch OpenAPI spec: {e.reason}", file=__import__("sys").stderr)
-        return 1
-
-    try:
-        spec = json.loads(data.decode("utf-8"))
-    except json.JSONDecodeError as e:
-        print(f"Error: Invalid JSON in OpenAPI spec: {e}", file=__import__("sys").stderr)
-        return 1
+    req = urllib3.request("GET", url)
+    spec = req.json()
 
     # Validate and group operations
     operations_by_tag: dict[str, list[tuple[str, str, dict[str, Any]]]] = {}
@@ -532,7 +510,6 @@ def main() -> int:
     commands_dir.mkdir(parents=True, exist_ok=True)
 
     # Generate app modules
-    apps_dict: dict[str, str] = {}
     for tag in sorted(operations_by_tag.keys()):
         operations = operations_by_tag[tag]
         tag_snake = to_snake_case(tag)
@@ -540,13 +517,11 @@ def main() -> int:
 
         app_file = commands_dir / f"{tag_snake}.py"
         app_file.write_text(app_content, encoding="utf-8")
-        # Use a CLI-safe group name (no spaces/parentheses)
-        apps_dict[to_kebab_case(tag)] = f"immich.cli.commands.{tag_snake}"
 
     # Skip generating __init__.py to preserve manual lazy import optimization
     # The __init__.py file uses lazy imports for faster shell completion.
     # If you need to regenerate it, manually update the _MODULE_MAP in __init__.py
-    # with any new tags from apps_dict.
+    # with any new tags.
 
     print(f"Generated CLI commands for {len(operations_by_tag)} tags")
 
