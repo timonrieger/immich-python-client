@@ -72,16 +72,6 @@ def main() -> int:
     print(f"Generating Immich client from ref: {args.ref}")
     print(f"Spec URL: {url}")
 
-    # quick sanity check that the spec is reachable
-    try:
-        resp = requests.get(url, timeout=30)
-        if resp.status_code != 200:
-            print(f"Failed to fetch OpenAPI spec (status={resp.status_code})")
-            return 1
-    except requests.RequestException as e:
-        print(f"Failed to fetch OpenAPI spec: {e}")
-        return 1
-
     if client_dir.exists():
         print("Deleting existing generated client folder:", client_dir)
         shutil.rmtree(client_dir)
