@@ -46,6 +46,71 @@ jobs:
       - name: Run unit tests
         run: mise run ci:test:unit
 
+  e2e-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check-out repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+        with:
+          persist-credentials: false
+
+      - name: Install uv + Python 3.14
+        uses: astral-sh/setup-uv@681c641aba71e4a1c380be3ab5e12ad51f415867 # v7
+        with:
+          version: "0.9.21"
+          python-version: "3.14"
+
+      - name: Install the project
+        run: uv sync --locked --dev
+
+      - name: Read Immich version
+        id: immich-version
+        run: echo "version=$(cat IMMICH-VERSION | tr -d 'v')" >> $GITHUB_OUTPUT
+
+      - name: Clone Immich repository
+        run: |
+          git clone --depth 1 --branch v${{ steps.immich-version.outputs.version }} https://github.com/immich-app/immich.git immich
+        env:
+          IMMICH_VERSION: ${{ steps.immich-version.outputs.version }}
+
+      - name: Start Immich server
+        working-directory: ./immich/e2e
+        run: |
+          docker compose up -d --build
+          echo "Waiting for Immich server to be ready..."
+          timeout=120
+          elapsed=0
+          while ! curl -f http://127.0.0.1:2285/api/server-info/ping > /dev/null 2>&1; do
+            if [ $elapsed -ge $timeout ]; then
+              echo "Server failed to start within $timeout seconds"
+              docker compose logs
+              exit 1
+            fi
+            sleep 2
+            elapsed=$((elapsed + 2))
+            echo "Waiting for server... (${elapsed}s/${timeout}s)"
+          done
+          echo "Server is ready!"
+
+      - name: Run e2e tests
+        env:
+          IMMICH_URL: http://127.0.0.1:2285
+          IMMICH_API_URL: http://127.0.0.1:2285/api
+        run: uv run pytest tests/e2e
+
+      - name: Show docker logs on failure
+        if: failure()
+        working-directory: ./immich/e2e
+        run: docker compose logs
+
+      - name: Teardown Immich server
+        if: always()
+        working-directory: ./immich/e2e
+        run: docker compose down -v
+
   release:
     runs-on: ubuntu-latest
     needs: [lint, test]
