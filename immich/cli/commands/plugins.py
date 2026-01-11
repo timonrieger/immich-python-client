@@ -15,7 +15,7 @@ Docs: https://api.immich.app/endpoints/plugins""", context_settings={'help_optio
 @app.command("get-plugin")
 def get_plugin(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Plugin ID"""),
 ) -> None:
     """Retrieve a plugin
 

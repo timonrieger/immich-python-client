@@ -78,7 +78,7 @@ Docs: https://api.immich.app/endpoints/sessions/deleteAllSessions
 @app.command("delete-session")
 def delete_session(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Session ID"""),
 ) -> None:
     """Delete a session
 
@@ -110,7 +110,7 @@ Docs: https://api.immich.app/endpoints/sessions/getSessions
 @app.command("lock-session")
 def lock_session(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Session ID"""),
 ) -> None:
     """Lock a session
 
@@ -127,7 +127,7 @@ Docs: https://api.immich.app/endpoints/sessions/lockSession
 @app.command("update-session")
 def update_session(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Session ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     is_pending_sync_reset: bool | None = typer.Option(None, "--isPendingSyncReset"),
 ) -> None:

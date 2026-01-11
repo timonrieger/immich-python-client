@@ -15,7 +15,7 @@ Docs: https://api.immich.app/endpoints/duplicates""", context_settings={'help_op
 @app.command("delete-duplicate")
 def delete_duplicate(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Duplicate asset ID"""),
 ) -> None:
     """Delete a duplicate
 

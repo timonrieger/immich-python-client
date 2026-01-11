@@ -112,7 +112,7 @@ Docs: https://api.immich.app/endpoints/people/deletePeople
 @app.command("delete-person")
 def delete_person(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Person ID"""),
 ) -> None:
     """Delete person
 
@@ -129,11 +129,11 @@ Docs: https://api.immich.app/endpoints/people/deletePerson
 @app.command("get-all-people")
 def get_all_people(
     ctx: typer.Context,
-    closest_asset_id: str | None = typer.Option(None, "--closest-asset-id"),
-    closest_person_id: str | None = typer.Option(None, "--closest-person-id"),
-    page: float | None = typer.Option(None, "--page"),
-    size: float | None = typer.Option(None, "--size"),
-    with_hidden: bool | None = typer.Option(None, "--with-hidden"),
+    closest_asset_id: str | None = typer.Option(None, "--closest-asset-id", help="""Closest asset ID for similarity search"""),
+    closest_person_id: str | None = typer.Option(None, "--closest-person-id", help="""Closest person ID for similarity search"""),
+    page: float | None = typer.Option(None, "--page", help="""Page number for pagination"""),
+    size: float | None = typer.Option(None, "--size", help="""Number of items per page"""),
+    with_hidden: bool | None = typer.Option(None, "--with-hidden", help="""Include hidden people"""),
 ) -> None:
     """Get all people
 
@@ -159,7 +159,7 @@ Docs: https://api.immich.app/endpoints/people/getAllPeople
 @app.command("get-person")
 def get_person(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Person ID"""),
 ) -> None:
     """Get a person
 
@@ -176,7 +176,7 @@ Docs: https://api.immich.app/endpoints/people/getPerson
 @app.command("get-person-statistics")
 def get_person_statistics(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Person ID"""),
 ) -> None:
     """Get person statistics
 
@@ -193,7 +193,7 @@ Docs: https://api.immich.app/endpoints/people/getPersonStatistics
 @app.command("get-person-thumbnail")
 def get_person_thumbnail(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Person ID"""),
 ) -> None:
     """Get person thumbnail
 
@@ -210,7 +210,7 @@ Docs: https://api.immich.app/endpoints/people/getPersonThumbnail
 @app.command("merge-person")
 def merge_person(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Target person ID to merge into"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     ids: list[str] = typer.Option(..., "--ids"),
 ) -> None:
@@ -253,7 +253,7 @@ Docs: https://api.immich.app/endpoints/people/mergePerson
 @app.command("reassign-faces")
 def reassign_faces(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Target person ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     data: list[str] = typer.Option(..., "--data", help="JSON string for data"),
 ) -> None:
@@ -339,7 +339,7 @@ Docs: https://api.immich.app/endpoints/people/updatePeople
 @app.command("update-person")
 def update_person(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Person ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     birth_date: str | None = typer.Option(None, "--birthDate"),
     color: str | None = typer.Option(None, "--color"),

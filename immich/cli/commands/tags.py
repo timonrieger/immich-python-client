@@ -110,7 +110,7 @@ Docs: https://api.immich.app/endpoints/tags/createTag
 @app.command("delete-tag")
 def delete_tag(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Tag ID"""),
 ) -> None:
     """Delete a tag
 
@@ -142,7 +142,7 @@ Docs: https://api.immich.app/endpoints/tags/getAllTags
 @app.command("get-tag-by-id")
 def get_tag_by_id(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Tag ID"""),
 ) -> None:
     """Retrieve a tag
 
@@ -159,7 +159,7 @@ Docs: https://api.immich.app/endpoints/tags/getTagById
 @app.command("tag-assets")
 def tag_assets(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Tag ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     ids: list[str] = typer.Option(..., "--ids"),
 ) -> None:
@@ -202,7 +202,7 @@ Docs: https://api.immich.app/endpoints/tags/tagAssets
 @app.command("untag-assets")
 def untag_assets(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Tag ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     ids: list[str] = typer.Option(..., "--ids"),
 ) -> None:
@@ -245,7 +245,7 @@ Docs: https://api.immich.app/endpoints/tags/untagAssets
 @app.command("update-tag")
 def update_tag(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Tag ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     color: str | None = typer.Option(None, "--color"),
 ) -> None:

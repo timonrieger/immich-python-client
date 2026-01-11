@@ -90,7 +90,7 @@ Docs: https://api.immich.app/endpoints/users-admin/createUserAdmin
 @app.command("delete-user-admin")
 def delete_user_admin(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""User ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     force: bool | None = typer.Option(None, "--force"),
 ) -> None:
@@ -132,7 +132,7 @@ Docs: https://api.immich.app/endpoints/users-admin/deleteUserAdmin
 @app.command("get-user-admin")
 def get_user_admin(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""User ID"""),
 ) -> None:
     """Retrieve a user
 
@@ -149,7 +149,7 @@ Docs: https://api.immich.app/endpoints/users-admin/getUserAdmin
 @app.command("get-user-preferences-admin")
 def get_user_preferences_admin(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""User ID"""),
 ) -> None:
     """Retrieve user preferences
 
@@ -166,7 +166,7 @@ Docs: https://api.immich.app/endpoints/users-admin/getUserPreferencesAdmin
 @app.command("get-user-sessions-admin")
 def get_user_sessions_admin(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""User ID"""),
 ) -> None:
     """Retrieve user sessions
 
@@ -183,10 +183,10 @@ Docs: https://api.immich.app/endpoints/users-admin/getUserSessionsAdmin
 @app.command("get-user-statistics-admin")
 def get_user_statistics_admin(
     ctx: typer.Context,
-    id: str,
-    is_favorite: bool | None = typer.Option(None, "--is-favorite"),
-    is_trashed: bool | None = typer.Option(None, "--is-trashed"),
-    visibility: str | None = typer.Option(None, "--visibility"),
+    id: str = typer.Argument(..., help="""User ID"""),
+    is_favorite: bool | None = typer.Option(None, "--is-favorite", help="""Filter by favorite status"""),
+    is_trashed: bool | None = typer.Option(None, "--is-trashed", help="""Filter by trash status"""),
+    visibility: str | None = typer.Option(None, "--visibility", help="""Filter by visibility"""),
 ) -> None:
     """Retrieve user statistics
 
@@ -209,7 +209,7 @@ Docs: https://api.immich.app/endpoints/users-admin/getUserStatisticsAdmin
 @app.command("restore-user-admin")
 def restore_user_admin(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""User ID"""),
 ) -> None:
     """Restore a deleted user
 
@@ -226,8 +226,8 @@ Docs: https://api.immich.app/endpoints/users-admin/restoreUserAdmin
 @app.command("search-users-admin")
 def search_users_admin(
     ctx: typer.Context,
-    id: str | None = typer.Option(None, "--id"),
-    with_deleted: bool | None = typer.Option(None, "--with-deleted"),
+    id: str | None = typer.Option(None, "--id", help="""User ID filter"""),
+    with_deleted: bool | None = typer.Option(None, "--with-deleted", help="""Include deleted users"""),
 ) -> None:
     """Search users
 
@@ -247,7 +247,7 @@ Docs: https://api.immich.app/endpoints/users-admin/searchUsersAdmin
 @app.command("update-user-admin")
 def update_user_admin(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""User ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     avatar_color: str | None = typer.Option(None, "--avatarColor"),
     email: str | None = typer.Option(None, "--email"),
@@ -321,7 +321,7 @@ Docs: https://api.immich.app/endpoints/users-admin/updateUserAdmin
 @app.command("update-user-preferences-admin")
 def update_user_preferences_admin(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""User ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     albums_default_asset_order: str | None = typer.Option(None, "--albums.defaultAssetOrder"),
     avatar_color: str | None = typer.Option(None, "--avatar.color"),

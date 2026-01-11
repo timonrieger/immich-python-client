@@ -69,7 +69,7 @@ Docs: https://api.immich.app/endpoints/activities/createActivity
 @app.command("delete-activity")
 def delete_activity(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Activity ID to delete"""),
 ) -> None:
     """Delete an activity
 
@@ -86,11 +86,11 @@ Docs: https://api.immich.app/endpoints/activities/deleteActivity
 @app.command("get-activities")
 def get_activities(
     ctx: typer.Context,
-    album_id: str = typer.Option(..., "--album-id"),
-    asset_id: str | None = typer.Option(None, "--asset-id"),
-    level: str | None = typer.Option(None, "--level"),
-    type: str | None = typer.Option(None, "--type"),
-    user_id: str | None = typer.Option(None, "--user-id"),
+    album_id: str = typer.Option(..., "--album-id", help="""Album ID"""),
+    asset_id: str | None = typer.Option(None, "--asset-id", help="""Asset ID (if activity is for an asset)"""),
+    level: str | None = typer.Option(None, "--level", help="""Filter by activity level"""),
+    type: str | None = typer.Option(None, "--type", help="""Filter by activity type"""),
+    user_id: str | None = typer.Option(None, "--user-id", help="""Filter by user ID"""),
 ) -> None:
     """List all activities
 
@@ -115,8 +115,8 @@ Docs: https://api.immich.app/endpoints/activities/getActivities
 @app.command("get-activity-statistics")
 def get_activity_statistics(
     ctx: typer.Context,
-    album_id: str = typer.Option(..., "--album-id"),
-    asset_id: str | None = typer.Option(None, "--asset-id"),
+    album_id: str = typer.Option(..., "--album-id", help="""Album ID"""),
+    asset_id: str | None = typer.Option(None, "--asset-id", help="""Asset ID (if activity is for an asset)"""),
 ) -> None:
     """Retrieve activity statistics
 

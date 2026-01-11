@@ -81,7 +81,7 @@ Docs: https://api.immich.app/endpoints/workflows/createWorkflow
 @app.command("delete-workflow")
 def delete_workflow(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Workflow ID"""),
 ) -> None:
     """Delete a workflow
 
@@ -98,7 +98,7 @@ Docs: https://api.immich.app/endpoints/workflows/deleteWorkflow
 @app.command("get-workflow")
 def get_workflow(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Workflow ID"""),
 ) -> None:
     """Retrieve a workflow
 
@@ -130,7 +130,7 @@ Docs: https://api.immich.app/endpoints/workflows/getWorkflows
 @app.command("update-workflow")
 def update_workflow(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Workflow ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     actions: list[str] | None = typer.Option(None, "--actions", help="JSON string for actions"),
     description: str | None = typer.Option(None, "--description"),

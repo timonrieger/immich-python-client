@@ -354,10 +354,22 @@ def generate_command_function(
         schema = param.get("schema", {"type": "string"})
         param_type = python_type_from_schema(schema, spec)
         required = param.get("required", False)
-        if required:
-            lines.append(f"    {param_name}: {param_type},")
+        description = param.get("description", "")
+        if description:
+            description_str = python_triple_quoted_str(description)
+            if required:
+                lines.append(
+                    f'    {param_name}: {param_type} = typer.Argument(..., help={description_str}),'
+                )
+            else:
+                lines.append(
+                    f'    {param_name}: {param_type} | None = typer.Argument(None, help={description_str}),'
+                )
         else:
-            lines.append(f"    {param_name}: {param_type} | None = None,")
+            if required:
+                lines.append(f"    {param_name}: {param_type},")
+            else:
+                lines.append(f"    {param_name}: {param_type} | None = None,")
 
     # Track all option names for collision detection
     used_option_names: set[str] = set()
@@ -371,6 +383,7 @@ def generate_command_function(
         param_type = python_type_from_schema(schema, spec)
         flag_name = to_kebab_case(openapi_name)
         full_opt_name = f"--{flag_name}"
+        description = param.get("description", "")
         
         # Check for collisions
         if full_opt_name in used_option_names:
@@ -380,14 +393,25 @@ def generate_command_function(
         used_option_names.add(full_opt_name)
         
         required = param.get("required", False)
-        if required:
-            lines.append(
-                f'    {param_name}: {param_type} = typer.Option(..., "--{flag_name}"),'
-            )
+        if description:
+            description_str = python_triple_quoted_str(description)
+            if required:
+                lines.append(
+                    f'    {param_name}: {param_type} = typer.Option(..., "--{flag_name}", help={description_str}),'
+                )
+            else:
+                lines.append(
+                    f'    {param_name}: {param_type} | None = typer.Option(None, "--{flag_name}", help={description_str}),'
+                )
         else:
-            lines.append(
-                f'    {param_name}: {param_type} | None = typer.Option(None, "--{flag_name}"),'
-            )
+            if required:
+                lines.append(
+                    f'    {param_name}: {param_type} = typer.Option(..., "--{flag_name}"),'
+                )
+            else:
+                lines.append(
+                    f'    {param_name}: {param_type} | None = typer.Option(None, "--{flag_name}"),'
+                )
 
     # Header parameters (optional flags)
     for param in sorted(header_params, key=lambda p: p["name"]):
@@ -398,6 +422,7 @@ def generate_command_function(
         param_type = python_type_from_schema(schema, spec)
         flag_name = to_kebab_case(openapi_name)
         full_opt_name = f"--{flag_name}"
+        description = param.get("description", "")
         
         # Check for collisions
         if full_opt_name in used_option_names:
@@ -407,14 +432,25 @@ def generate_command_function(
         used_option_names.add(full_opt_name)
         
         required = param.get("required", False)
-        if required:
-            lines.append(
-                f'    {param_name}: {param_type} = typer.Option(..., "--{flag_name}"),'
-            )
+        if description:
+            description_str = python_triple_quoted_str(description)
+            if required:
+                lines.append(
+                    f'    {param_name}: {param_type} = typer.Option(..., "--{flag_name}", help={description_str}),'
+                )
+            else:
+                lines.append(
+                    f'    {param_name}: {param_type} | None = typer.Option(None, "--{flag_name}", help={description_str}),'
+                )
         else:
-            lines.append(
-                f'    {param_name}: {param_type} | None = typer.Option(None, "--{flag_name}"),'
-            )
+            if required:
+                lines.append(
+                    f'    {param_name}: {param_type} = typer.Option(..., "--{flag_name}"),'
+                )
+            else:
+                lines.append(
+                    f'    {param_name}: {param_type} | None = typer.Option(None, "--{flag_name}"),'
+                )
     
     # Request body options
     body_flags: list[tuple[list[str], dict[str, Any], bool, str, str]] = []  # (path, schema, required, param_name, opt_name)

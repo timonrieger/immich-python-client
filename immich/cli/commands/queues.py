@@ -15,7 +15,7 @@ Docs: https://api.immich.app/endpoints/queues""", context_settings={'help_option
 @app.command("empty-queue")
 def empty_queue(
     ctx: typer.Context,
-    name: str,
+    name: str = typer.Argument(..., help="""Queue name"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     failed: bool | None = typer.Option(None, "--failed"),
 ) -> None:
@@ -57,7 +57,7 @@ Docs: https://api.immich.app/endpoints/queues/emptyQueue
 @app.command("get-queue")
 def get_queue(
     ctx: typer.Context,
-    name: str,
+    name: str = typer.Argument(..., help="""Queue name"""),
 ) -> None:
     """Retrieve a queue
 
@@ -74,8 +74,8 @@ Docs: https://api.immich.app/endpoints/queues/getQueue
 @app.command("get-queue-jobs")
 def get_queue_jobs(
     ctx: typer.Context,
-    name: str,
-    status: list[str] | None = typer.Option(None, "--status"),
+    name: str = typer.Argument(..., help="""Queue name"""),
+    status: list[str] | None = typer.Option(None, "--status", help="""Filter by job status"""),
 ) -> None:
     """Retrieve queue jobs
 
@@ -109,7 +109,7 @@ Docs: https://api.immich.app/endpoints/queues/getQueues
 @app.command("update-queue")
 def update_queue(
     ctx: typer.Context,
-    name: str,
+    name: str = typer.Argument(..., help="""Queue name"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     is_paused: bool | None = typer.Option(None, "--isPaused"),
 ) -> None:

@@ -82,7 +82,7 @@ Docs: https://api.immich.app/endpoints/notifications-admin/createNotification
 @app.command("get-notification-template-admin")
 def get_notification_template_admin(
     ctx: typer.Context,
-    name: str,
+    name: str = typer.Argument(..., help="""Email template name"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     template: str = typer.Option(..., "--template"),
 ) -> None:
