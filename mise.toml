@@ -14,11 +14,11 @@ description = "Run pre-commit hooks"
 run = "uv run ty check"
 description = "Run type checking"
 
-[tasks.test]
+[tasks."test:unit"]
 run = "uv run pytest tests/"
 description = "Run tests with pytest"
 
-[tasks."test:cov"]
+[tasks."test:unit:cov"]
 run = "uv run pytest tests/ --cov=immich --cov-report=html --cov-report=term"
 description = "Run tests with coverage report"
 
@@ -67,6 +67,17 @@ description = "Run lint then check sequentially"
 run = [
     { task = "lint" },
     { task = "check" },
+]
+
+[tasks."ci:install"]
+description = "Install dependencies in CI"
+run = ["uv sync --locked --dev"]
+
+[tasks."ci:test:unit"]
+description = "Run unit tests in CI"
+run = [
+    { task = "ci:install" },
+    { task = "test:unit" },
 ]
 
 [tasks.clean]
