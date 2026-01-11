@@ -15,8 +15,8 @@ Docs: https://api.immich.app/endpoints/download""", context_settings={'help_opti
 @app.command("download-archive")
 def download_archive(
     ctx: typer.Context,
-    key: str | None = typer.Option(None, "--key"),
-    slug: str | None = typer.Option(None, "--slug"),
+    key: str | None = typer.Option(None, "--key", help="""Access key for shared links"""),
+    slug: str | None = typer.Option(None, "--slug", help="""Access slug for shared links"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     asset_ids: list[str] = typer.Option(..., "--assetIds"),
 ) -> None:
@@ -62,8 +62,8 @@ Docs: https://api.immich.app/endpoints/download/downloadArchive
 @app.command("get-download-info")
 def get_download_info(
     ctx: typer.Context,
-    key: str | None = typer.Option(None, "--key"),
-    slug: str | None = typer.Option(None, "--slug"),
+    key: str | None = typer.Option(None, "--key", help="""Access key for shared links"""),
+    slug: str | None = typer.Option(None, "--slug", help="""Access slug for shared links"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     album_id: str | None = typer.Option(None, "--albumId"),
     archive_size: int | None = typer.Option(None, "--archiveSize"),

@@ -56,7 +56,7 @@ Docs: https://api.immich.app/endpoints/stacks/createStack
 @app.command("delete-stack")
 def delete_stack(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Stack ID"""),
 ) -> None:
     """Delete a stack
 
@@ -114,7 +114,7 @@ Docs: https://api.immich.app/endpoints/stacks/deleteStacks
 @app.command("get-stack")
 def get_stack(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Stack ID"""),
 ) -> None:
     """Retrieve a stack
 
@@ -131,8 +131,8 @@ Docs: https://api.immich.app/endpoints/stacks/getStack
 @app.command("remove-asset-from-stack")
 def remove_asset_from_stack(
     ctx: typer.Context,
-    asset_id: str,
-    id: str,
+    asset_id: str = typer.Argument(..., help="""Asset ID to remove"""),
+    id: str = typer.Argument(..., help="""Stack ID"""),
 ) -> None:
     """Remove an asset from a stack
 
@@ -150,7 +150,7 @@ Docs: https://api.immich.app/endpoints/stacks/removeAssetFromStack
 @app.command("search-stacks")
 def search_stacks(
     ctx: typer.Context,
-    primary_asset_id: str | None = typer.Option(None, "--primary-asset-id"),
+    primary_asset_id: str | None = typer.Option(None, "--primary-asset-id", help="""Filter by primary asset ID"""),
 ) -> None:
     """Retrieve stacks
 
@@ -168,7 +168,7 @@ Docs: https://api.immich.app/endpoints/stacks/searchStacks
 @app.command("update-stack")
 def update_stack(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Stack ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     primary_asset_id: str | None = typer.Option(None, "--primaryAssetId"),
 ) -> None:

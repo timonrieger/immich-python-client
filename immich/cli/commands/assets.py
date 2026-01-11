@@ -169,8 +169,8 @@ Docs: https://api.immich.app/endpoints/assets/copyAsset
 @app.command("delete-asset-metadata")
 def delete_asset_metadata(
     ctx: typer.Context,
-    id: str,
-    key: str,
+    id: str = typer.Argument(..., help="""Asset ID"""),
+    key: str = typer.Argument(..., help="""Metadata key"""),
 ) -> None:
     """Delete asset metadata by key
 
@@ -275,10 +275,10 @@ Docs: https://api.immich.app/endpoints/assets/deleteBulkAssetMetadata
 @app.command("download-asset")
 def download_asset(
     ctx: typer.Context,
-    id: str,
-    edited: bool | None = typer.Option(None, "--edited"),
-    key: str | None = typer.Option(None, "--key"),
-    slug: str | None = typer.Option(None, "--slug"),
+    id: str = typer.Argument(..., help="""Asset ID"""),
+    edited: bool | None = typer.Option(None, "--edited", help="""Return edited asset if available"""),
+    key: str | None = typer.Option(None, "--key", help="""Access key for shared links"""),
+    slug: str | None = typer.Option(None, "--slug", help="""Access slug for shared links"""),
 ) -> None:
     """Download original asset
 
@@ -345,7 +345,7 @@ Docs: https://api.immich.app/endpoints/assets/editAsset
 @app.command("get-all-user-assets-by-device-id")
 def get_all_user_assets_by_device_id(
     ctx: typer.Context,
-    device_id: str,
+    device_id: str = typer.Argument(..., help="""Device ID"""),
 ) -> None:
     """Retrieve assets by device ID
 
@@ -380,8 +380,8 @@ Docs: https://api.immich.app/endpoints/assets/getAssetEdits
 def get_asset_info(
     ctx: typer.Context,
     id: str,
-    key: str | None = typer.Option(None, "--key"),
-    slug: str | None = typer.Option(None, "--slug"),
+    key: str | None = typer.Option(None, "--key", help="""Access key for shared links"""),
+    slug: str | None = typer.Option(None, "--slug", help="""Access slug for shared links"""),
 ) -> None:
     """Retrieve an asset
 
@@ -419,8 +419,8 @@ Docs: https://api.immich.app/endpoints/assets/getAssetMetadata
 @app.command("get-asset-metadata-by-key")
 def get_asset_metadata_by_key(
     ctx: typer.Context,
-    id: str,
-    key: str,
+    id: str = typer.Argument(..., help="""Asset ID"""),
+    key: str = typer.Argument(..., help="""Metadata key"""),
 ) -> None:
     """Retrieve asset metadata by key
 
@@ -455,9 +455,9 @@ Docs: https://api.immich.app/endpoints/assets/getAssetOcr
 @app.command("get-asset-statistics")
 def get_asset_statistics(
     ctx: typer.Context,
-    is_favorite: bool | None = typer.Option(None, "--is-favorite"),
-    is_trashed: bool | None = typer.Option(None, "--is-trashed"),
-    visibility: str | None = typer.Option(None, "--visibility"),
+    is_favorite: bool | None = typer.Option(None, "--is-favorite", help="""Filter by favorite status"""),
+    is_trashed: bool | None = typer.Option(None, "--is-trashed", help="""Filter by trash status"""),
+    visibility: str | None = typer.Option(None, "--visibility", help="""Filter by visibility"""),
 ) -> None:
     """Get asset statistics
 
@@ -479,7 +479,7 @@ Docs: https://api.immich.app/endpoints/assets/getAssetStatistics
 @app.command("get-random")
 def get_random(
     ctx: typer.Context,
-    count: float | None = typer.Option(None, "--count"),
+    count: float | None = typer.Option(None, "--count", help="""Number of random assets to return"""),
 ) -> None:
     """Get random assets
 
@@ -497,9 +497,9 @@ Docs: https://api.immich.app/endpoints/assets/getRandom
 @app.command("play-asset-video")
 def play_asset_video(
     ctx: typer.Context,
-    id: str,
-    key: str | None = typer.Option(None, "--key"),
-    slug: str | None = typer.Option(None, "--slug"),
+    id: str = typer.Argument(..., help="""Asset ID"""),
+    key: str | None = typer.Option(None, "--key", help="""Access key for shared links"""),
+    slug: str | None = typer.Option(None, "--slug", help="""Access slug for shared links"""),
 ) -> None:
     """Play asset video
 
@@ -537,9 +537,9 @@ Docs: https://api.immich.app/endpoints/assets/removeAssetEdits
 @app.command("replace-asset")
 def replace_asset(
     ctx: typer.Context,
-    id: str,
-    key: str | None = typer.Option(None, "--key"),
-    slug: str | None = typer.Option(None, "--slug"),
+    id: str = typer.Argument(..., help="""Asset ID"""),
+    key: str | None = typer.Option(None, "--key", help="""Access key for shared links"""),
+    slug: str | None = typer.Option(None, "--slug", help="""Access slug for shared links"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON with multipart fields (non-file)"),
     asset_data: Path = typer.Option(..., "--asset-data", help="File to upload for assetData"),
 ) -> None:
@@ -882,9 +882,9 @@ Docs: https://api.immich.app/endpoints/assets/updateBulkAssetMetadata
 @app.command("upload-asset")
 def upload_asset(
     ctx: typer.Context,
-    key: str | None = typer.Option(None, "--key"),
-    slug: str | None = typer.Option(None, "--slug"),
-    x_immich_checksum: str | None = typer.Option(None, "--x-immich-checksum"),
+    key: str | None = typer.Option(None, "--key", help="""Access key for shared links"""),
+    slug: str | None = typer.Option(None, "--slug", help="""Access slug for shared links"""),
+    x_immich_checksum: str | None = typer.Option(None, "--x-immich-checksum", help="""sha1 checksum that can be used for duplicate detection before the file is uploaded"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON with multipart fields (non-file)"),
     asset_data: Path = typer.Option(..., "--asset-data", help="File to upload for assetData"),
     sidecar_data: Path | None = typer.Option(None, "--sidecar-data", help="File to upload for sidecarData"),
@@ -964,11 +964,11 @@ Docs: https://api.immich.app/endpoints/assets/uploadAsset
 @app.command("view-asset")
 def view_asset(
     ctx: typer.Context,
-    id: str,
-    edited: bool | None = typer.Option(None, "--edited"),
-    key: str | None = typer.Option(None, "--key"),
-    size: str | None = typer.Option(None, "--size"),
-    slug: str | None = typer.Option(None, "--slug"),
+    id: str = typer.Argument(..., help="""Asset ID"""),
+    edited: bool | None = typer.Option(None, "--edited", help="""Return edited asset if available"""),
+    key: str | None = typer.Option(None, "--key", help="""Access key for shared links"""),
+    size: str | None = typer.Option(None, "--size", help="""Asset media size"""),
+    slug: str | None = typer.Option(None, "--slug", help="""Access slug for shared links"""),
 ) -> None:
     """View asset thumbnail
 

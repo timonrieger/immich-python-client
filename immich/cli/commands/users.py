@@ -112,7 +112,7 @@ Docs: https://api.immich.app/endpoints/users/getMyUser
 @app.command("get-profile-image")
 def get_profile_image(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""User ID"""),
 ) -> None:
     """Retrieve user profile image
 
@@ -129,7 +129,7 @@ Docs: https://api.immich.app/endpoints/users/getProfileImage
 @app.command("get-user")
 def get_user(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""User ID"""),
 ) -> None:
     """Retrieve a user
 

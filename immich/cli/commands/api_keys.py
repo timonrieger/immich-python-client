@@ -61,7 +61,7 @@ Docs: https://api.immich.app/endpoints/api-keys/createApiKey
 @app.command("delete-api-key")
 def delete_api_key(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""API key ID"""),
 ) -> None:
     """Delete an API key
 
@@ -78,7 +78,7 @@ Docs: https://api.immich.app/endpoints/api-keys/deleteApiKey
 @app.command("get-api-key")
 def get_api_key(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""API key ID"""),
 ) -> None:
     """Retrieve an API key
 
@@ -125,7 +125,7 @@ Docs: https://api.immich.app/endpoints/api-keys/getMyApiKey
 @app.command("update-api-key")
 def update_api_key(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""API key ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     name: str | None = typer.Option(None, "--name"),
     permissions: list[str] | None = typer.Option(None, "--permissions", help="JSON string for permissions"),

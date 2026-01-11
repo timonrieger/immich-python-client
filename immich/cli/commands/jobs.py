@@ -71,7 +71,7 @@ Docs: https://api.immich.app/endpoints/jobs/getQueuesLegacy
 @app.command("run-queue-command-legacy")
 def run_queue_command_legacy(
     ctx: typer.Context,
-    name: str,
+    name: str = typer.Argument(..., help="""Queue name"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     command: str = typer.Option(..., "--command"),
     force: bool | None = typer.Option(None, "--force"),

@@ -91,7 +91,7 @@ Docs: https://api.immich.app/endpoints/faces/createFace
 @app.command("delete-face")
 def delete_face(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Face ID to delete"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     force: bool = typer.Option(..., "--force"),
 ) -> None:
@@ -134,7 +134,7 @@ Docs: https://api.immich.app/endpoints/faces/deleteFace
 @app.command("get-faces")
 def get_faces(
     ctx: typer.Context,
-    id: str = typer.Option(..., "--id"),
+    id: str = typer.Option(..., "--id", help="""Asset ID to retrieve faces for"""),
 ) -> None:
     """Retrieve faces for asset
 
@@ -151,7 +151,7 @@ Docs: https://api.immich.app/endpoints/faces/getFaces
 @app.command("reassign-faces-by-id")
 def reassign_faces_by_id(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Person ID to assign the face to"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     body_id: str = typer.Option(..., "--id"),
 ) -> None:

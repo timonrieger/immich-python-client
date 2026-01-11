@@ -15,7 +15,7 @@ Docs: https://api.immich.app/endpoints/notifications""", context_settings={'help
 @app.command("delete-notification")
 def delete_notification(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Notification ID"""),
 ) -> None:
     """Delete a notification
 
@@ -73,7 +73,7 @@ Docs: https://api.immich.app/endpoints/notifications/deleteNotifications
 @app.command("get-notification")
 def get_notification(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Notification ID"""),
 ) -> None:
     """Get a notification
 
@@ -90,10 +90,10 @@ Docs: https://api.immich.app/endpoints/notifications/getNotification
 @app.command("get-notifications")
 def get_notifications(
     ctx: typer.Context,
-    id: str | None = typer.Option(None, "--id"),
-    level: str | None = typer.Option(None, "--level"),
-    type: str | None = typer.Option(None, "--type"),
-    unread: bool | None = typer.Option(None, "--unread"),
+    id: str | None = typer.Option(None, "--id", help="""Filter by notification ID"""),
+    level: str | None = typer.Option(None, "--level", help="""Filter by notification level"""),
+    type: str | None = typer.Option(None, "--type", help="""Filter by notification type"""),
+    unread: bool | None = typer.Option(None, "--unread", help="""Filter by unread status"""),
 ) -> None:
     """Retrieve notifications
 
@@ -117,7 +117,7 @@ Docs: https://api.immich.app/endpoints/notifications/getNotifications
 @app.command("update-notification")
 def update_notification(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Notification ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     read_at: str | None = typer.Option(None, "--readAt"),
 ) -> None:

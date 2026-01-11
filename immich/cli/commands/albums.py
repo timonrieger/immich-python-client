@@ -15,9 +15,9 @@ Docs: https://api.immich.app/endpoints/albums""", context_settings={'help_option
 @app.command("add-assets-to-album")
 def add_assets_to_album(
     ctx: typer.Context,
-    id: str,
-    key: str | None = typer.Option(None, "--key"),
-    slug: str | None = typer.Option(None, "--slug"),
+    id: str = typer.Argument(..., help="""Album ID"""),
+    key: str | None = typer.Option(None, "--key", help="""Access key for shared links"""),
+    slug: str | None = typer.Option(None, "--slug", help="""Access slug for shared links"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     ids: list[str] = typer.Option(..., "--ids"),
 ) -> None:
@@ -64,8 +64,8 @@ Docs: https://api.immich.app/endpoints/albums/addAssetsToAlbum
 @app.command("add-assets-to-albums")
 def add_assets_to_albums(
     ctx: typer.Context,
-    key: str | None = typer.Option(None, "--key"),
-    slug: str | None = typer.Option(None, "--slug"),
+    key: str | None = typer.Option(None, "--key", help="""Access key for shared links"""),
+    slug: str | None = typer.Option(None, "--slug", help="""Access slug for shared links"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     album_ids: list[str] = typer.Option(..., "--albumIds"),
     asset_ids: list[str] = typer.Option(..., "--assetIds"),
@@ -116,7 +116,7 @@ Docs: https://api.immich.app/endpoints/albums/addAssetsToAlbums
 @app.command("add-users-to-album")
 def add_users_to_album(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Album ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     album_users: list[str] = typer.Option(..., "--albumUsers", help="JSON string for albumUsers"),
 ) -> None:
@@ -214,7 +214,7 @@ Docs: https://api.immich.app/endpoints/albums/createAlbum
 @app.command("delete-album")
 def delete_album(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Album ID"""),
 ) -> None:
     """Delete an album
 
@@ -231,10 +231,10 @@ Docs: https://api.immich.app/endpoints/albums/deleteAlbum
 @app.command("get-album-info")
 def get_album_info(
     ctx: typer.Context,
-    id: str,
-    key: str | None = typer.Option(None, "--key"),
-    slug: str | None = typer.Option(None, "--slug"),
-    without_assets: bool | None = typer.Option(None, "--without-assets"),
+    id: str = typer.Argument(..., help="""Album ID"""),
+    key: str | None = typer.Option(None, "--key", help="""Access key for shared links"""),
+    slug: str | None = typer.Option(None, "--slug", help="""Access slug for shared links"""),
+    without_assets: bool | None = typer.Option(None, "--without-assets", help="""Exclude assets from response"""),
 ) -> None:
     """Retrieve an album
 
@@ -272,8 +272,8 @@ Docs: https://api.immich.app/endpoints/albums/getAlbumStatistics
 @app.command("get-all-albums")
 def get_all_albums(
     ctx: typer.Context,
-    asset_id: str | None = typer.Option(None, "--asset-id"),
-    shared: bool | None = typer.Option(None, "--shared"),
+    asset_id: str | None = typer.Option(None, "--asset-id", help="""Filter albums containing this asset ID (ignores shared parameter)"""),
+    shared: bool | None = typer.Option(None, "--shared", help="""Filter by shared status: true = only shared, false = only own, undefined = all"""),
 ) -> None:
     """List all albums
 
@@ -293,7 +293,7 @@ Docs: https://api.immich.app/endpoints/albums/getAllAlbums
 @app.command("remove-asset-from-album")
 def remove_asset_from_album(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Album ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     ids: list[str] = typer.Option(..., "--ids"),
 ) -> None:
@@ -336,8 +336,8 @@ Docs: https://api.immich.app/endpoints/albums/removeAssetFromAlbum
 @app.command("remove-user-from-album")
 def remove_user_from_album(
     ctx: typer.Context,
-    id: str,
-    user_id: str,
+    id: str = typer.Argument(..., help="""Album ID"""),
+    user_id: str = typer.Argument(..., help="""User ID (use "me" to leave shared album)"""),
 ) -> None:
     """Remove user from album
 
@@ -355,7 +355,7 @@ Docs: https://api.immich.app/endpoints/albums/removeUserFromAlbum
 @app.command("update-album-info")
 def update_album_info(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Album ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     album_name: str | None = typer.Option(None, "--albumName"),
     album_thumbnail_asset_id: str | None = typer.Option(None, "--albumThumbnailAssetId"),
@@ -413,8 +413,8 @@ Docs: https://api.immich.app/endpoints/albums/updateAlbumInfo
 @app.command("update-album-user")
 def update_album_user(
     ctx: typer.Context,
-    id: str,
-    user_id: str,
+    id: str = typer.Argument(..., help="""Album ID"""),
+    user_id: str = typer.Argument(..., help="""User ID (use "me" for current user)"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     role: str = typer.Option(..., "--role"),
 ) -> None:

@@ -68,7 +68,7 @@ Docs: https://api.immich.app/endpoints/libraries/createLibrary
 @app.command("delete-library")
 def delete_library(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Library ID"""),
 ) -> None:
     """Delete a library
 
@@ -100,7 +100,7 @@ Docs: https://api.immich.app/endpoints/libraries/getAllLibraries
 @app.command("get-library")
 def get_library(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Library ID"""),
 ) -> None:
     """Retrieve a library
 
@@ -117,7 +117,7 @@ Docs: https://api.immich.app/endpoints/libraries/getLibrary
 @app.command("get-library-statistics")
 def get_library_statistics(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Library ID"""),
 ) -> None:
     """Retrieve library statistics
 
@@ -134,7 +134,7 @@ Docs: https://api.immich.app/endpoints/libraries/getLibraryStatistics
 @app.command("scan-library")
 def scan_library(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Library ID"""),
 ) -> None:
     """Scan a library
 
@@ -151,7 +151,7 @@ Docs: https://api.immich.app/endpoints/libraries/scanLibrary
 @app.command("update-library")
 def update_library(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Library ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     exclusion_patterns: list[str] | None = typer.Option(None, "--exclusionPatterns"),
     import_paths: list[str] | None = typer.Option(None, "--importPaths"),
@@ -201,7 +201,7 @@ Docs: https://api.immich.app/endpoints/libraries/updateLibrary
 @app.command("validate")
 def validate(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Library ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     exclusion_patterns: list[str] | None = typer.Option(None, "--exclusionPatterns"),
     import_paths: list[str] | None = typer.Option(None, "--importPaths"),

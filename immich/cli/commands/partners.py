@@ -56,7 +56,7 @@ Docs: https://api.immich.app/endpoints/partners/createPartner
 @app.command("create-partner-deprecated")
 def create_partner_deprecated(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""User ID to share with"""),
 ) -> None:
     """Create a partner
 
@@ -73,7 +73,7 @@ Docs: https://api.immich.app/endpoints/partners/createPartnerDeprecated
 @app.command("get-partners")
 def get_partners(
     ctx: typer.Context,
-    direction: str = typer.Option(..., "--direction"),
+    direction: str = typer.Option(..., "--direction", help="""Partner direction"""),
 ) -> None:
     """Retrieve partners
 
@@ -90,7 +90,7 @@ Docs: https://api.immich.app/endpoints/partners/getPartners
 @app.command("remove-partner")
 def remove_partner(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Partner ID"""),
 ) -> None:
     """Remove a partner
 
@@ -107,7 +107,7 @@ Docs: https://api.immich.app/endpoints/partners/removePartner
 @app.command("update-partner")
 def update_partner(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Partner ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     in_timeline: bool = typer.Option(..., "--inTimeline"),
 ) -> None:

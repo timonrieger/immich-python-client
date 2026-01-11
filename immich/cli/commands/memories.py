@@ -15,7 +15,7 @@ Docs: https://api.immich.app/endpoints/memories""", context_settings={'help_opti
 @app.command("add-memory-assets")
 def add_memory_assets(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Memory ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     ids: list[str] = typer.Option(..., "--ids"),
 ) -> None:
@@ -121,7 +121,7 @@ Docs: https://api.immich.app/endpoints/memories/createMemory
 @app.command("delete-memory")
 def delete_memory(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Memory ID"""),
 ) -> None:
     """Delete a memory
 
@@ -138,7 +138,7 @@ Docs: https://api.immich.app/endpoints/memories/deleteMemory
 @app.command("get-memory")
 def get_memory(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Memory ID"""),
 ) -> None:
     """Retrieve a memory
 
@@ -155,12 +155,12 @@ Docs: https://api.immich.app/endpoints/memories/getMemory
 @app.command("memories-statistics")
 def memories_statistics(
     ctx: typer.Context,
-    for_: str | None = typer.Option(None, "--for"),
-    is_saved: bool | None = typer.Option(None, "--is-saved"),
-    is_trashed: bool | None = typer.Option(None, "--is-trashed"),
-    order: str | None = typer.Option(None, "--order"),
-    size: int | None = typer.Option(None, "--size"),
-    type: str | None = typer.Option(None, "--type"),
+    for_: str | None = typer.Option(None, "--for", help="""Filter by date"""),
+    is_saved: bool | None = typer.Option(None, "--is-saved", help="""Filter by saved status"""),
+    is_trashed: bool | None = typer.Option(None, "--is-trashed", help="""Include trashed memories"""),
+    order: str | None = typer.Option(None, "--order", help="""Sort order"""),
+    size: int | None = typer.Option(None, "--size", help="""Number of memories to return"""),
+    type: str | None = typer.Option(None, "--type", help="""Memory type"""),
 ) -> None:
     """Retrieve memories statistics
 
@@ -188,7 +188,7 @@ Docs: https://api.immich.app/endpoints/memories/memoriesStatistics
 @app.command("remove-memory-assets")
 def remove_memory_assets(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Memory ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     ids: list[str] = typer.Option(..., "--ids"),
 ) -> None:
@@ -231,12 +231,12 @@ Docs: https://api.immich.app/endpoints/memories/removeMemoryAssets
 @app.command("search-memories")
 def search_memories(
     ctx: typer.Context,
-    for_: str | None = typer.Option(None, "--for"),
-    is_saved: bool | None = typer.Option(None, "--is-saved"),
-    is_trashed: bool | None = typer.Option(None, "--is-trashed"),
-    order: str | None = typer.Option(None, "--order"),
-    size: int | None = typer.Option(None, "--size"),
-    type: str | None = typer.Option(None, "--type"),
+    for_: str | None = typer.Option(None, "--for", help="""Filter by date"""),
+    is_saved: bool | None = typer.Option(None, "--is-saved", help="""Filter by saved status"""),
+    is_trashed: bool | None = typer.Option(None, "--is-trashed", help="""Include trashed memories"""),
+    order: str | None = typer.Option(None, "--order", help="""Sort order"""),
+    size: int | None = typer.Option(None, "--size", help="""Number of memories to return"""),
+    type: str | None = typer.Option(None, "--type", help="""Memory type"""),
 ) -> None:
     """Retrieve memories
 
@@ -264,7 +264,7 @@ Docs: https://api.immich.app/endpoints/memories/searchMemories
 @app.command("update-memory")
 def update_memory(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Memory ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     is_saved: bool | None = typer.Option(None, "--isSaved"),
     memory_at: str | None = typer.Option(None, "--memoryAt"),

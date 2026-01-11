@@ -15,9 +15,9 @@ Docs: https://api.immich.app/endpoints/shared-links""", context_settings={'help_
 @app.command("add-shared-link-assets")
 def add_shared_link_assets(
     ctx: typer.Context,
-    id: str,
-    key: str | None = typer.Option(None, "--key"),
-    slug: str | None = typer.Option(None, "--slug"),
+    id: str = typer.Argument(..., help="""Shared link ID"""),
+    key: str | None = typer.Option(None, "--key", help="""Access key for shared links"""),
+    slug: str | None = typer.Option(None, "--slug", help="""Access slug for shared links"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     asset_ids: list[str] = typer.Option(..., "--assetIds"),
 ) -> None:
@@ -141,8 +141,8 @@ Docs: https://api.immich.app/endpoints/shared-links/createSharedLink
 @app.command("get-all-shared-links")
 def get_all_shared_links(
     ctx: typer.Context,
-    album_id: str | None = typer.Option(None, "--album-id"),
-    id: str | None = typer.Option(None, "--id"),
+    album_id: str | None = typer.Option(None, "--album-id", help="""Filter by album ID"""),
+    id: str | None = typer.Option(None, "--id", help="""Filter by shared link ID"""),
 ) -> None:
     """Retrieve all shared links
 
@@ -162,10 +162,10 @@ Docs: https://api.immich.app/endpoints/shared-links/getAllSharedLinks
 @app.command("get-my-shared-link")
 def get_my_shared_link(
     ctx: typer.Context,
-    key: str | None = typer.Option(None, "--key"),
-    password: str | None = typer.Option(None, "--password"),
-    slug: str | None = typer.Option(None, "--slug"),
-    token: str | None = typer.Option(None, "--token"),
+    key: str | None = typer.Option(None, "--key", help="""Access key for shared links"""),
+    password: str | None = typer.Option(None, "--password", help="""Link password"""),
+    slug: str | None = typer.Option(None, "--slug", help="""Access slug for shared links"""),
+    token: str | None = typer.Option(None, "--token", help="""Access token"""),
 ) -> None:
     """Retrieve current shared link
 
@@ -189,7 +189,7 @@ Docs: https://api.immich.app/endpoints/shared-links/getMySharedLink
 @app.command("get-shared-link-by-id")
 def get_shared_link_by_id(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Shared link ID"""),
 ) -> None:
     """Retrieve a shared link
 
@@ -206,7 +206,7 @@ Docs: https://api.immich.app/endpoints/shared-links/getSharedLinkById
 @app.command("remove-shared-link")
 def remove_shared_link(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Shared link ID"""),
 ) -> None:
     """Delete a shared link
 
@@ -223,9 +223,9 @@ Docs: https://api.immich.app/endpoints/shared-links/removeSharedLink
 @app.command("remove-shared-link-assets")
 def remove_shared_link_assets(
     ctx: typer.Context,
-    id: str,
-    key: str | None = typer.Option(None, "--key"),
-    slug: str | None = typer.Option(None, "--slug"),
+    id: str = typer.Argument(..., help="""Shared link ID"""),
+    key: str | None = typer.Option(None, "--key", help="""Access key for shared links"""),
+    slug: str | None = typer.Option(None, "--slug", help="""Access slug for shared links"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     asset_ids: list[str] = typer.Option(..., "--assetIds"),
 ) -> None:
@@ -272,7 +272,7 @@ Docs: https://api.immich.app/endpoints/shared-links/removeSharedLinkAssets
 @app.command("update-shared-link")
 def update_shared_link(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Shared link ID"""),
     json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),
     allow_download: bool | None = typer.Option(None, "--allowDownload"),
     allow_upload: bool | None = typer.Option(None, "--allowUpload"),
