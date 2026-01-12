@@ -80,26 +80,11 @@ jobs:
       - name: Start Immich server
         working-directory: ./immich-git-repo/e2e
         run: |
-          docker compose up --build --renew-anon-volumes --force-recreate --remove-orphans > /tmp/docker-compose.log 2>&1 &
-          COMPOSE_PID=$!
-          echo "Waiting for Immich server to be ready..."
-          timeout=60
-          elapsed=0
-          while ! grep -q "Immich Microservices is running" /tmp/docker-compose.log 2>/dev/null; do
-            if [ $elapsed -ge $timeout ]; then
-              echo "Server failed to start within $timeout seconds"
-              echo "=== Docker Compose Logs ==="
-              cat /tmp/docker-compose.log
-              echo "=== Docker Compose Status ==="
-              docker compose logs
-              kill $COMPOSE_PID 2>/dev/null || true
-              exit 1
-            fi
-            sleep 2
-            elapsed=$((elapsed + 2))
-            echo "Waiting for server... (${elapsed}s/${timeout}s)"
-          done
-          echo "Server is ready!"
+          # matching with upstream Immich e2e setup (`e2e/src/setup/docker-compose.ts`)
+          docker compose up -d --build --renew-anon-volumes --force-recreate --remove-orphans
+          echo "Waiting for Immich e2e environment to be ready..."
+          timeout 60s bash -lc 'docker compose logs -f --no-color --tail=0 | grep -m 1 "Immich Microservices is running"'
+          echo "Immich e2e environment is ready!"
 
       - name: Run e2e tests
         env:
@@ -115,7 +100,7 @@ jobs:
       - name: Teardown Immich server
         if: always()
         working-directory: ./immich-git-repo/e2e
-        run: docker compose down -v
+        run: docker compose down
 
   release:
     runs-on: ubuntu-latest
