@@ -869,29 +869,6 @@ def generate_tag_app(
     return "\n".join(lines)
 
 
-def generate_init_py(tags: list[str]) -> str:
-    """Generate __init__.py with lazy import map for commands."""
-    lines = [
-        '"""Lazy import map for CLI commands (auto-generated, do not edit)."""',
-        "",
-        "from __future__ import annotations",
-        "",
-        "# Lazy import map: module_name -> CLI command name",
-        "# Modules are imported lazily in app.py for faster shell completion",
-        "_MODULE_MAP: dict[str, str] = {",
-    ]
-
-    # Sort tags for consistent output
-    for tag in sorted(tags):
-        module_name = to_snake_case(tag)
-        app_name = to_kebab_case(tag)
-        lines.append(f'    "{module_name}": "{app_name}",')
-
-    lines.append("}")
-
-    return "\n".join(lines)
-
-
 def main() -> int:
     """Main codegen entrypoint."""
     parser = argparse.ArgumentParser(
@@ -940,11 +917,6 @@ def main() -> int:
 
         app_file = commands_dir / f"{tag_snake}.py"
         app_file.write_text(app_content, encoding="utf-8")
-
-    # Generate __init__.py with lazy import map
-    init_content = generate_init_py(list(operations_by_tag.keys()))
-    init_file = commands_dir / "__init__.py"
-    init_file.write_text(init_content, encoding="utf-8")
 
     print(f"Generated CLI commands for {len(operations_by_tag)} tags")
 
