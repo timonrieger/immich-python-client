@@ -41,3 +41,11 @@ _MODULE_MAP: dict[str, str] = {
     "views": "views",
     "workflows": "workflows",
 }
+
+# Wrapper module map: module_name -> full import path for wrapper modules
+# Wrapper modules extend the auto-generated commands with convenience methods
+_WRAPPERS: dict[str, str] = {
+    "assets": "immich.cli_wrapper.commands.assets",
+    "download": "immich.cli_wrapper.commands.download",
+    "users": "immich.cli_wrapper.commands.users",
+}

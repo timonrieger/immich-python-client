@@ -31,10 +31,13 @@ app = typer.Typer(
 console = Console()
 stderr_console = Console(file=sys.stderr)
 
-from immich.cli.commands import _MODULE_MAP
+from immich.cli.commands import _MODULE_MAP, _WRAPPERS
 
 for module_name, app_name in _MODULE_MAP.items():
-    module = importlib.import_module(f"immich.cli.commands.{module_name}")
+    if module_name in _WRAPPERS:
+        module = importlib.import_module(_WRAPPERS[module_name])
+    else:
+        module = importlib.import_module(f"immich.cli.commands.{module_name}")
     app.add_typer(module.app, name=app_name)
 
 
