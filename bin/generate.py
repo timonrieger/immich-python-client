@@ -13,7 +13,6 @@ import os
 import shutil
 import subprocess  # nosec: B404
 from pathlib import Path
-import requests  # type: ignore[import-untyped]
 
 
 def project_root() -> Path:

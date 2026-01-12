@@ -29,38 +29,40 @@ MP4_BASE64 = "AAAAIGZ0eXBtcDQyAAAAAG1wNDJtcDQxaXNvbWF2YzEAAAGhtZGF0AAACrgYF//+q3
 async def client_with_api_key(tmp_path: Path):
     """Set up admin user, create API key, and return authenticated client."""
     base_url = os.environ.get("IMMICH_API_URL", "http://127.0.0.1:2285/api")
-    
+
     # Create unauthenticated client for setup
     setup_client = AsyncClient(base_url=base_url)
-    
+
     try:
         # Sign up admin
         await setup_client.authentication.sign_up_admin(
-            SignUpDto(email="admin@immich.cloud", name="Immich Admin", password="password")
+            SignUpDto(
+                email="admin@immich.cloud", name="Immich Admin", password="password"
+            )
         )
-        
+
         # Login to get access token
         login_response = await setup_client.authentication.login(
             LoginCredentialDto(email="admin@immich.cloud", password="password")
         )
-        
+
         # Mark admin as onboarded
         await setup_client.system_metadata.update_admin_onboarding(
             AdminOnboardingUpdateDto(is_onboarded=True),
             _headers={"Authorization": f"Bearer {login_response.access_token}"},
         )
-        
+
         # Create API key with all permissions
         api_key_response = await setup_client.api_keys.create_api_key(
             APIKeyCreateDto(name="e2e", permissions=[Permission.ALL]),
             _headers={"Authorization": f"Bearer {login_response.access_token}"},
         )
-        
+
         # Create authenticated client with API key
         client = AsyncClient(base_url=base_url, api_key=api_key_response.secret)
-        
+
         yield client
-        
+
         await client.close()
     finally:
         await setup_client.close()
@@ -84,7 +86,9 @@ def test_video(tmp_path: Path) -> Path:
 
 @pytest.mark.asyncio
 @pytest.mark.e2e
-async def test_assets_upload(client_with_api_key: AsyncClient, test_image: Path, test_video: Path, tmp_path: Path):
+async def test_assets_upload(
+    client_with_api_key: AsyncClient, test_image: Path, test_video: Path, tmp_path: Path
+):
     """Test AssetsApiWrapped.upload method."""
     result = await client_with_api_key.assets.upload(
         [test_image, test_video],
@@ -92,7 +96,7 @@ async def test_assets_upload(client_with_api_key: AsyncClient, test_image: Path,
         concurrency=2,
         show_progress=False,
     )
-    
+
     assert result.stats.total == 2
     assert result.stats.uploaded == 2
     assert len(result.uploaded) == 2
@@ -112,13 +116,13 @@ async def test_assets_download_asset_to_file(
     )
     assert len(upload_result.uploaded) == 1
     asset_id = UUID(upload_result.uploaded[0].asset.id)
-    
+
     # Download the asset
     out_dir = tmp_path / "downloads"
     downloaded_path = await client_with_api_key.assets.download_asset_to_file(
         id=asset_id, out_dir=out_dir, show_progress=False
     )
-    
+
     assert downloaded_path.exists()
     assert downloaded_path.is_file()
     assert downloaded_path.read_bytes() == test_image.read_bytes()
@@ -136,13 +140,13 @@ async def test_assets_view_asset_to_file(
     )
     assert len(upload_result.uploaded) == 1
     asset_id = UUID(upload_result.uploaded[0].asset.id)
-    
+
     # Download thumbnail
     out_dir = tmp_path / "thumbnails"
     thumbnail_path = await client_with_api_key.assets.view_asset_to_file(
         id=asset_id, out_dir=out_dir, size=AssetMediaSize.THUMBNAIL, show_progress=False
     )
-    
+
     assert thumbnail_path.exists()
     assert thumbnail_path.is_file()
 
@@ -159,13 +163,13 @@ async def test_assets_play_asset_video_to_file(
     )
     assert len(upload_result.uploaded) == 1
     asset_id = UUID(upload_result.uploaded[0].asset.id)
-    
+
     # Download video stream
     out_dir = tmp_path / "videos"
     video_path = await client_with_api_key.assets.play_asset_video_to_file(
         id=asset_id, out_dir=out_dir, show_progress=False
     )
-    
+
     assert video_path.exists()
     assert video_path.is_file()
 
@@ -182,16 +186,16 @@ async def test_download_archive_to_file(
     )
     assert len(upload_result.uploaded) == 1
     asset_id = UUID(upload_result.uploaded[0].asset.id)
-    
+
     # Create download info
     download_info = DownloadInfoDto(asset_ids=[asset_id])
-    
+
     # Download archive
     out_dir = tmp_path / "archives"
     archive_paths = await client_with_api_key.download.download_archive_to_file(
         download_info=download_info, out_dir=out_dir, show_progress=False
     )
-    
+
     assert len(archive_paths) == 1
     assert archive_paths[0].exists()
     assert archive_paths[0].suffix == ".zip"
@@ -206,16 +210,16 @@ async def test_users_get_profile_image_to_file(
     # Get current user info
     my_user = await client_with_api_key.users.get_my_user()
     user_id = UUID(my_user.id)
-    
+
     # Upload profile image
     img_bytes = test_image.read_bytes()
     await client_with_api_key.users.create_profile_image(file=img_bytes)
-    
+
     # Download profile image
     out_dir = tmp_path / "profiles"
     profile_path = await client_with_api_key.users.get_profile_image_to_file(
         id=user_id, out_dir=out_dir, show_progress=False
     )
-    
+
     assert profile_path.exists()
     assert profile_path.is_file()
