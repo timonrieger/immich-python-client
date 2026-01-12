@@ -257,7 +257,7 @@ def get_file_times(path: Path, stats: os.stat_result) -> tuple[datetime, datetim
         if sys.platform == "win32":
             ctime = stats.st_ctime
         else:
-            ctime = statx(path).btime
+            ctime = statx(os.fspath(path)).btime
 
     return datetime.fromtimestamp(
         ctime or mtime, tz=timezone.utc
