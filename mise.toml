@@ -1,6 +1,5 @@
 [tools]
-# reuse UV_PYTHON from the CI environment to avoid installing two versions of Python (performance)
-python = "{{ get_env(name='UV_PYTHON', default='3.14.2') }}"
+python = "3.14.2"
 uv = "0.9.21"
 
 # https://mise.jdx.dev/mise-cookbook/python.html#mise-uv

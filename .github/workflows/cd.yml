@@ -28,6 +28,9 @@ jobs:
       pull-requests: write
     env:
       UV_PYTHON: ${{ matrix.python-version }}
+      # technically not needed, since uv will read UV_PYTHON from the environment,
+      # but this way uv can reuse mise's installed Python (performance)
+      MISE_PYTHON_VERSION: ${{ matrix.python-version }}
 
     strategy:
       fail-fast: false
