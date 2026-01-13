@@ -13,8 +13,7 @@
       "matchPackageNames": [
         "uv",
         "uv_build",
-        "astral-sh/uv",
-        "astral-sh/setup-uv"
+        "astral-sh/uv"
       ]
     }
   ]
