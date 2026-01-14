@@ -50,7 +50,7 @@ async def client_with_api_key():
         # Mark admin as onboarded
         await setup_client.system_metadata.update_admin_onboarding(
             # NOTE: type ignore likely a ty issue
-            AdminOnboardingUpdateDto(is_onboarded=True),  # type: ignore[missing-argument]
+            AdminOnboardingUpdateDto(isOnboarded=True),
             _headers={"Authorization": f"Bearer {login_response.access_token}"},
         )
 
