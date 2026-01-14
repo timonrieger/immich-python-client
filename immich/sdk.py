@@ -308,7 +308,7 @@ class AsyncClient:
             base_url=base_url,
         )
         self.base_client = ApiClient(configuration=self.config)
-        self.base_client.user_agent = "immich-python-client"
+        self.base_client.user_agent = "immich-py"
 
         # Allow caller to inject a pre-configured aiohttp session.
         if http_client is not None:

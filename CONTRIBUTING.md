@@ -10,7 +10,7 @@ Pull requests are welcome! However, **modifications to auto-generated code will 
 
 Before submitting a pull request, please ensure:
 
-1. Install [mise](https://mise.jdx.dev) if you haven't already
+1. Install [mise](https://mise.jdx.dev)
 2. Run `mise run ci:check` to verify all checks pass
 3. To see all available tasks, run `mise tasks ls`
 
@@ -18,30 +18,13 @@ Before submitting a pull request, please ensure:
 
 The following directories contain auto-generated code and **must not be modified**:
 
-- `immich/client/` - All files in this directory are auto-generated from the Immich OpenAPI specification
-- Any other auto-generated files
-
-The generated client is updated by automation:
-
-- Generate client from the upstream Immich release
-- Commit to `main` via an automation PR
-- Tag + release to PyPI
-
-### What can be contributed
-
-You can contribute to:
-
-- Custom wrapper functions in `immich/client_wrapper/`
-- Internal functions in `immich/_internal/`
-- SDK-level code in `immich/sdk.py`
-- Tests in `tests/`
-- Documentation improvements
-- Build and development tooling
+- `immich/client/` - Auto-generated client
+- `immich/cli/commands/` - Auto-generated CLI commands
 
 ## Where to report issues
 
-- **Immich API/spec problems** (missing/incorrect endpoints, schema issues, breaking API changes): open an issue in the upstream Immich repository.
-- **Generation issues** (bad codegen output, typing problems introduced by generation, workflow automation problems): open an issue here.
+- **Immich API/spec problems** (missing/incorrect endpoints, schema issues, breaking API changes): open an issue in the [upstream Immich repository](https://github.com/immich-app/immich/issues).
+- **Generation issues** (bad codegen output, typing problems introduced by generation, workflow automation problems): open an issue [here](https://github.com/timonrieger/immich-py/issues).
 
 When reporting, include:
 
