@@ -38,8 +38,8 @@ dependencies = [
 build = ["uv==0.9.21"]
 
 [project.urls]
-Repository = "https://github.com/timonrieger/immich-python-client"
-Changelog = "https://github.com/timonrieger/immich-python-client/releases"
+Repository = "https://github.com/timonrieger/immich-py"
+Changelog = "https://github.com/timonrieger/immich-py/releases"
 
 [build-system]
 requires = ["uv_build==0.9.21"]

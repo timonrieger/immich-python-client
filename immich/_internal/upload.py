@@ -305,7 +305,7 @@ async def upload_file(
     response = await assets_api.upload_asset_with_http_info(
         asset_data=asset_data,
         device_asset_id=f"{filepath.name}-{stats.st_size}".replace(" ", ""),
-        device_id="immich-python-client",
+        device_id="immich-py",
         file_created_at=file_created_at,
         file_modified_at=file_modified_at,
         sidecar_data=sidecar_data,
