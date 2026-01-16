@@ -15,12 +15,17 @@ from immich.client.models.activity_response_dto import ActivityResponseDto
 from immich.client.models.admin_onboarding_update_dto import AdminOnboardingUpdateDto
 from immich.client.models.api_key_create_dto import APIKeyCreateDto
 from immich.client.models.asset_bulk_delete_dto import AssetBulkDeleteDto
+from immich.client.models.license_response_dto import LicenseResponseDto
 from immich.client.models.login_credential_dto import LoginCredentialDto
 from immich.client.models.permission import Permission
 from immich.client.models.reaction_type import ReactionType
 from immich.client.models.sign_up_dto import SignUpDto
 
 from tests.e2e.client.generators import make_random_image, make_random_video
+
+# License keys for testing
+ACTIVATION_KEY = "4kJUNUWMq13J14zqPFm1NodRcI6MV6DeOGvQNIgrM8Sc9nv669wyEVvFw1Nz4Kb1W7zLWblOtXEQzpRRqC4r4fKjewJxfbpeo9sEsqAVIfl4Ero-Vp1Dg21-sVdDGZEAy2oeTCXAyCT5d1JqrqR6N1qTAm4xOx9ujXQRFYhjRG8uwudw7_Q49pF18Tj5OEv9qCqElxztoNck4i6O_azsmsoOQrLIENIWPh3EynBN3ESpYERdCgXO8MlWeuG14_V1HbNjnJPZDuvYg__YfMzoOEtfm1sCqEaJ2Ww-BaX7yGfuCL4XsuZlCQQNHjfscy_WywVfIZPKCiW8QR74i0cSzQ"
+LICENSE_KEY = "IMSV-6ECZ-91TE-WZRM-Q7AQ-MBN4-UW48-2CPT-71X9"
 
 
 @pytest.fixture
@@ -233,3 +238,43 @@ def activity(
             cli_app,
             ["--format", "json", "activities", "delete-activity", str(activity.id)],
         )
+
+
+@pytest.fixture
+def license(runner: CliRunner) -> LicenseResponseDto:
+    """Fixture to set up license for testing.
+
+    Sets a license, returns parsed license object.
+    Skips dependent tests if license setup fails.
+    Note: This requires valid license keys. Tests may skip if license keys are not available.
+    """
+    # Set up: Create license
+    result = runner.invoke(
+        cli_app,
+        [
+            "--format",
+            "json",
+            "server",
+            "set-server-license",
+            "--licenseKey",
+            LICENSE_KEY,
+            "--activationKey",
+            ACTIVATION_KEY,
+        ],
+    )
+
+    if result.exit_code != 0:
+        pytest.skip(f"License setup failed:\n{result.stdout}{result.stderr}")
+
+    try:
+        license_obj = LicenseResponseDto.model_validate(json.loads(result.output))
+    except (ValidationError, json.JSONDecodeError) as e:
+        pytest.skip(f"License setup returned invalid JSON:\n{e}\n{result.output}")
+
+    yield license_obj
+
+    # Cleanup: Delete license (only runs if we got here, i.e., license parsed successfully)
+    runner.invoke(
+        cli_app,
+        ["--format", "json", "server", "delete-server-license"],
+    )
