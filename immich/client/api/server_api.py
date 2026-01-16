@@ -1127,7 +1127,7 @@ class ServerApi:
         )
         return response_data.response
 
-    def _get_server_featurest(
+    def _get_server_features_serialize(
         self,
         _request_auth,
         _content_type,

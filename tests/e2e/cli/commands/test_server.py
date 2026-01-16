@@ -4,7 +4,6 @@ from immich.cli.app import app as cli_app
 
 
 @pytest.mark.e2e
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "subcommand",
     [
@@ -24,7 +23,7 @@ from immich.cli.app import app as cli_app
         "ping-server",
     ],
 )
-async def test_server_cli_standard_commands_smoke(
+def test_server_cli_standard_commands_smoke(
     runner: CliRunner,
     subcommand: str,
 ) -> None:
