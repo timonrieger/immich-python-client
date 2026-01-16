@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 import typer
 
 from immich.cli.runtime import (
@@ -57,8 +58,8 @@ def create_memory(
     asset_ids: list[str] | None = typer.Option(None, "--assetIds"),
     data_year: float = typer.Option(..., "--data.year"),
     is_saved: bool | None = typer.Option(None, "--isSaved"),
-    memory_at: str = typer.Option(..., "--memoryAt"),
-    seen_at: str | None = typer.Option(None, "--seenAt"),
+    memory_at: datetime = typer.Option(..., "--memoryAt"),
+    seen_at: datetime | None = typer.Option(None, "--seenAt"),
     type: str = typer.Option(..., "--type"),
 ) -> None:
     """Create a memory
@@ -136,7 +137,7 @@ def get_memory(
 @app.command("memories-statistics")
 def memories_statistics(
     ctx: typer.Context,
-    for_: str | None = typer.Option(None, "--for"),
+    for_: datetime | None = typer.Option(None, "--for"),
     is_saved: str | None = typer.Option(None, "--is-saved"),
     is_trashed: str | None = typer.Option(None, "--is-trashed"),
     order: str | None = typer.Option(None, "--order"),
@@ -203,7 +204,7 @@ def remove_memory_assets(
 @app.command("search-memories")
 def search_memories(
     ctx: typer.Context,
-    for_: str | None = typer.Option(None, "--for"),
+    for_: datetime | None = typer.Option(None, "--for"),
     is_saved: str | None = typer.Option(None, "--is-saved"),
     is_trashed: str | None = typer.Option(None, "--is-trashed"),
     order: str | None = typer.Option(None, "--order"),
@@ -240,8 +241,8 @@ def update_memory(
     ctx: typer.Context,
     id: str,
     is_saved: bool | None = typer.Option(None, "--isSaved"),
-    memory_at: str | None = typer.Option(None, "--memoryAt"),
-    seen_at: str | None = typer.Option(None, "--seenAt"),
+    memory_at: datetime | None = typer.Option(None, "--memoryAt"),
+    seen_at: datetime | None = typer.Option(None, "--seenAt"),
 ) -> None:
     """Update a memory
 

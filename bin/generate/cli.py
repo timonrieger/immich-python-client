@@ -93,7 +93,7 @@ def python_type_from_schema(
             if fmt == "uuid":
                 return "str"  # UUID as string for CLI
             if fmt == "date-time":
-                return "str"  # datetime as string for CLI
+                return "datetime"  # Typer handles datetime parsing
         return "str"
     elif schema_type == "integer":
         return "int"
@@ -826,6 +826,7 @@ def generate_tag_app(
         "",
         "from __future__ import annotations",
         "",
+        "from datetime import datetime",
         "from pathlib import Path",
         "import typer",
         "",

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 import typer
 
 from immich.cli.runtime import print_response, run_command
@@ -17,8 +18,8 @@ Docs: https://api.immich.app/endpoints/map""",
 @app.command("get-map-markers")
 def get_map_markers(
     ctx: typer.Context,
-    file_created_after: str | None = typer.Option(None, "--file-created-after"),
-    file_created_before: str | None = typer.Option(None, "--file-created-before"),
+    file_created_after: datetime | None = typer.Option(None, "--file-created-after"),
+    file_created_before: datetime | None = typer.Option(None, "--file-created-before"),
     is_archived: str | None = typer.Option(None, "--is-archived"),
     is_favorite: str | None = typer.Option(None, "--is-favorite"),
     with_partners: str | None = typer.Option(None, "--with-partners"),
