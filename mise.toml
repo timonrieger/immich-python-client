@@ -28,9 +28,10 @@ description = "Run e2e client tests"
 
 [tasks."test:e2e"]
 run = [
-  { tasks = ["test:e2e:client", "test:e2e:cli"] },
+  { task = "test:e2e:client" },
+  { task = "test:e2e:cli" },
 ]
-description = "Run e2e tests"
+description = "Run e2e tests sequentially"
 
 [tasks."test:unit:cov"]
 run = "uv run pytest tests/unit --cov=immich --cov-report=html --cov-report=term"
