@@ -23,41 +23,22 @@ Docs: https://api.immich.app/endpoints/workflows""",
 @app.command("create-workflow")
 def create_workflow(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    actions: list[str] = typer.Option(..., "--actions", help="""Workflow actions"""),
-    description: str | None = typer.Option(
-        None, "--description", help="""Workflow description"""
-    ),
-    enabled: bool | None = typer.Option(None, "--enabled", help="""Workflow enabled"""),
-    filters: list[str] = typer.Option(..., "--filters", help="""Workflow filters"""),
-    name: str = typer.Option(..., "--name", help="""Workflow name"""),
-    trigger_type: str = typer.Option(..., "--triggerType", help="""Trigger type"""),
+    actions: list[str] = typer.Option(..., "--actions", help="JSON string for actions"),
+    description: str | None = typer.Option(None, "--description"),
+    enabled: bool | None = typer.Option(None, "--enabled"),
+    filters: list[str] = typer.Option(..., "--filters", help="JSON string for filters"),
+    name: str = typer.Option(..., "--name"),
+    trigger_type: str = typer.Option(..., "--triggerType"),
 ) -> None:
     """Create a workflow
 
     Docs: https://api.immich.app/endpoints/workflows/createWorkflow
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([actions, description, enabled, filters, name, trigger_type])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.workflow_create_dto import WorkflowCreateDto
-
-        workflow_create_dto = deserialize_request_body(json_data, WorkflowCreateDto)
-        kwargs["workflow_create_dto"] = workflow_create_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             actions,
             description,
@@ -87,11 +68,10 @@ def create_workflow(
         if trigger_type is None:
             raise SystemExit("Error: --triggerType is required")
         set_nested(json_data, ["triggerType"], trigger_type)
-        if json_data:
-            from immich.client.models.workflow_create_dto import WorkflowCreateDto
+        from immich.client.models.workflow_create_dto import WorkflowCreateDto
 
-            workflow_create_dto = deserialize_request_body(json_data, WorkflowCreateDto)
-            kwargs["workflow_create_dto"] = workflow_create_dto
+        workflow_create_dto = deserialize_request_body(json_data, WorkflowCreateDto)
+        kwargs["workflow_create_dto"] = workflow_create_dto
     client = ctx.obj["client"]
     api_group = client.workflows
     result = run_command(client, api_group, "create_workflow", **kwargs)
@@ -102,7 +82,7 @@ def create_workflow(
 @app.command("delete-workflow")
 def delete_workflow(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Workflow ID"""),
+    id: str,
 ) -> None:
     """Delete a workflow
 
@@ -120,7 +100,7 @@ def delete_workflow(
 @app.command("get-workflow")
 def get_workflow(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Workflow ID"""),
+    id: str,
 ) -> None:
     """Retrieve a workflow
 
@@ -154,24 +134,17 @@ def get_workflows(
 @app.command("update-workflow")
 def update_workflow(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Workflow ID"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
+    id: str,
     actions: list[str] | None = typer.Option(
-        None, "--actions", help="""Workflow actions"""
+        None, "--actions", help="JSON string for actions"
     ),
-    description: str | None = typer.Option(
-        None, "--description", help="""Workflow description"""
-    ),
-    enabled: bool | None = typer.Option(None, "--enabled", help="""Workflow enabled"""),
+    description: str | None = typer.Option(None, "--description"),
+    enabled: bool | None = typer.Option(None, "--enabled"),
     filters: list[str] | None = typer.Option(
-        None, "--filters", help="""Workflow filters"""
+        None, "--filters", help="JSON string for filters"
     ),
-    name: str | None = typer.Option(None, "--name", help="""Workflow name"""),
-    trigger_type: str | None = typer.Option(
-        None, "--triggerType", help="""Trigger type"""
-    ),
+    name: str | None = typer.Option(None, "--name"),
+    trigger_type: str | None = typer.Option(None, "--triggerType"),
 ) -> None:
     """Update a workflow
 
@@ -179,24 +152,10 @@ def update_workflow(
     """
     kwargs = {}
     kwargs["id"] = id
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([actions, description, enabled, filters, name, trigger_type])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.workflow_update_dto import WorkflowUpdateDto
-
-        workflow_update_dto = deserialize_request_body(json_data, WorkflowUpdateDto)
-        kwargs["workflow_update_dto"] = workflow_update_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             actions,
             description,
@@ -222,11 +181,10 @@ def update_workflow(
             set_nested(json_data, ["name"], name)
         if trigger_type is not None:
             set_nested(json_data, ["triggerType"], trigger_type)
-        if json_data:
-            from immich.client.models.workflow_update_dto import WorkflowUpdateDto
+        from immich.client.models.workflow_update_dto import WorkflowUpdateDto
 
-            workflow_update_dto = deserialize_request_body(json_data, WorkflowUpdateDto)
-            kwargs["workflow_update_dto"] = workflow_update_dto
+        workflow_update_dto = deserialize_request_body(json_data, WorkflowUpdateDto)
+        kwargs["workflow_update_dto"] = workflow_update_dto
     client = ctx.obj["client"]
     api_group = client.workflows
     result = run_command(client, api_group, "update_workflow", **kwargs)

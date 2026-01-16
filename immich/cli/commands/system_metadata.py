@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import typer
 
 from immich.cli.runtime import (
@@ -71,40 +70,17 @@ def get_version_check_state(
 @app.command("update-admin-onboarding")
 def update_admin_onboarding(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    is_onboarded: bool = typer.Option(
-        ..., "--isOnboarded", help="""Is admin onboarded"""
-    ),
+    is_onboarded: bool = typer.Option(..., "--isOnboarded"),
 ) -> None:
     """Update admin onboarding
 
     Docs: https://api.immich.app/endpoints/system-metadata/updateAdminOnboarding
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([is_onboarded])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.admin_onboarding_update_dto import (
-            AdminOnboardingUpdateDto,
-        )
-
-        admin_onboarding_update_dto = deserialize_request_body(
-            json_data, AdminOnboardingUpdateDto
-        )
-        kwargs["admin_onboarding_update_dto"] = admin_onboarding_update_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             is_onboarded,
         ]
@@ -114,15 +90,14 @@ def update_admin_onboarding(
         if is_onboarded is None:
             raise SystemExit("Error: --isOnboarded is required")
         set_nested(json_data, ["isOnboarded"], is_onboarded)
-        if json_data:
-            from immich.client.models.admin_onboarding_update_dto import (
-                AdminOnboardingUpdateDto,
-            )
+        from immich.client.models.admin_onboarding_update_dto import (
+            AdminOnboardingUpdateDto,
+        )
 
-            admin_onboarding_update_dto = deserialize_request_body(
-                json_data, AdminOnboardingUpdateDto
-            )
-            kwargs["admin_onboarding_update_dto"] = admin_onboarding_update_dto
+        admin_onboarding_update_dto = deserialize_request_body(
+            json_data, AdminOnboardingUpdateDto
+        )
+        kwargs["admin_onboarding_update_dto"] = admin_onboarding_update_dto
     client = ctx.obj["client"]
     api_group = client.system_metadata
     result = run_command(client, api_group, "update_admin_onboarding", **kwargs)

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import typer
 
 from immich.cli.runtime import (
@@ -23,10 +22,7 @@ Docs: https://api.immich.app/endpoints/queues""",
 @app.command("empty-queue")
 def empty_queue(
     ctx: typer.Context,
-    name: str = typer.Argument(..., help="""Queue name"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
+    name: str,
     failed: bool | None = typer.Option(
         None,
         "--failed",
@@ -39,24 +35,10 @@ def empty_queue(
     """
     kwargs = {}
     kwargs["name"] = name
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([failed])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.queue_delete_dto import QueueDeleteDto
-
-        queue_delete_dto = deserialize_request_body(json_data, QueueDeleteDto)
-        kwargs["queue_delete_dto"] = queue_delete_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             failed,
         ]
@@ -65,11 +47,10 @@ def empty_queue(
         json_data = {}
         if failed is not None:
             set_nested(json_data, ["failed"], failed)
-        if json_data:
-            from immich.client.models.queue_delete_dto import QueueDeleteDto
+        from immich.client.models.queue_delete_dto import QueueDeleteDto
 
-            queue_delete_dto = deserialize_request_body(json_data, QueueDeleteDto)
-            kwargs["queue_delete_dto"] = queue_delete_dto
+        queue_delete_dto = deserialize_request_body(json_data, QueueDeleteDto)
+        kwargs["queue_delete_dto"] = queue_delete_dto
     client = ctx.obj["client"]
     api_group = client.queues
     result = run_command(client, api_group, "empty_queue", **kwargs)
@@ -80,7 +61,7 @@ def empty_queue(
 @app.command("get-queue")
 def get_queue(
     ctx: typer.Context,
-    name: str = typer.Argument(..., help="""Queue name"""),
+    name: str,
 ) -> None:
     """Retrieve a queue
 
@@ -98,10 +79,8 @@ def get_queue(
 @app.command("get-queue-jobs")
 def get_queue_jobs(
     ctx: typer.Context,
-    name: str = typer.Argument(..., help="""Queue name"""),
-    status: list[str] | None = typer.Option(
-        None, "--status", help="""Filter by job status"""
-    ),
+    name: str,
+    status: list[str] | None = typer.Option(None, "--status"),
 ) -> None:
     """Retrieve queue jobs
 
@@ -137,13 +116,8 @@ def get_queues(
 @app.command("update-queue")
 def update_queue(
     ctx: typer.Context,
-    name: str = typer.Argument(..., help="""Queue name"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    is_paused: bool | None = typer.Option(
-        None, "--isPaused", help="""Whether to pause the queue"""
-    ),
+    name: str,
+    is_paused: bool | None = typer.Option(None, "--isPaused"),
 ) -> None:
     """Update a queue
 
@@ -151,24 +125,10 @@ def update_queue(
     """
     kwargs = {}
     kwargs["name"] = name
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([is_paused])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.queue_update_dto import QueueUpdateDto
-
-        queue_update_dto = deserialize_request_body(json_data, QueueUpdateDto)
-        kwargs["queue_update_dto"] = queue_update_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             is_paused,
         ]
@@ -177,11 +137,10 @@ def update_queue(
         json_data = {}
         if is_paused is not None:
             set_nested(json_data, ["isPaused"], is_paused)
-        if json_data:
-            from immich.client.models.queue_update_dto import QueueUpdateDto
+        from immich.client.models.queue_update_dto import QueueUpdateDto
 
-            queue_update_dto = deserialize_request_body(json_data, QueueUpdateDto)
-            kwargs["queue_update_dto"] = queue_update_dto
+        queue_update_dto = deserialize_request_body(json_data, QueueUpdateDto)
+        kwargs["queue_update_dto"] = queue_update_dto
     client = ctx.obj["client"]
     api_group = client.queues
     result = run_command(client, api_group, "update_queue", **kwargs)

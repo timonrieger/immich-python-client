@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import typer
 
 from immich.cli.runtime import (
@@ -23,15 +22,10 @@ Docs: https://api.immich.app/endpoints/sessions""",
 @app.command("create-session")
 def create_session(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    device_os: str | None = typer.Option(None, "--deviceOS", help="""Device OS"""),
-    device_type: str | None = typer.Option(
-        None, "--deviceType", help="""Device type"""
-    ),
+    device_os: str | None = typer.Option(None, "--deviceOS"),
+    device_type: str | None = typer.Option(None, "--deviceType"),
     duration: float | None = typer.Option(
-        None, "--duration", help="""Session duration in seconds"""
+        None, "--duration", help="""session duration, in seconds"""
     ),
 ) -> None:
     """Create a session
@@ -39,24 +33,10 @@ def create_session(
     Docs: https://api.immich.app/endpoints/sessions/createSession
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([device_os, device_type, duration])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.session_create_dto import SessionCreateDto
-
-        session_create_dto = deserialize_request_body(json_data, SessionCreateDto)
-        kwargs["session_create_dto"] = session_create_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             device_os,
             device_type,
@@ -71,11 +51,10 @@ def create_session(
             set_nested(json_data, ["deviceType"], device_type)
         if duration is not None:
             set_nested(json_data, ["duration"], duration)
-        if json_data:
-            from immich.client.models.session_create_dto import SessionCreateDto
+        from immich.client.models.session_create_dto import SessionCreateDto
 
-            session_create_dto = deserialize_request_body(json_data, SessionCreateDto)
-            kwargs["session_create_dto"] = session_create_dto
+        session_create_dto = deserialize_request_body(json_data, SessionCreateDto)
+        kwargs["session_create_dto"] = session_create_dto
     client = ctx.obj["client"]
     api_group = client.sessions
     result = run_command(client, api_group, "create_session", **kwargs)
@@ -102,7 +81,7 @@ def delete_all_sessions(
 @app.command("delete-session")
 def delete_session(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Session ID"""),
+    id: str,
 ) -> None:
     """Delete a session
 
@@ -136,7 +115,7 @@ def get_sessions(
 @app.command("lock-session")
 def lock_session(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Session ID"""),
+    id: str,
 ) -> None:
     """Lock a session
 
@@ -154,13 +133,8 @@ def lock_session(
 @app.command("update-session")
 def update_session(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Session ID"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    is_pending_sync_reset: bool | None = typer.Option(
-        None, "--isPendingSyncReset", help="""Reset pending sync state"""
-    ),
+    id: str,
+    is_pending_sync_reset: bool | None = typer.Option(None, "--isPendingSyncReset"),
 ) -> None:
     """Update a session
 
@@ -168,24 +142,10 @@ def update_session(
     """
     kwargs = {}
     kwargs["id"] = id
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([is_pending_sync_reset])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.session_update_dto import SessionUpdateDto
-
-        session_update_dto = deserialize_request_body(json_data, SessionUpdateDto)
-        kwargs["session_update_dto"] = session_update_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             is_pending_sync_reset,
         ]
@@ -194,11 +154,10 @@ def update_session(
         json_data = {}
         if is_pending_sync_reset is not None:
             set_nested(json_data, ["isPendingSyncReset"], is_pending_sync_reset)
-        if json_data:
-            from immich.client.models.session_update_dto import SessionUpdateDto
+        from immich.client.models.session_update_dto import SessionUpdateDto
 
-            session_update_dto = deserialize_request_body(json_data, SessionUpdateDto)
-            kwargs["session_update_dto"] = session_update_dto
+        session_update_dto = deserialize_request_body(json_data, SessionUpdateDto)
+        kwargs["session_update_dto"] = session_update_dto
     client = ctx.obj["client"]
     api_group = client.sessions
     result = run_command(client, api_group, "update_session", **kwargs)

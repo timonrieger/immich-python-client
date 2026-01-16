@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import typer
 
 from immich.cli.runtime import (
@@ -23,7 +22,7 @@ Docs: https://api.immich.app/endpoints/notifications""",
 @app.command("delete-notification")
 def delete_notification(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Notification ID"""),
+    id: str,
 ) -> None:
     """Delete a notification
 
@@ -41,38 +40,17 @@ def delete_notification(
 @app.command("delete-notifications")
 def delete_notifications(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    ids: list[str] = typer.Option(..., "--ids", help="""Notification IDs to delete"""),
+    ids: list[str] = typer.Option(..., "--ids"),
 ) -> None:
     """Delete notifications
 
     Docs: https://api.immich.app/endpoints/notifications/deleteNotifications
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([ids])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.notification_delete_all_dto import (
-            NotificationDeleteAllDto,
-        )
-
-        notification_delete_all_dto = deserialize_request_body(
-            json_data, NotificationDeleteAllDto
-        )
-        kwargs["notification_delete_all_dto"] = notification_delete_all_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             ids,
         ]
@@ -82,15 +60,14 @@ def delete_notifications(
         if ids is None:
             raise SystemExit("Error: --ids is required")
         set_nested(json_data, ["ids"], ids)
-        if json_data:
-            from immich.client.models.notification_delete_all_dto import (
-                NotificationDeleteAllDto,
-            )
+        from immich.client.models.notification_delete_all_dto import (
+            NotificationDeleteAllDto,
+        )
 
-            notification_delete_all_dto = deserialize_request_body(
-                json_data, NotificationDeleteAllDto
-            )
-            kwargs["notification_delete_all_dto"] = notification_delete_all_dto
+        notification_delete_all_dto = deserialize_request_body(
+            json_data, NotificationDeleteAllDto
+        )
+        kwargs["notification_delete_all_dto"] = notification_delete_all_dto
     client = ctx.obj["client"]
     api_group = client.notifications
     result = run_command(client, api_group, "delete_notifications", **kwargs)
@@ -101,7 +78,7 @@ def delete_notifications(
 @app.command("get-notification")
 def get_notification(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Notification ID"""),
+    id: str,
 ) -> None:
     """Get a notification
 
@@ -119,16 +96,10 @@ def get_notification(
 @app.command("get-notifications")
 def get_notifications(
     ctx: typer.Context,
-    id: str | None = typer.Option(None, "--id", help="""Filter by notification ID"""),
-    level: str | None = typer.Option(
-        None, "--level", help="""Filter by notification level"""
-    ),
-    type: str | None = typer.Option(
-        None, "--type", help="""Filter by notification type"""
-    ),
-    unread: bool | None = typer.Option(
-        None, "--unread", help="""Filter by unread status"""
-    ),
+    id: str | None = typer.Option(None, "--id"),
+    level: str | None = typer.Option(None, "--level"),
+    type: str | None = typer.Option(None, "--type"),
+    unread: bool | None = typer.Option(None, "--unread"),
 ) -> None:
     """Retrieve notifications
 
@@ -153,13 +124,8 @@ def get_notifications(
 @app.command("update-notification")
 def update_notification(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Notification ID"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    read_at: str | None = typer.Option(
-        None, "--readAt", help="""Date when notification was read"""
-    ),
+    id: str,
+    read_at: str | None = typer.Option(None, "--readAt"),
 ) -> None:
     """Update a notification
 
@@ -167,26 +133,10 @@ def update_notification(
     """
     kwargs = {}
     kwargs["id"] = id
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([read_at])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.notification_update_dto import NotificationUpdateDto
-
-        notification_update_dto = deserialize_request_body(
-            json_data, NotificationUpdateDto
-        )
-        kwargs["notification_update_dto"] = notification_update_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             read_at,
         ]
@@ -195,15 +145,12 @@ def update_notification(
         json_data = {}
         if read_at is not None:
             set_nested(json_data, ["readAt"], read_at)
-        if json_data:
-            from immich.client.models.notification_update_dto import (
-                NotificationUpdateDto,
-            )
+        from immich.client.models.notification_update_dto import NotificationUpdateDto
 
-            notification_update_dto = deserialize_request_body(
-                json_data, NotificationUpdateDto
-            )
-            kwargs["notification_update_dto"] = notification_update_dto
+        notification_update_dto = deserialize_request_body(
+            json_data, NotificationUpdateDto
+        )
+        kwargs["notification_update_dto"] = notification_update_dto
     client = ctx.obj["client"]
     api_group = client.notifications
     result = run_command(client, api_group, "update_notification", **kwargs)
@@ -214,41 +161,18 @@ def update_notification(
 @app.command("update-notifications")
 def update_notifications(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    ids: list[str] = typer.Option(..., "--ids", help="""Notification IDs to update"""),
-    read_at: str | None = typer.Option(
-        None, "--readAt", help="""Date when notifications were read"""
-    ),
+    ids: list[str] = typer.Option(..., "--ids"),
+    read_at: str | None = typer.Option(None, "--readAt"),
 ) -> None:
     """Update notifications
 
     Docs: https://api.immich.app/endpoints/notifications/updateNotifications
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([ids, read_at])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.notification_update_all_dto import (
-            NotificationUpdateAllDto,
-        )
-
-        notification_update_all_dto = deserialize_request_body(
-            json_data, NotificationUpdateAllDto
-        )
-        kwargs["notification_update_all_dto"] = notification_update_all_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             ids,
             read_at,
@@ -261,15 +185,14 @@ def update_notifications(
         set_nested(json_data, ["ids"], ids)
         if read_at is not None:
             set_nested(json_data, ["readAt"], read_at)
-        if json_data:
-            from immich.client.models.notification_update_all_dto import (
-                NotificationUpdateAllDto,
-            )
+        from immich.client.models.notification_update_all_dto import (
+            NotificationUpdateAllDto,
+        )
 
-            notification_update_all_dto = deserialize_request_body(
-                json_data, NotificationUpdateAllDto
-            )
-            kwargs["notification_update_all_dto"] = notification_update_all_dto
+        notification_update_all_dto = deserialize_request_body(
+            json_data, NotificationUpdateAllDto
+        )
+        kwargs["notification_update_all_dto"] = notification_update_all_dto
     client = ctx.obj["client"]
     api_group = client.notifications
     result = run_command(client, api_group, "update_notifications", **kwargs)

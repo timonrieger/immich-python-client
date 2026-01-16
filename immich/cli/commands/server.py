@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import typer
 
 from immich.cli.runtime import (
@@ -247,39 +246,18 @@ def ping_server(
 @app.command("set-server-license")
 def set_server_license(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    activation_key: str = typer.Option(
-        ..., "--activationKey", help="""Activation key"""
-    ),
-    license_key: str = typer.Option(
-        ..., "--licenseKey", help="""License key (format: IM(SV|CL)(-XXXX){8})"""
-    ),
+    activation_key: str = typer.Option(..., "--activationKey"),
+    license_key: str = typer.Option(..., "--licenseKey"),
 ) -> None:
     """Set server product key
 
     Docs: https://api.immich.app/endpoints/server/setServerLicense
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([activation_key, license_key])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.license_key_dto import LicenseKeyDto
-
-        license_key_dto = deserialize_request_body(json_data, LicenseKeyDto)
-        kwargs["license_key_dto"] = license_key_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             activation_key,
             license_key,
@@ -293,11 +271,10 @@ def set_server_license(
         if license_key is None:
             raise SystemExit("Error: --licenseKey is required")
         set_nested(json_data, ["licenseKey"], license_key)
-        if json_data:
-            from immich.client.models.license_key_dto import LicenseKeyDto
+        from immich.client.models.license_key_dto import LicenseKeyDto
 
-            license_key_dto = deserialize_request_body(json_data, LicenseKeyDto)
-            kwargs["license_key_dto"] = license_key_dto
+        license_key_dto = deserialize_request_body(json_data, LicenseKeyDto)
+        kwargs["license_key_dto"] = license_key_dto
     client = ctx.obj["client"]
     api_group = client.server
     result = run_command(client, api_group, "set_server_license", **kwargs)

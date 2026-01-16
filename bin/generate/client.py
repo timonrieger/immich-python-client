@@ -11,8 +11,6 @@ import argparse
 import os
 import shutil
 import subprocess  # nosec: B404
-import urllib.error
-import urllib.request
 from pathlib import Path
 
 

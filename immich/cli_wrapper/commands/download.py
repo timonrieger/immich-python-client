@@ -9,7 +9,13 @@ from pathlib import Path
 import typer
 
 from immich.cli.commands import download as download_commands
-from immich.cli.runtime import deserialize_request_body, handle_api_error, print_response, run_async, set_nested
+from immich.cli.runtime import (
+    deserialize_request_body,
+    handle_api_error,
+    print_response,
+    run_async,
+    set_nested,
+)
 from immich.client.exceptions import ApiException
 
 # Reuse the existing app from the generated commands
@@ -19,7 +25,9 @@ app = download_commands.app
 @app.command("download-archive-to-file")
 def download_archive_to_file(
     ctx: typer.Context,
-    out_dir: Path = typer.Argument(..., help="Output directory for the downloaded ZIP archives"),
+    out_dir: Path = typer.Argument(
+        ..., help="Output directory for the downloaded ZIP archives"
+    ),
     key: str | None = typer.Option(
         None, "--key", help="Public share key (last path segment of /share/<key>)"
     ),
@@ -27,14 +35,14 @@ def download_archive_to_file(
         None, "--slug", help="Public share slug (last path segment of /s/<slug>)"
     ),
     show_progress: bool = typer.Option(
-        True, "--show-progress/--no-show-progress", help="Show progress bars (per-archive bytes + overall archive count)"
+        True,
+        "--show-progress/--no-show-progress",
+        help="Show progress bars (per-archive bytes + overall archive count)",
     ),
     json_str: str | None = typer.Option(
         None, "--json", help="Inline JSON request body for DownloadInfoDto"
     ),
-    album_id: str | None = typer.Option(
-        None, "--albumId", help="Album ID to download"
-    ),
+    album_id: str | None = typer.Option(None, "--albumId", help="Album ID to download"),
     archive_size: int | None = typer.Option(
         None, "--archiveSize", help="Archive size limit in bytes"
     ),
@@ -56,7 +64,7 @@ def download_archive_to_file(
     # Build DownloadInfoDto from --json or dotted flags (same pattern as get-download-info)
     has_json = json_str is not None
     has_flags = any([album_id, archive_size, asset_ids, user_id])
-    
+
     if has_json and has_flags:
         raise SystemExit(
             "Error: Cannot use both --json and dotted body flags together. Use one or the other."
@@ -65,10 +73,11 @@ def download_archive_to_file(
         raise SystemExit(
             "Error: Request body is required. Provide --json or use dotted body flags."
         )
-    
+
     if json_str is not None:
         json_data = json.loads(json_str)
         from immich.client.models.download_info_dto import DownloadInfoDto
+
         download_info = deserialize_request_body(json_data, DownloadInfoDto)
     elif has_flags:
         json_data = {}
@@ -82,9 +91,12 @@ def download_archive_to_file(
             set_nested(json_data, ["userId"], user_id)
         if json_data:
             from immich.client.models.download_info_dto import DownloadInfoDto
+
             download_info = deserialize_request_body(json_data, DownloadInfoDto)
         else:
-            raise SystemExit("Error: At least one field must be provided for download_info")
+            raise SystemExit(
+                "Error: At least one field must be provided for download_info"
+            )
 
     async def _call_and_close() -> list[Path]:
         try:

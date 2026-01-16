@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import typer
 
 from immich.cli.runtime import (
@@ -23,38 +22,21 @@ Docs: https://api.immich.app/endpoints/users-admin""",
 @app.command("create-user-admin")
 def create_user_admin(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    avatar_color: str | None = typer.Option(
-        None, "--avatarColor", help="""Avatar color"""
-    ),
-    email: str = typer.Option(..., "--email", help="""User email"""),
-    is_admin: bool | None = typer.Option(
-        None, "--isAdmin", help="""Grant admin privileges"""
-    ),
-    name: str = typer.Option(..., "--name", help="""User name"""),
-    notify: bool | None = typer.Option(
-        None, "--notify", help="""Send notification email"""
-    ),
-    password: str = typer.Option(..., "--password", help="""User password"""),
-    quota_size_in_bytes: int | None = typer.Option(
-        None, "--quotaSizeInBytes", help="""Storage quota in bytes"""
-    ),
-    should_change_password: bool | None = typer.Option(
-        None, "--shouldChangePassword", help="""Require password change on next login"""
-    ),
-    storage_label: str | None = typer.Option(
-        None, "--storageLabel", help="""Storage label"""
-    ),
+    avatar_color: str | None = typer.Option(None, "--avatarColor"),
+    email: str = typer.Option(..., "--email"),
+    is_admin: bool | None = typer.Option(None, "--isAdmin"),
+    name: str = typer.Option(..., "--name"),
+    notify: bool | None = typer.Option(None, "--notify"),
+    password: str = typer.Option(..., "--password"),
+    quota_size_in_bytes: int | None = typer.Option(None, "--quotaSizeInBytes"),
+    should_change_password: bool | None = typer.Option(None, "--shouldChangePassword"),
+    storage_label: str | None = typer.Option(None, "--storageLabel"),
 ) -> None:
     """Create a user
 
     Docs: https://api.immich.app/endpoints/users-admin/createUserAdmin
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any(
         [
             avatar_color,
@@ -68,21 +50,9 @@ def create_user_admin(
             storage_label,
         ]
     )
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.user_admin_create_dto import UserAdminCreateDto
-
-        user_admin_create_dto = deserialize_request_body(json_data, UserAdminCreateDto)
-        kwargs["user_admin_create_dto"] = user_admin_create_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             avatar_color,
             email,
@@ -118,13 +88,10 @@ def create_user_admin(
             set_nested(json_data, ["shouldChangePassword"], should_change_password)
         if storage_label is not None:
             set_nested(json_data, ["storageLabel"], storage_label)
-        if json_data:
-            from immich.client.models.user_admin_create_dto import UserAdminCreateDto
+        from immich.client.models.user_admin_create_dto import UserAdminCreateDto
 
-            user_admin_create_dto = deserialize_request_body(
-                json_data, UserAdminCreateDto
-            )
-            kwargs["user_admin_create_dto"] = user_admin_create_dto
+        user_admin_create_dto = deserialize_request_body(json_data, UserAdminCreateDto)
+        kwargs["user_admin_create_dto"] = user_admin_create_dto
     client = ctx.obj["client"]
     api_group = client.users_admin
     result = run_command(client, api_group, "create_user_admin", **kwargs)
@@ -135,13 +102,8 @@ def create_user_admin(
 @app.command("delete-user-admin")
 def delete_user_admin(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""User ID"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    force: bool | None = typer.Option(
-        None, "--force", help="""Force delete even if user has assets"""
-    ),
+    id: str,
+    force: bool | None = typer.Option(None, "--force"),
 ) -> None:
     """Delete a user
 
@@ -149,24 +111,10 @@ def delete_user_admin(
     """
     kwargs = {}
     kwargs["id"] = id
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([force])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.user_admin_delete_dto import UserAdminDeleteDto
-
-        user_admin_delete_dto = deserialize_request_body(json_data, UserAdminDeleteDto)
-        kwargs["user_admin_delete_dto"] = user_admin_delete_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             force,
         ]
@@ -175,13 +123,10 @@ def delete_user_admin(
         json_data = {}
         if force is not None:
             set_nested(json_data, ["force"], force)
-        if json_data:
-            from immich.client.models.user_admin_delete_dto import UserAdminDeleteDto
+        from immich.client.models.user_admin_delete_dto import UserAdminDeleteDto
 
-            user_admin_delete_dto = deserialize_request_body(
-                json_data, UserAdminDeleteDto
-            )
-            kwargs["user_admin_delete_dto"] = user_admin_delete_dto
+        user_admin_delete_dto = deserialize_request_body(json_data, UserAdminDeleteDto)
+        kwargs["user_admin_delete_dto"] = user_admin_delete_dto
     client = ctx.obj["client"]
     api_group = client.users_admin
     result = run_command(client, api_group, "delete_user_admin", **kwargs)
@@ -192,7 +137,7 @@ def delete_user_admin(
 @app.command("get-user-admin")
 def get_user_admin(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""User ID"""),
+    id: str,
 ) -> None:
     """Retrieve a user
 
@@ -210,7 +155,7 @@ def get_user_admin(
 @app.command("get-user-preferences-admin")
 def get_user_preferences_admin(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""User ID"""),
+    id: str,
 ) -> None:
     """Retrieve user preferences
 
@@ -228,7 +173,7 @@ def get_user_preferences_admin(
 @app.command("get-user-sessions-admin")
 def get_user_sessions_admin(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""User ID"""),
+    id: str,
 ) -> None:
     """Retrieve user sessions
 
@@ -246,16 +191,10 @@ def get_user_sessions_admin(
 @app.command("get-user-statistics-admin")
 def get_user_statistics_admin(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""User ID"""),
-    is_favorite: bool | None = typer.Option(
-        None, "--is-favorite", help="""Filter by favorite status"""
-    ),
-    is_trashed: bool | None = typer.Option(
-        None, "--is-trashed", help="""Filter by trash status"""
-    ),
-    visibility: str | None = typer.Option(
-        None, "--visibility", help="""Filter by visibility"""
-    ),
+    id: str,
+    is_favorite: bool | None = typer.Option(None, "--is-favorite"),
+    is_trashed: bool | None = typer.Option(None, "--is-trashed"),
+    visibility: str | None = typer.Option(None, "--visibility"),
 ) -> None:
     """Retrieve user statistics
 
@@ -279,7 +218,7 @@ def get_user_statistics_admin(
 @app.command("restore-user-admin")
 def restore_user_admin(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""User ID"""),
+    id: str,
 ) -> None:
     """Restore a deleted user
 
@@ -297,10 +236,8 @@ def restore_user_admin(
 @app.command("search-users-admin")
 def search_users_admin(
     ctx: typer.Context,
-    id: str | None = typer.Option(None, "--id", help="""User ID filter"""),
-    with_deleted: bool | None = typer.Option(
-        None, "--with-deleted", help="""Include deleted users"""
-    ),
+    id: str | None = typer.Option(None, "--id"),
+    with_deleted: bool | None = typer.Option(None, "--with-deleted"),
 ) -> None:
     """Search users
 
@@ -321,29 +258,16 @@ def search_users_admin(
 @app.command("update-user-admin")
 def update_user_admin(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""User ID"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    avatar_color: str | None = typer.Option(
-        None, "--avatarColor", help="""Avatar color"""
-    ),
-    email: str | None = typer.Option(None, "--email", help="""User email"""),
-    is_admin: bool | None = typer.Option(
-        None, "--isAdmin", help="""Grant admin privileges"""
-    ),
-    name: str | None = typer.Option(None, "--name", help="""User name"""),
-    password: str | None = typer.Option(None, "--password", help="""User password"""),
-    pin_code: str | None = typer.Option(None, "--pinCode", help="""PIN code"""),
-    quota_size_in_bytes: int | None = typer.Option(
-        None, "--quotaSizeInBytes", help="""Storage quota in bytes"""
-    ),
-    should_change_password: bool | None = typer.Option(
-        None, "--shouldChangePassword", help="""Require password change on next login"""
-    ),
-    storage_label: str | None = typer.Option(
-        None, "--storageLabel", help="""Storage label"""
-    ),
+    id: str,
+    avatar_color: str | None = typer.Option(None, "--avatarColor"),
+    email: str | None = typer.Option(None, "--email"),
+    is_admin: bool | None = typer.Option(None, "--isAdmin"),
+    name: str | None = typer.Option(None, "--name"),
+    password: str | None = typer.Option(None, "--password"),
+    pin_code: str | None = typer.Option(None, "--pinCode"),
+    quota_size_in_bytes: int | None = typer.Option(None, "--quotaSizeInBytes"),
+    should_change_password: bool | None = typer.Option(None, "--shouldChangePassword"),
+    storage_label: str | None = typer.Option(None, "--storageLabel"),
 ) -> None:
     """Update a user
 
@@ -351,8 +275,6 @@ def update_user_admin(
     """
     kwargs = {}
     kwargs["id"] = id
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any(
         [
             avatar_color,
@@ -366,21 +288,9 @@ def update_user_admin(
             storage_label,
         ]
     )
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.user_admin_update_dto import UserAdminUpdateDto
-
-        user_admin_update_dto = deserialize_request_body(json_data, UserAdminUpdateDto)
-        kwargs["user_admin_update_dto"] = user_admin_update_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             avatar_color,
             email,
@@ -413,13 +323,10 @@ def update_user_admin(
             set_nested(json_data, ["shouldChangePassword"], should_change_password)
         if storage_label is not None:
             set_nested(json_data, ["storageLabel"], storage_label)
-        if json_data:
-            from immich.client.models.user_admin_update_dto import UserAdminUpdateDto
+        from immich.client.models.user_admin_update_dto import UserAdminUpdateDto
 
-            user_admin_update_dto = deserialize_request_body(
-                json_data, UserAdminUpdateDto
-            )
-            kwargs["user_admin_update_dto"] = user_admin_update_dto
+        user_admin_update_dto = deserialize_request_body(json_data, UserAdminUpdateDto)
+        kwargs["user_admin_update_dto"] = user_admin_update_dto
     client = ctx.obj["client"]
     api_group = client.users_admin
     result = run_command(client, api_group, "update_user_admin", **kwargs)
@@ -430,85 +337,44 @@ def update_user_admin(
 @app.command("update-user-preferences-admin")
 def update_user_preferences_admin(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""User ID"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
+    id: str,
     albums_default_asset_order: str | None = typer.Option(
-        None, "--albums.defaultAssetOrder", help="""Asset sort order"""
+        None, "--albums.defaultAssetOrder"
     ),
-    avatar_color: str | None = typer.Option(
-        None, "--avatar.color", help="""Avatar color"""
-    ),
-    cast_g_cast_enabled: bool | None = typer.Option(
-        None, "--cast.gCastEnabled", help="""Whether Google Cast is enabled"""
-    ),
-    download_archive_size: int | None = typer.Option(
-        None, "--download.archiveSize", help="""Maximum archive size in bytes"""
-    ),
+    avatar_color: str | None = typer.Option(None, "--avatar.color"),
+    cast_g_cast_enabled: bool | None = typer.Option(None, "--cast.gCastEnabled"),
+    download_archive_size: int | None = typer.Option(None, "--download.archiveSize"),
     download_include_embedded_videos: bool | None = typer.Option(
-        None,
-        "--download.includeEmbeddedVideos",
-        help="""Whether to include embedded videos in downloads""",
+        None, "--download.includeEmbeddedVideos"
     ),
     email_notifications_album_invite: bool | None = typer.Option(
-        None,
-        "--emailNotifications.albumInvite",
-        help="""Whether to receive email notifications for album invites""",
+        None, "--emailNotifications.albumInvite"
     ),
     email_notifications_album_update: bool | None = typer.Option(
-        None,
-        "--emailNotifications.albumUpdate",
-        help="""Whether to receive email notifications for album updates""",
+        None, "--emailNotifications.albumUpdate"
     ),
     email_notifications_enabled: bool | None = typer.Option(
-        None,
-        "--emailNotifications.enabled",
-        help="""Whether email notifications are enabled""",
+        None, "--emailNotifications.enabled"
     ),
-    folders_enabled: bool | None = typer.Option(
-        None, "--folders.enabled", help="""Whether folders are enabled"""
-    ),
-    folders_sidebar_web: bool | None = typer.Option(
-        None, "--folders.sidebarWeb", help="""Whether folders appear in web sidebar"""
-    ),
-    memories_duration: int | None = typer.Option(
-        None, "--memories.duration", help="""Memory duration in seconds"""
-    ),
-    memories_enabled: bool | None = typer.Option(
-        None, "--memories.enabled", help="""Whether memories are enabled"""
-    ),
-    people_enabled: bool | None = typer.Option(
-        None, "--people.enabled", help="""Whether people are enabled"""
-    ),
-    people_sidebar_web: bool | None = typer.Option(
-        None, "--people.sidebarWeb", help="""Whether people appear in web sidebar"""
-    ),
+    folders_enabled: bool | None = typer.Option(None, "--folders.enabled"),
+    folders_sidebar_web: bool | None = typer.Option(None, "--folders.sidebarWeb"),
+    memories_duration: int | None = typer.Option(None, "--memories.duration"),
+    memories_enabled: bool | None = typer.Option(None, "--memories.enabled"),
+    people_enabled: bool | None = typer.Option(None, "--people.enabled"),
+    people_sidebar_web: bool | None = typer.Option(None, "--people.sidebarWeb"),
     purchase_hide_buy_button_until: str | None = typer.Option(
-        None,
-        "--purchase.hideBuyButtonUntil",
-        help="""Date until which to hide buy button""",
+        None, "--purchase.hideBuyButtonUntil"
     ),
     purchase_show_support_badge: bool | None = typer.Option(
-        None, "--purchase.showSupportBadge", help="""Whether to show support badge"""
+        None, "--purchase.showSupportBadge"
     ),
-    ratings_enabled: bool | None = typer.Option(
-        None, "--ratings.enabled", help="""Whether ratings are enabled"""
-    ),
-    shared_links_enabled: bool | None = typer.Option(
-        None, "--sharedLinks.enabled", help="""Whether shared links are enabled"""
-    ),
+    ratings_enabled: bool | None = typer.Option(None, "--ratings.enabled"),
+    shared_links_enabled: bool | None = typer.Option(None, "--sharedLinks.enabled"),
     shared_links_sidebar_web: bool | None = typer.Option(
-        None,
-        "--sharedLinks.sidebarWeb",
-        help="""Whether shared links appear in web sidebar""",
+        None, "--sharedLinks.sidebarWeb"
     ),
-    tags_enabled: bool | None = typer.Option(
-        None, "--tags.enabled", help="""Whether tags are enabled"""
-    ),
-    tags_sidebar_web: bool | None = typer.Option(
-        None, "--tags.sidebarWeb", help="""Whether tags appear in web sidebar"""
-    ),
+    tags_enabled: bool | None = typer.Option(None, "--tags.enabled"),
+    tags_sidebar_web: bool | None = typer.Option(None, "--tags.sidebarWeb"),
 ) -> None:
     """Update user preferences
 
@@ -516,8 +382,6 @@ def update_user_preferences_admin(
     """
     kwargs = {}
     kwargs["id"] = id
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any(
         [
             albums_default_asset_order,
@@ -543,25 +407,9 @@ def update_user_preferences_admin(
             tags_sidebar_web,
         ]
     )
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.user_preferences_update_dto import (
-            UserPreferencesUpdateDto,
-        )
-
-        user_preferences_update_dto = deserialize_request_body(
-            json_data, UserPreferencesUpdateDto
-        )
-        kwargs["user_preferences_update_dto"] = user_preferences_update_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             albums_default_asset_order,
             avatar_color,
@@ -656,15 +504,14 @@ def update_user_preferences_admin(
             set_nested(json_data, ["tags", "enabled"], tags_enabled)
         if tags_sidebar_web is not None:
             set_nested(json_data, ["tags", "sidebarWeb"], tags_sidebar_web)
-        if json_data:
-            from immich.client.models.user_preferences_update_dto import (
-                UserPreferencesUpdateDto,
-            )
+        from immich.client.models.user_preferences_update_dto import (
+            UserPreferencesUpdateDto,
+        )
 
-            user_preferences_update_dto = deserialize_request_body(
-                json_data, UserPreferencesUpdateDto
-            )
-            kwargs["user_preferences_update_dto"] = user_preferences_update_dto
+        user_preferences_update_dto = deserialize_request_body(
+            json_data, UserPreferencesUpdateDto
+        )
+        kwargs["user_preferences_update_dto"] = user_preferences_update_dto
     client = ctx.obj["client"]
     api_group = client.users_admin
     result = run_command(client, api_group, "update_user_preferences_admin", **kwargs)

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import typer
 
 from immich.cli.runtime import (
@@ -23,47 +22,26 @@ Docs: https://api.immich.app/endpoints/faces""",
 @app.command("create-face")
 def create_face(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    asset_id: str = typer.Option(..., "--assetId", help="""Asset ID"""),
-    height: int = typer.Option(..., "--height", help="""Face bounding box height"""),
-    image_height: int = typer.Option(
-        ..., "--imageHeight", help="""Image height in pixels"""
-    ),
-    image_width: int = typer.Option(
-        ..., "--imageWidth", help="""Image width in pixels"""
-    ),
-    person_id: str = typer.Option(..., "--personId", help="""Person ID"""),
-    width: int = typer.Option(..., "--width", help="""Face bounding box width"""),
-    x: int = typer.Option(..., "--x", help="""Face bounding box X coordinate"""),
-    y: int = typer.Option(..., "--y", help="""Face bounding box Y coordinate"""),
+    asset_id: str = typer.Option(..., "--assetId"),
+    height: int = typer.Option(..., "--height"),
+    image_height: int = typer.Option(..., "--imageHeight"),
+    image_width: int = typer.Option(..., "--imageWidth"),
+    person_id: str = typer.Option(..., "--personId"),
+    width: int = typer.Option(..., "--width"),
+    x: int = typer.Option(..., "--x"),
+    y: int = typer.Option(..., "--y"),
 ) -> None:
     """Create a face
 
     Docs: https://api.immich.app/endpoints/faces/createFace
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any(
         [asset_id, height, image_height, image_width, person_id, width, x, y]
     )
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.asset_face_create_dto import AssetFaceCreateDto
-
-        asset_face_create_dto = deserialize_request_body(json_data, AssetFaceCreateDto)
-        kwargs["asset_face_create_dto"] = asset_face_create_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             asset_id,
             height,
@@ -101,13 +79,10 @@ def create_face(
         if y is None:
             raise SystemExit("Error: --y is required")
         set_nested(json_data, ["y"], y)
-        if json_data:
-            from immich.client.models.asset_face_create_dto import AssetFaceCreateDto
+        from immich.client.models.asset_face_create_dto import AssetFaceCreateDto
 
-            asset_face_create_dto = deserialize_request_body(
-                json_data, AssetFaceCreateDto
-            )
-            kwargs["asset_face_create_dto"] = asset_face_create_dto
+        asset_face_create_dto = deserialize_request_body(json_data, AssetFaceCreateDto)
+        kwargs["asset_face_create_dto"] = asset_face_create_dto
     client = ctx.obj["client"]
     api_group = client.faces
     result = run_command(client, api_group, "create_face", **kwargs)
@@ -118,13 +93,8 @@ def create_face(
 @app.command("delete-face")
 def delete_face(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Face ID to delete"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    force: bool = typer.Option(
-        ..., "--force", help="""Force delete even if person has other faces"""
-    ),
+    id: str,
+    force: bool = typer.Option(..., "--force"),
 ) -> None:
     """Delete a face
 
@@ -132,24 +102,10 @@ def delete_face(
     """
     kwargs = {}
     kwargs["id"] = id
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([force])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.asset_face_delete_dto import AssetFaceDeleteDto
-
-        asset_face_delete_dto = deserialize_request_body(json_data, AssetFaceDeleteDto)
-        kwargs["asset_face_delete_dto"] = asset_face_delete_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             force,
         ]
@@ -159,13 +115,10 @@ def delete_face(
         if force is None:
             raise SystemExit("Error: --force is required")
         set_nested(json_data, ["force"], force)
-        if json_data:
-            from immich.client.models.asset_face_delete_dto import AssetFaceDeleteDto
+        from immich.client.models.asset_face_delete_dto import AssetFaceDeleteDto
 
-            asset_face_delete_dto = deserialize_request_body(
-                json_data, AssetFaceDeleteDto
-            )
-            kwargs["asset_face_delete_dto"] = asset_face_delete_dto
+        asset_face_delete_dto = deserialize_request_body(json_data, AssetFaceDeleteDto)
+        kwargs["asset_face_delete_dto"] = asset_face_delete_dto
     client = ctx.obj["client"]
     api_group = client.faces
     result = run_command(client, api_group, "delete_face", **kwargs)
@@ -176,7 +129,7 @@ def delete_face(
 @app.command("get-faces")
 def get_faces(
     ctx: typer.Context,
-    id: str = typer.Option(..., "--id", help="""Asset ID to retrieve faces for"""),
+    id: str = typer.Option(..., "--id"),
 ) -> None:
     """Retrieve faces for asset
 
@@ -194,11 +147,8 @@ def get_faces(
 @app.command("reassign-faces-by-id")
 def reassign_faces_by_id(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Person ID to assign the face to"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    body_id: str = typer.Option(..., "--id", help="""Face ID"""),
+    id: str,
+    body_id: str = typer.Option(..., "--id"),
 ) -> None:
     """Re-assign a face to another person
 
@@ -206,24 +156,10 @@ def reassign_faces_by_id(
     """
     kwargs = {}
     kwargs["id"] = id
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([body_id])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.face_dto import FaceDto
-
-        face_dto = deserialize_request_body(json_data, FaceDto)
-        kwargs["face_dto"] = face_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             body_id,
         ]
@@ -233,11 +169,10 @@ def reassign_faces_by_id(
         if body_id is None:
             raise SystemExit("Error: --id is required")
         set_nested(json_data, ["id"], body_id)
-        if json_data:
-            from immich.client.models.face_dto import FaceDto
+        from immich.client.models.face_dto import FaceDto
 
-            face_dto = deserialize_request_body(json_data, FaceDto)
-            kwargs["face_dto"] = face_dto
+        face_dto = deserialize_request_body(json_data, FaceDto)
+        kwargs["face_dto"] = face_dto
     client = ctx.obj["client"]
     api_group = client.faces
     result = run_command(client, api_group, "reassign_faces_by_id", **kwargs)

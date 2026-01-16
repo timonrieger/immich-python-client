@@ -20,12 +20,18 @@ app = users_commands.app
 def get_profile_image_to_file(
     ctx: typer.Context,
     id: str = typer.Argument(..., help="User ID (UUID)"),
-    out_dir: Path = typer.Argument(..., help="Output directory for the profile image file"),
+    out_dir: Path = typer.Argument(
+        ..., help="Output directory for the profile image file"
+    ),
     filename: str | None = typer.Option(
-        None, "--filename", help="Filename to use (defaults to original filename or profile-{user_id})"
+        None,
+        "--filename",
+        help="Filename to use (defaults to original filename or profile-{user_id})",
     ),
     show_progress: bool = typer.Option(
-        True, "--show-progress/--no-show-progress", help="Show progress bar while downloading"
+        True,
+        "--show-progress/--no-show-progress",
+        help="Show progress bar while downloading",
     ),
 ) -> None:
     """Download a user's profile image and save it to a file.

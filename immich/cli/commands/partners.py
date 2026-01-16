@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import typer
 
 from immich.cli.runtime import (
@@ -23,36 +22,17 @@ Docs: https://api.immich.app/endpoints/partners""",
 @app.command("create-partner")
 def create_partner(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    shared_with_id: str = typer.Option(
-        ..., "--sharedWithId", help="""User ID to share with"""
-    ),
+    shared_with_id: str = typer.Option(..., "--sharedWithId"),
 ) -> None:
     """Create a partner
 
     Docs: https://api.immich.app/endpoints/partners/createPartner
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([shared_with_id])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.partner_create_dto import PartnerCreateDto
-
-        partner_create_dto = deserialize_request_body(json_data, PartnerCreateDto)
-        kwargs["partner_create_dto"] = partner_create_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             shared_with_id,
         ]
@@ -62,11 +42,10 @@ def create_partner(
         if shared_with_id is None:
             raise SystemExit("Error: --sharedWithId is required")
         set_nested(json_data, ["sharedWithId"], shared_with_id)
-        if json_data:
-            from immich.client.models.partner_create_dto import PartnerCreateDto
+        from immich.client.models.partner_create_dto import PartnerCreateDto
 
-            partner_create_dto = deserialize_request_body(json_data, PartnerCreateDto)
-            kwargs["partner_create_dto"] = partner_create_dto
+        partner_create_dto = deserialize_request_body(json_data, PartnerCreateDto)
+        kwargs["partner_create_dto"] = partner_create_dto
     client = ctx.obj["client"]
     api_group = client.partners
     result = run_command(client, api_group, "create_partner", **kwargs)
@@ -77,7 +56,7 @@ def create_partner(
 @app.command("create-partner-deprecated")
 def create_partner_deprecated(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""User ID to share with"""),
+    id: str,
 ) -> None:
     """Create a partner
 
@@ -95,7 +74,7 @@ def create_partner_deprecated(
 @app.command("get-partners")
 def get_partners(
     ctx: typer.Context,
-    direction: str = typer.Option(..., "--direction", help="""Partner direction"""),
+    direction: str = typer.Option(..., "--direction"),
 ) -> None:
     """Retrieve partners
 
@@ -113,7 +92,7 @@ def get_partners(
 @app.command("remove-partner")
 def remove_partner(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Partner ID"""),
+    id: str,
 ) -> None:
     """Remove a partner
 
@@ -131,13 +110,8 @@ def remove_partner(
 @app.command("update-partner")
 def update_partner(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Partner ID"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    in_timeline: bool = typer.Option(
-        ..., "--inTimeline", help="""Show partner assets in timeline"""
-    ),
+    id: str,
+    in_timeline: bool = typer.Option(..., "--inTimeline"),
 ) -> None:
     """Update a partner
 
@@ -145,24 +119,10 @@ def update_partner(
     """
     kwargs = {}
     kwargs["id"] = id
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([in_timeline])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.partner_update_dto import PartnerUpdateDto
-
-        partner_update_dto = deserialize_request_body(json_data, PartnerUpdateDto)
-        kwargs["partner_update_dto"] = partner_update_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             in_timeline,
         ]
@@ -172,11 +132,10 @@ def update_partner(
         if in_timeline is None:
             raise SystemExit("Error: --inTimeline is required")
         set_nested(json_data, ["inTimeline"], in_timeline)
-        if json_data:
-            from immich.client.models.partner_update_dto import PartnerUpdateDto
+        from immich.client.models.partner_update_dto import PartnerUpdateDto
 
-            partner_update_dto = deserialize_request_body(json_data, PartnerUpdateDto)
-            kwargs["partner_update_dto"] = partner_update_dto
+        partner_update_dto = deserialize_request_body(json_data, PartnerUpdateDto)
+        kwargs["partner_update_dto"] = partner_update_dto
     client = ctx.obj["client"]
     api_group = client.partners
     result = run_command(client, api_group, "update_partner", **kwargs)

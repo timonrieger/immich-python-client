@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import typer
 
 from immich.cli.runtime import (
@@ -23,41 +22,20 @@ Docs: https://api.immich.app/endpoints/activities""",
 @app.command("create-activity")
 def create_activity(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    album_id: str = typer.Option(..., "--albumId", help="""Album ID"""),
-    asset_id: str | None = typer.Option(
-        None, "--assetId", help="""Asset ID (if activity is for an asset)"""
-    ),
-    comment: str | None = typer.Option(
-        None, "--comment", help="""Comment text (required if type is comment)"""
-    ),
-    type: str = typer.Option(..., "--type", help="""Activity type (like or comment)"""),
+    album_id: str = typer.Option(..., "--albumId"),
+    asset_id: str | None = typer.Option(None, "--assetId"),
+    comment: str | None = typer.Option(None, "--comment"),
+    type: str = typer.Option(..., "--type"),
 ) -> None:
     """Create an activity
 
     Docs: https://api.immich.app/endpoints/activities/createActivity
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([album_id, asset_id, comment, type])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.activity_create_dto import ActivityCreateDto
-
-        activity_create_dto = deserialize_request_body(json_data, ActivityCreateDto)
-        kwargs["activity_create_dto"] = activity_create_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             album_id,
             asset_id,
@@ -77,11 +55,10 @@ def create_activity(
         if type is None:
             raise SystemExit("Error: --type is required")
         set_nested(json_data, ["type"], type)
-        if json_data:
-            from immich.client.models.activity_create_dto import ActivityCreateDto
+        from immich.client.models.activity_create_dto import ActivityCreateDto
 
-            activity_create_dto = deserialize_request_body(json_data, ActivityCreateDto)
-            kwargs["activity_create_dto"] = activity_create_dto
+        activity_create_dto = deserialize_request_body(json_data, ActivityCreateDto)
+        kwargs["activity_create_dto"] = activity_create_dto
     client = ctx.obj["client"]
     api_group = client.activities
     result = run_command(client, api_group, "create_activity", **kwargs)
@@ -92,7 +69,7 @@ def create_activity(
 @app.command("delete-activity")
 def delete_activity(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Activity ID to delete"""),
+    id: str,
 ) -> None:
     """Delete an activity
 
@@ -110,15 +87,11 @@ def delete_activity(
 @app.command("get-activities")
 def get_activities(
     ctx: typer.Context,
-    album_id: str = typer.Option(..., "--album-id", help="""Album ID"""),
-    asset_id: str | None = typer.Option(
-        None, "--asset-id", help="""Asset ID (if activity is for an asset)"""
-    ),
-    level: str | None = typer.Option(
-        None, "--level", help="""Filter by activity level"""
-    ),
-    type: str | None = typer.Option(None, "--type", help="""Filter by activity type"""),
-    user_id: str | None = typer.Option(None, "--user-id", help="""Filter by user ID"""),
+    album_id: str = typer.Option(..., "--album-id"),
+    asset_id: str | None = typer.Option(None, "--asset-id"),
+    level: str | None = typer.Option(None, "--level"),
+    type: str | None = typer.Option(None, "--type"),
+    user_id: str | None = typer.Option(None, "--user-id"),
 ) -> None:
     """List all activities
 
@@ -144,10 +117,8 @@ def get_activities(
 @app.command("get-activity-statistics")
 def get_activity_statistics(
     ctx: typer.Context,
-    album_id: str = typer.Option(..., "--album-id", help="""Album ID"""),
-    asset_id: str | None = typer.Option(
-        None, "--asset-id", help="""Asset ID (if activity is for an asset)"""
-    ),
+    album_id: str = typer.Option(..., "--album-id"),
+    asset_id: str | None = typer.Option(None, "--asset-id"),
 ) -> None:
     """Retrieve activity statistics
 

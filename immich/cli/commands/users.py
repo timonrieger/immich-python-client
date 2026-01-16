@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 import typer
 
@@ -25,24 +24,21 @@ Docs: https://api.immich.app/endpoints/users""",
 @app.command("create-profile-image")
 def create_profile_image(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON with multipart fields (non-file)"
-    ),
-    file: Path = typer.Option(..., "--file", help="""Profile image file"""),
+    file: Path = typer.Option(..., "--file", help="File to upload for file"),
 ) -> None:
     """Create user profile image
 
     Docs: https://api.immich.app/endpoints/users/createProfileImage
     """
     kwargs = {}
-    json_data = json.loads(json_str) if json_str is not None else {}
+    json_data = {}  # noqa: F841
     missing: list[str] = []
     kwargs["file"] = load_file_bytes(file)
     if missing:
         raise SystemExit(
             "Error: missing required multipart fields: "
             + ", ".join(missing)
-            + ". Provide them via --json and/or file options."
+            + ". Provide them via file options."
         )
     client = ctx.obj["client"]
     api_group = client.users
@@ -134,7 +130,7 @@ def get_my_user(
 @app.command("get-profile-image")
 def get_profile_image(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""User ID"""),
+    id: str,
 ) -> None:
     """Retrieve user profile image
 
@@ -152,7 +148,7 @@ def get_profile_image(
 @app.command("get-user")
 def get_user(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""User ID"""),
+    id: str,
 ) -> None:
     """Retrieve a user
 
@@ -218,39 +214,18 @@ def search_users(
 @app.command("set-user-license")
 def set_user_license(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    activation_key: str = typer.Option(
-        ..., "--activationKey", help="""Activation key"""
-    ),
-    license_key: str = typer.Option(
-        ..., "--licenseKey", help="""License key (format: IM(SV|CL)(-XXXX){8})"""
-    ),
+    activation_key: str = typer.Option(..., "--activationKey"),
+    license_key: str = typer.Option(..., "--licenseKey"),
 ) -> None:
     """Set user product key
 
     Docs: https://api.immich.app/endpoints/users/setUserLicense
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([activation_key, license_key])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.license_key_dto import LicenseKeyDto
-
-        license_key_dto = deserialize_request_body(json_data, LicenseKeyDto)
-        kwargs["license_key_dto"] = license_key_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             activation_key,
             license_key,
@@ -264,11 +239,10 @@ def set_user_license(
         if license_key is None:
             raise SystemExit("Error: --licenseKey is required")
         set_nested(json_data, ["licenseKey"], license_key)
-        if json_data:
-            from immich.client.models.license_key_dto import LicenseKeyDto
+        from immich.client.models.license_key_dto import LicenseKeyDto
 
-            license_key_dto = deserialize_request_body(json_data, LicenseKeyDto)
-            kwargs["license_key_dto"] = license_key_dto
+        license_key_dto = deserialize_request_body(json_data, LicenseKeyDto)
+        kwargs["license_key_dto"] = license_key_dto
     client = ctx.obj["client"]
     api_group = client.users
     result = run_command(client, api_group, "set_user_license", **kwargs)
@@ -279,36 +253,17 @@ def set_user_license(
 @app.command("set-user-onboarding")
 def set_user_onboarding(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    is_onboarded: bool = typer.Option(
-        ..., "--isOnboarded", help="""Is user onboarded"""
-    ),
+    is_onboarded: bool = typer.Option(..., "--isOnboarded"),
 ) -> None:
     """Update user onboarding
 
     Docs: https://api.immich.app/endpoints/users/setUserOnboarding
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([is_onboarded])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.onboarding_dto import OnboardingDto
-
-        onboarding_dto = deserialize_request_body(json_data, OnboardingDto)
-        kwargs["onboarding_dto"] = onboarding_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             is_onboarded,
         ]
@@ -318,11 +273,10 @@ def set_user_onboarding(
         if is_onboarded is None:
             raise SystemExit("Error: --isOnboarded is required")
         set_nested(json_data, ["isOnboarded"], is_onboarded)
-        if json_data:
-            from immich.client.models.onboarding_dto import OnboardingDto
+        from immich.client.models.onboarding_dto import OnboardingDto
 
-            onboarding_dto = deserialize_request_body(json_data, OnboardingDto)
-            kwargs["onboarding_dto"] = onboarding_dto
+        onboarding_dto = deserialize_request_body(json_data, OnboardingDto)
+        kwargs["onboarding_dto"] = onboarding_dto
     client = ctx.obj["client"]
     api_group = client.users
     result = run_command(client, api_group, "set_user_onboarding", **kwargs)
@@ -333,92 +287,49 @@ def set_user_onboarding(
 @app.command("update-my-preferences")
 def update_my_preferences(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
     albums_default_asset_order: str | None = typer.Option(
-        None, "--albums.defaultAssetOrder", help="""Asset sort order"""
+        None, "--albums.defaultAssetOrder"
     ),
-    avatar_color: str | None = typer.Option(
-        None, "--avatar.color", help="""Avatar color"""
-    ),
-    cast_g_cast_enabled: bool | None = typer.Option(
-        None, "--cast.gCastEnabled", help="""Whether Google Cast is enabled"""
-    ),
-    download_archive_size: int | None = typer.Option(
-        None, "--download.archiveSize", help="""Maximum archive size in bytes"""
-    ),
+    avatar_color: str | None = typer.Option(None, "--avatar.color"),
+    cast_g_cast_enabled: bool | None = typer.Option(None, "--cast.gCastEnabled"),
+    download_archive_size: int | None = typer.Option(None, "--download.archiveSize"),
     download_include_embedded_videos: bool | None = typer.Option(
-        None,
-        "--download.includeEmbeddedVideos",
-        help="""Whether to include embedded videos in downloads""",
+        None, "--download.includeEmbeddedVideos"
     ),
     email_notifications_album_invite: bool | None = typer.Option(
-        None,
-        "--emailNotifications.albumInvite",
-        help="""Whether to receive email notifications for album invites""",
+        None, "--emailNotifications.albumInvite"
     ),
     email_notifications_album_update: bool | None = typer.Option(
-        None,
-        "--emailNotifications.albumUpdate",
-        help="""Whether to receive email notifications for album updates""",
+        None, "--emailNotifications.albumUpdate"
     ),
     email_notifications_enabled: bool | None = typer.Option(
-        None,
-        "--emailNotifications.enabled",
-        help="""Whether email notifications are enabled""",
+        None, "--emailNotifications.enabled"
     ),
-    folders_enabled: bool | None = typer.Option(
-        None, "--folders.enabled", help="""Whether folders are enabled"""
-    ),
-    folders_sidebar_web: bool | None = typer.Option(
-        None, "--folders.sidebarWeb", help="""Whether folders appear in web sidebar"""
-    ),
-    memories_duration: int | None = typer.Option(
-        None, "--memories.duration", help="""Memory duration in seconds"""
-    ),
-    memories_enabled: bool | None = typer.Option(
-        None, "--memories.enabled", help="""Whether memories are enabled"""
-    ),
-    people_enabled: bool | None = typer.Option(
-        None, "--people.enabled", help="""Whether people are enabled"""
-    ),
-    people_sidebar_web: bool | None = typer.Option(
-        None, "--people.sidebarWeb", help="""Whether people appear in web sidebar"""
-    ),
+    folders_enabled: bool | None = typer.Option(None, "--folders.enabled"),
+    folders_sidebar_web: bool | None = typer.Option(None, "--folders.sidebarWeb"),
+    memories_duration: int | None = typer.Option(None, "--memories.duration"),
+    memories_enabled: bool | None = typer.Option(None, "--memories.enabled"),
+    people_enabled: bool | None = typer.Option(None, "--people.enabled"),
+    people_sidebar_web: bool | None = typer.Option(None, "--people.sidebarWeb"),
     purchase_hide_buy_button_until: str | None = typer.Option(
-        None,
-        "--purchase.hideBuyButtonUntil",
-        help="""Date until which to hide buy button""",
+        None, "--purchase.hideBuyButtonUntil"
     ),
     purchase_show_support_badge: bool | None = typer.Option(
-        None, "--purchase.showSupportBadge", help="""Whether to show support badge"""
+        None, "--purchase.showSupportBadge"
     ),
-    ratings_enabled: bool | None = typer.Option(
-        None, "--ratings.enabled", help="""Whether ratings are enabled"""
-    ),
-    shared_links_enabled: bool | None = typer.Option(
-        None, "--sharedLinks.enabled", help="""Whether shared links are enabled"""
-    ),
+    ratings_enabled: bool | None = typer.Option(None, "--ratings.enabled"),
+    shared_links_enabled: bool | None = typer.Option(None, "--sharedLinks.enabled"),
     shared_links_sidebar_web: bool | None = typer.Option(
-        None,
-        "--sharedLinks.sidebarWeb",
-        help="""Whether shared links appear in web sidebar""",
+        None, "--sharedLinks.sidebarWeb"
     ),
-    tags_enabled: bool | None = typer.Option(
-        None, "--tags.enabled", help="""Whether tags are enabled"""
-    ),
-    tags_sidebar_web: bool | None = typer.Option(
-        None, "--tags.sidebarWeb", help="""Whether tags appear in web sidebar"""
-    ),
+    tags_enabled: bool | None = typer.Option(None, "--tags.enabled"),
+    tags_sidebar_web: bool | None = typer.Option(None, "--tags.sidebarWeb"),
 ) -> None:
     """Update my preferences
 
     Docs: https://api.immich.app/endpoints/users/updateMyPreferences
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any(
         [
             albums_default_asset_order,
@@ -444,25 +355,9 @@ def update_my_preferences(
             tags_sidebar_web,
         ]
     )
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.user_preferences_update_dto import (
-            UserPreferencesUpdateDto,
-        )
-
-        user_preferences_update_dto = deserialize_request_body(
-            json_data, UserPreferencesUpdateDto
-        )
-        kwargs["user_preferences_update_dto"] = user_preferences_update_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             albums_default_asset_order,
             avatar_color,
@@ -557,15 +452,14 @@ def update_my_preferences(
             set_nested(json_data, ["tags", "enabled"], tags_enabled)
         if tags_sidebar_web is not None:
             set_nested(json_data, ["tags", "sidebarWeb"], tags_sidebar_web)
-        if json_data:
-            from immich.client.models.user_preferences_update_dto import (
-                UserPreferencesUpdateDto,
-            )
+        from immich.client.models.user_preferences_update_dto import (
+            UserPreferencesUpdateDto,
+        )
 
-            user_preferences_update_dto = deserialize_request_body(
-                json_data, UserPreferencesUpdateDto
-            )
-            kwargs["user_preferences_update_dto"] = user_preferences_update_dto
+        user_preferences_update_dto = deserialize_request_body(
+            json_data, UserPreferencesUpdateDto
+        )
+        kwargs["user_preferences_update_dto"] = user_preferences_update_dto
     client = ctx.obj["client"]
     api_group = client.users
     result = run_command(client, api_group, "update_my_preferences", **kwargs)
@@ -576,43 +470,20 @@ def update_my_preferences(
 @app.command("update-my-user")
 def update_my_user(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    avatar_color: str | None = typer.Option(
-        None, "--avatarColor", help="""Avatar color"""
-    ),
-    email: str | None = typer.Option(None, "--email", help="""User email"""),
-    name: str | None = typer.Option(None, "--name", help="""User name"""),
-    password: str | None = typer.Option(
-        None,
-        "--password",
-        help="""User password (deprecated, use change password endpoint)""",
-    ),
+    avatar_color: str | None = typer.Option(None, "--avatarColor"),
+    email: str | None = typer.Option(None, "--email"),
+    name: str | None = typer.Option(None, "--name"),
+    password: str | None = typer.Option(None, "--password"),
 ) -> None:
     """Update current user
 
     Docs: https://api.immich.app/endpoints/users/updateMyUser
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([avatar_color, email, name, password])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.user_update_me_dto import UserUpdateMeDto
-
-        user_update_me_dto = deserialize_request_body(json_data, UserUpdateMeDto)
-        kwargs["user_update_me_dto"] = user_update_me_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             avatar_color,
             email,
@@ -630,11 +501,10 @@ def update_my_user(
             set_nested(json_data, ["name"], name)
         if password is not None:
             set_nested(json_data, ["password"], password)
-        if json_data:
-            from immich.client.models.user_update_me_dto import UserUpdateMeDto
+        from immich.client.models.user_update_me_dto import UserUpdateMeDto
 
-            user_update_me_dto = deserialize_request_body(json_data, UserUpdateMeDto)
-            kwargs["user_update_me_dto"] = user_update_me_dto
+        user_update_me_dto = deserialize_request_body(json_data, UserUpdateMeDto)
+        kwargs["user_update_me_dto"] = user_update_me_dto
     client = ctx.obj["client"]
     api_group = client.users
     result = run_command(client, api_group, "update_my_user", **kwargs)

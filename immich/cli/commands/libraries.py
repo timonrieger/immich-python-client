@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import typer
 
 from immich.cli.runtime import (
@@ -23,41 +22,20 @@ Docs: https://api.immich.app/endpoints/libraries""",
 @app.command("create-library")
 def create_library(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    exclusion_patterns: list[str] | None = typer.Option(
-        None, "--exclusionPatterns", help="""Exclusion patterns (max 128)"""
-    ),
-    import_paths: list[str] | None = typer.Option(
-        None, "--importPaths", help="""Import paths (max 128)"""
-    ),
-    name: str | None = typer.Option(None, "--name", help="""Library name"""),
-    owner_id: str = typer.Option(..., "--ownerId", help="""Owner user ID"""),
+    exclusion_patterns: list[str] | None = typer.Option(None, "--exclusionPatterns"),
+    import_paths: list[str] | None = typer.Option(None, "--importPaths"),
+    name: str | None = typer.Option(None, "--name"),
+    owner_id: str = typer.Option(..., "--ownerId"),
 ) -> None:
     """Create a library
 
     Docs: https://api.immich.app/endpoints/libraries/createLibrary
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([exclusion_patterns, import_paths, name, owner_id])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.create_library_dto import CreateLibraryDto
-
-        create_library_dto = deserialize_request_body(json_data, CreateLibraryDto)
-        kwargs["create_library_dto"] = create_library_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             exclusion_patterns,
             import_paths,
@@ -76,11 +54,10 @@ def create_library(
         if owner_id is None:
             raise SystemExit("Error: --ownerId is required")
         set_nested(json_data, ["ownerId"], owner_id)
-        if json_data:
-            from immich.client.models.create_library_dto import CreateLibraryDto
+        from immich.client.models.create_library_dto import CreateLibraryDto
 
-            create_library_dto = deserialize_request_body(json_data, CreateLibraryDto)
-            kwargs["create_library_dto"] = create_library_dto
+        create_library_dto = deserialize_request_body(json_data, CreateLibraryDto)
+        kwargs["create_library_dto"] = create_library_dto
     client = ctx.obj["client"]
     api_group = client.libraries
     result = run_command(client, api_group, "create_library", **kwargs)
@@ -91,7 +68,7 @@ def create_library(
 @app.command("delete-library")
 def delete_library(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Library ID"""),
+    id: str,
 ) -> None:
     """Delete a library
 
@@ -125,7 +102,7 @@ def get_all_libraries(
 @app.command("get-library")
 def get_library(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Library ID"""),
+    id: str,
 ) -> None:
     """Retrieve a library
 
@@ -143,7 +120,7 @@ def get_library(
 @app.command("get-library-statistics")
 def get_library_statistics(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Library ID"""),
+    id: str,
 ) -> None:
     """Retrieve library statistics
 
@@ -161,7 +138,7 @@ def get_library_statistics(
 @app.command("scan-library")
 def scan_library(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Library ID"""),
+    id: str,
 ) -> None:
     """Scan a library
 
@@ -179,17 +156,10 @@ def scan_library(
 @app.command("update-library")
 def update_library(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Library ID"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    exclusion_patterns: list[str] | None = typer.Option(
-        None, "--exclusionPatterns", help="""Exclusion patterns (max 128)"""
-    ),
-    import_paths: list[str] | None = typer.Option(
-        None, "--importPaths", help="""Import paths (max 128)"""
-    ),
-    name: str | None = typer.Option(None, "--name", help="""Library name"""),
+    id: str,
+    exclusion_patterns: list[str] | None = typer.Option(None, "--exclusionPatterns"),
+    import_paths: list[str] | None = typer.Option(None, "--importPaths"),
+    name: str | None = typer.Option(None, "--name"),
 ) -> None:
     """Update a library
 
@@ -197,24 +167,10 @@ def update_library(
     """
     kwargs = {}
     kwargs["id"] = id
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([exclusion_patterns, import_paths, name])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.update_library_dto import UpdateLibraryDto
-
-        update_library_dto = deserialize_request_body(json_data, UpdateLibraryDto)
-        kwargs["update_library_dto"] = update_library_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             exclusion_patterns,
             import_paths,
@@ -229,11 +185,10 @@ def update_library(
             set_nested(json_data, ["importPaths"], import_paths)
         if name is not None:
             set_nested(json_data, ["name"], name)
-        if json_data:
-            from immich.client.models.update_library_dto import UpdateLibraryDto
+        from immich.client.models.update_library_dto import UpdateLibraryDto
 
-            update_library_dto = deserialize_request_body(json_data, UpdateLibraryDto)
-            kwargs["update_library_dto"] = update_library_dto
+        update_library_dto = deserialize_request_body(json_data, UpdateLibraryDto)
+        kwargs["update_library_dto"] = update_library_dto
     client = ctx.obj["client"]
     api_group = client.libraries
     result = run_command(client, api_group, "update_library", **kwargs)
@@ -244,16 +199,9 @@ def update_library(
 @app.command("validate")
 def validate(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Library ID"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    exclusion_patterns: list[str] | None = typer.Option(
-        None, "--exclusionPatterns", help="""Exclusion patterns (max 128)"""
-    ),
-    import_paths: list[str] | None = typer.Option(
-        None, "--importPaths", help="""Import paths to validate (max 128)"""
-    ),
+    id: str,
+    exclusion_patterns: list[str] | None = typer.Option(None, "--exclusionPatterns"),
+    import_paths: list[str] | None = typer.Option(None, "--importPaths"),
 ) -> None:
     """Validate library settings
 
@@ -261,24 +209,10 @@ def validate(
     """
     kwargs = {}
     kwargs["id"] = id
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([exclusion_patterns, import_paths])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.validate_library_dto import ValidateLibraryDto
-
-        validate_library_dto = deserialize_request_body(json_data, ValidateLibraryDto)
-        kwargs["validate_library_dto"] = validate_library_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             exclusion_patterns,
             import_paths,
@@ -290,13 +224,10 @@ def validate(
             set_nested(json_data, ["exclusionPatterns"], exclusion_patterns)
         if import_paths is not None:
             set_nested(json_data, ["importPaths"], import_paths)
-        if json_data:
-            from immich.client.models.validate_library_dto import ValidateLibraryDto
+        from immich.client.models.validate_library_dto import ValidateLibraryDto
 
-            validate_library_dto = deserialize_request_body(
-                json_data, ValidateLibraryDto
-            )
-            kwargs["validate_library_dto"] = validate_library_dto
+        validate_library_dto = deserialize_request_body(json_data, ValidateLibraryDto)
+        kwargs["validate_library_dto"] = validate_library_dto
     client = ctx.obj["client"]
     api_group = client.libraries
     result = run_command(client, api_group, "validate", **kwargs)

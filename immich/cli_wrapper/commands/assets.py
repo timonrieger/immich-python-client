@@ -21,7 +21,9 @@ app = assets_commands.app
 def download_asset_to_file(
     ctx: typer.Context,
     id: str = typer.Argument(..., help="Asset ID (UUID)"),
-    out_dir: Path = typer.Argument(..., help="Output directory for the downloaded file"),
+    out_dir: Path = typer.Argument(
+        ..., help="Output directory for the downloaded file"
+    ),
     key: str | None = typer.Option(
         None, "--key", help="Public share key (last path segment of /share/<key>)"
     ),
@@ -29,10 +31,14 @@ def download_asset_to_file(
         None, "--slug", help="Public share slug (last path segment of /s/<slug>)"
     ),
     filename: str | None = typer.Option(
-        None, "--filename", help="Filename to use (defaults to original filename or orig-{asset_id})"
+        None,
+        "--filename",
+        help="Filename to use (defaults to original filename or orig-{asset_id})",
     ),
     show_progress: bool = typer.Option(
-        True, "--show-progress/--no-show-progress", help="Show progress bar while downloading"
+        True,
+        "--show-progress/--no-show-progress",
+        help="Show progress bar while downloading",
     ),
 ) -> None:
     """Download an asset to a file.
@@ -79,10 +85,14 @@ def play_asset_video_to_file(
         None, "--slug", help="Public share slug (last path segment of /s/<slug>)"
     ),
     filename: str | None = typer.Option(
-        None, "--filename", help="Filename to use (defaults to original filename or video-{asset_id})"
+        None,
+        "--filename",
+        help="Filename to use (defaults to original filename or video-{asset_id})",
     ),
     show_progress: bool = typer.Option(
-        True, "--show-progress/--no-show-progress", help="Show progress bar while downloading"
+        True,
+        "--show-progress/--no-show-progress",
+        help="Show progress bar while downloading",
     ),
 ) -> None:
     """Save an asset's video stream to a file.
@@ -132,10 +142,14 @@ def view_asset_to_file(
         None, "--size", help="Thumbnail size: fullsize, preview, or thumbnail"
     ),
     filename: str | None = typer.Option(
-        None, "--filename", help="Filename to use (defaults to original filename or thumb-{asset_id})"
+        None,
+        "--filename",
+        help="Filename to use (defaults to original filename or thumb-{asset_id})",
     ),
     show_progress: bool = typer.Option(
-        True, "--show-progress/--no-show-progress", help="Show progress bar while downloading"
+        True,
+        "--show-progress/--no-show-progress",
+        help="Show progress bar while downloading",
     ),
 ) -> None:
     """Save an asset's thumbnail to a file.
@@ -183,15 +197,23 @@ def view_asset_to_file(
 @app.command("upload")
 def upload(
     ctx: typer.Context,
-    paths: list[Path] = typer.Argument(..., help="File or directory paths to upload (can specify multiple)"),
+    paths: list[Path] = typer.Argument(
+        ..., help="File or directory paths to upload (can specify multiple)"
+    ),
     ignore_pattern: str | None = typer.Option(
-        None, "--ignore-pattern", help="Wildcard pattern to ignore files (uses fnmatch, not regex)"
+        None,
+        "--ignore-pattern",
+        help="Wildcard pattern to ignore files (uses fnmatch, not regex)",
     ),
     include_hidden: bool = typer.Option(
-        False, "--include-hidden/--no-include-hidden", help="Include hidden files (starting with '.')"
+        False,
+        "--include-hidden/--no-include-hidden",
+        help="Include hidden files (starting with '.')",
     ),
     check_duplicates: bool = typer.Option(
-        True, "--check-duplicates/--no-check-duplicates", help="Check for duplicates using SHA1 hashes before uploading"
+        True,
+        "--check-duplicates/--no-check-duplicates",
+        help="Check for duplicates using SHA1 hashes before uploading",
     ),
     concurrency: int = typer.Option(
         5, "--concurrency", help="Number of concurrent uploads (default: 5)"
@@ -200,19 +222,29 @@ def upload(
         True, "--show-progress/--no-show-progress", help="Show progress bars"
     ),
     include_sidecars: bool = typer.Option(
-        True, "--include-sidecars/--no-include-sidecars", help="Automatically detect and upload XMP sidecar files"
+        True,
+        "--include-sidecars/--no-include-sidecars",
+        help="Automatically detect and upload XMP sidecar files",
     ),
     album_name: str | None = typer.Option(
-        None, "--album-name", help="Album name to create or use (if not provided, no album operations are performed)"
+        None,
+        "--album-name",
+        help="Album name to create or use (if not provided, no album operations are performed)",
     ),
     delete_after_upload: bool = typer.Option(
-        False, "--delete-after-upload/--no-delete-after-upload", help="Delete successfully uploaded files locally"
+        False,
+        "--delete-after-upload/--no-delete-after-upload",
+        help="Delete successfully uploaded files locally",
     ),
     delete_duplicates: bool = typer.Option(
-        False, "--delete-duplicates/--no-delete-duplicates", help="Delete duplicate files locally"
+        False,
+        "--delete-duplicates/--no-delete-duplicates",
+        help="Delete duplicate files locally",
     ),
     dry_run: bool = typer.Option(
-        False, "--dry-run/--no-dry-run", help="Simulate uploads without actually uploading"
+        False,
+        "--dry-run/--no-dry-run",
+        help="Simulate uploads without actually uploading",
     ),
 ) -> None:
     """Upload assets with smart features.

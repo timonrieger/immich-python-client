@@ -23,12 +23,9 @@ Docs: https://api.immich.app/endpoints/api-keys""",
 @app.command("create-api-key")
 def create_api_key(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    name: str | None = typer.Option(None, "--name", help="""API key name"""),
+    name: str | None = typer.Option(None, "--name"),
     permissions: list[str] = typer.Option(
-        ..., "--permissions", help="""List of permissions"""
+        ..., "--permissions", help="JSON string for permissions"
     ),
 ) -> None:
     """Create an API key
@@ -36,24 +33,10 @@ def create_api_key(
     Docs: https://api.immich.app/endpoints/api-keys/createApiKey
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([name, permissions])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.api_key_create_dto import APIKeyCreateDto
-
-        api_key_create_dto = deserialize_request_body(json_data, APIKeyCreateDto)
-        kwargs["api_key_create_dto"] = api_key_create_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             name,
             permissions,
@@ -67,11 +50,10 @@ def create_api_key(
             raise SystemExit("Error: --permissions is required")
         value_permissions = json.loads(permissions)
         set_nested(json_data, ["permissions"], value_permissions)
-        if json_data:
-            from immich.client.models.api_key_create_dto import APIKeyCreateDto
+        from immich.client.models.api_key_create_dto import APIKeyCreateDto
 
-            api_key_create_dto = deserialize_request_body(json_data, APIKeyCreateDto)
-            kwargs["api_key_create_dto"] = api_key_create_dto
+        api_key_create_dto = deserialize_request_body(json_data, APIKeyCreateDto)
+        kwargs["api_key_create_dto"] = api_key_create_dto
     client = ctx.obj["client"]
     api_group = client.api_keys
     result = run_command(client, api_group, "create_api_key", **kwargs)
@@ -82,7 +64,7 @@ def create_api_key(
 @app.command("delete-api-key")
 def delete_api_key(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""API key ID"""),
+    id: str,
 ) -> None:
     """Delete an API key
 
@@ -100,7 +82,7 @@ def delete_api_key(
 @app.command("get-api-key")
 def get_api_key(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""API key ID"""),
+    id: str,
 ) -> None:
     """Retrieve an API key
 
@@ -150,13 +132,10 @@ def get_my_api_key(
 @app.command("update-api-key")
 def update_api_key(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""API key ID"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    name: str | None = typer.Option(None, "--name", help="""API key name"""),
+    id: str,
+    name: str | None = typer.Option(None, "--name"),
     permissions: list[str] | None = typer.Option(
-        None, "--permissions", help="""List of permissions"""
+        None, "--permissions", help="JSON string for permissions"
     ),
 ) -> None:
     """Update an API key
@@ -165,24 +144,10 @@ def update_api_key(
     """
     kwargs = {}
     kwargs["id"] = id
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([name, permissions])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.api_key_update_dto import APIKeyUpdateDto
-
-        api_key_update_dto = deserialize_request_body(json_data, APIKeyUpdateDto)
-        kwargs["api_key_update_dto"] = api_key_update_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             name,
             permissions,
@@ -195,11 +160,10 @@ def update_api_key(
         if permissions is not None:
             value_permissions = json.loads(permissions)
             set_nested(json_data, ["permissions"], value_permissions)
-        if json_data:
-            from immich.client.models.api_key_update_dto import APIKeyUpdateDto
+        from immich.client.models.api_key_update_dto import APIKeyUpdateDto
 
-            api_key_update_dto = deserialize_request_body(json_data, APIKeyUpdateDto)
-            kwargs["api_key_update_dto"] = api_key_update_dto
+        api_key_update_dto = deserialize_request_body(json_data, APIKeyUpdateDto)
+        kwargs["api_key_update_dto"] = api_key_update_dto
     client = ctx.obj["client"]
     api_group = client.api_keys
     result = run_command(client, api_group, "update_api_key", **kwargs)

@@ -30,9 +30,7 @@ def get_time_bucket(
         "--is-trashed",
         help="""Filter by trash status (true for trashed assets only, false for non-trashed only)""",
     ),
-    key: str | None = typer.Option(
-        None, "--key", help="""Access key for shared links"""
-    ),
+    key: str | None = typer.Option(None, "--key"),
     order: str | None = typer.Option(
         None,
         "--order",
@@ -43,9 +41,7 @@ def get_time_bucket(
         "--person-id",
         help="""Filter assets containing a specific person (face recognition)""",
     ),
-    slug: str | None = typer.Option(
-        None, "--slug", help="""Access slug for shared links"""
-    ),
+    slug: str | None = typer.Option(None, "--slug"),
     tag_id: str | None = typer.Option(
         None, "--tag-id", help="""Filter assets with a specific tag"""
     ),
@@ -129,9 +125,7 @@ def get_time_buckets(
         "--is-trashed",
         help="""Filter by trash status (true for trashed assets only, false for non-trashed only)""",
     ),
-    key: str | None = typer.Option(
-        None, "--key", help="""Access key for shared links"""
-    ),
+    key: str | None = typer.Option(None, "--key"),
     order: str | None = typer.Option(
         None,
         "--order",
@@ -142,9 +136,7 @@ def get_time_buckets(
         "--person-id",
         help="""Filter assets containing a specific person (face recognition)""",
     ),
-    slug: str | None = typer.Option(
-        None, "--slug", help="""Access slug for shared links"""
-    ),
+    slug: str | None = typer.Option(None, "--slug"),
     tag_id: str | None = typer.Option(
         None, "--tag-id", help="""Filter assets with a specific tag"""
     ),

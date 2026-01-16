@@ -71,9 +71,6 @@ def get_storage_template_options(
 @app.command("update-config")
 def update_config(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
     backup_database_cron_expression: str = typer.Option(
         ..., "--backup.database.cronExpression"
     ),
@@ -170,67 +167,47 @@ def update_config(
         ..., "--machineLearning.availabilityChecks.timeout"
     ),
     machine_learning_clip_enabled: bool = typer.Option(
-        ..., "--machineLearning.clip.enabled", help="""Whether the task is enabled"""
+        ..., "--machineLearning.clip.enabled"
     ),
     machine_learning_clip_model_name: str = typer.Option(
-        ..., "--machineLearning.clip.modelName", help="""Name of the model to use"""
+        ..., "--machineLearning.clip.modelName"
     ),
     machine_learning_duplicate_detection_enabled: bool = typer.Option(
-        ...,
-        "--machineLearning.duplicateDetection.enabled",
-        help="""Whether the task is enabled""",
+        ..., "--machineLearning.duplicateDetection.enabled"
     ),
     machine_learning_duplicate_detection_max_distance: float = typer.Option(
-        ...,
-        "--machineLearning.duplicateDetection.maxDistance",
-        help="""Maximum distance threshold for duplicate detection (0.001-0.1)""",
+        ..., "--machineLearning.duplicateDetection.maxDistance"
     ),
     machine_learning_enabled: bool = typer.Option(..., "--machineLearning.enabled"),
     machine_learning_facial_recognition_enabled: bool = typer.Option(
-        ...,
-        "--machineLearning.facialRecognition.enabled",
-        help="""Whether the task is enabled""",
+        ..., "--machineLearning.facialRecognition.enabled"
     ),
     machine_learning_facial_recognition_max_distance: float = typer.Option(
-        ...,
-        "--machineLearning.facialRecognition.maxDistance",
-        help="""Maximum distance threshold for face recognition (0.1-2)""",
+        ..., "--machineLearning.facialRecognition.maxDistance"
     ),
     machine_learning_facial_recognition_min_faces: int = typer.Option(
-        ...,
-        "--machineLearning.facialRecognition.minFaces",
-        help="""Minimum number of faces required for recognition""",
+        ..., "--machineLearning.facialRecognition.minFaces"
     ),
     machine_learning_facial_recognition_min_score: float = typer.Option(
-        ...,
-        "--machineLearning.facialRecognition.minScore",
-        help="""Minimum confidence score for face detection (0.1-1)""",
+        ..., "--machineLearning.facialRecognition.minScore"
     ),
     machine_learning_facial_recognition_model_name: str = typer.Option(
-        ...,
-        "--machineLearning.facialRecognition.modelName",
-        help="""Name of the model to use""",
+        ..., "--machineLearning.facialRecognition.modelName"
     ),
     machine_learning_ocr_enabled: bool = typer.Option(
-        ..., "--machineLearning.ocr.enabled", help="""Whether the task is enabled"""
+        ..., "--machineLearning.ocr.enabled"
     ),
     machine_learning_ocr_max_resolution: int = typer.Option(
-        ...,
-        "--machineLearning.ocr.maxResolution",
-        help="""Maximum resolution for OCR processing""",
+        ..., "--machineLearning.ocr.maxResolution"
     ),
     machine_learning_ocr_min_detection_score: float = typer.Option(
-        ...,
-        "--machineLearning.ocr.minDetectionScore",
-        help="""Minimum confidence score for text detection (0.1-1)""",
+        ..., "--machineLearning.ocr.minDetectionScore"
     ),
     machine_learning_ocr_min_recognition_score: float = typer.Option(
-        ...,
-        "--machineLearning.ocr.minRecognitionScore",
-        help="""Minimum confidence score for text recognition (0.1-1)""",
+        ..., "--machineLearning.ocr.minRecognitionScore"
     ),
     machine_learning_ocr_model_name: str = typer.Option(
-        ..., "--machineLearning.ocr.modelName", help="""Name of the model to use"""
+        ..., "--machineLearning.ocr.modelName"
     ),
     machine_learning_urls: list[str] = typer.Option(..., "--machineLearning.urls"),
     map_dark_style: str = typer.Option(..., "--map.darkStyle"),
@@ -255,37 +232,29 @@ def update_config(
         ..., "--nightlyTasks.syncQuotaUsage"
     ),
     notifications_smtp_enabled: bool = typer.Option(
-        ...,
-        "--notifications.smtp.enabled",
-        help="""Whether SMTP email notifications are enabled""",
+        ..., "--notifications.smtp.enabled"
     ),
-    notifications_smtp_from_: str = typer.Option(
-        ..., "--notifications.smtp.from", help="""Email address to send from"""
-    ),
+    notifications_smtp_from_: str = typer.Option(..., "--notifications.smtp.from"),
     notifications_smtp_reply_to: str = typer.Option(
-        ..., "--notifications.smtp.replyTo", help="""Email address for replies"""
+        ..., "--notifications.smtp.replyTo"
     ),
     notifications_smtp_transport_host: str = typer.Option(
-        ..., "--notifications.smtp.transport.host", help="""SMTP server hostname"""
+        ..., "--notifications.smtp.transport.host"
     ),
     notifications_smtp_transport_ignore_cert: bool = typer.Option(
-        ...,
-        "--notifications.smtp.transport.ignoreCert",
-        help="""Whether to ignore SSL certificate errors""",
+        ..., "--notifications.smtp.transport.ignoreCert"
     ),
     notifications_smtp_transport_password: str = typer.Option(
-        ..., "--notifications.smtp.transport.password", help="""SMTP password"""
+        ..., "--notifications.smtp.transport.password"
     ),
     notifications_smtp_transport_port: float = typer.Option(
-        ..., "--notifications.smtp.transport.port", help="""SMTP server port"""
+        ..., "--notifications.smtp.transport.port"
     ),
     notifications_smtp_transport_secure: bool = typer.Option(
-        ...,
-        "--notifications.smtp.transport.secure",
-        help="""Whether to use secure connection (TLS/SSL)""",
+        ..., "--notifications.smtp.transport.secure"
     ),
     notifications_smtp_transport_username: str = typer.Option(
-        ..., "--notifications.smtp.transport.username", help="""SMTP username"""
+        ..., "--notifications.smtp.transport.username"
     ),
     oauth_auto_launch: bool = typer.Option(..., "--oauth.autoLaunch"),
     oauth_auto_register: bool = typer.Option(..., "--oauth.autoRegister"),
@@ -330,9 +299,7 @@ def update_config(
     templates_email_welcome_template: str = typer.Option(
         ..., "--templates.email.welcomeTemplate"
     ),
-    theme_custom_css: str = typer.Option(
-        ..., "--theme.customCss", help="""Custom CSS for theming"""
-    ),
+    theme_custom_css: str = typer.Option(..., "--theme.customCss"),
     trash_days: int = typer.Option(..., "--trash.days"),
     trash_enabled: bool = typer.Option(..., "--trash.enabled"),
     user_delete_delay: int = typer.Option(..., "--user.deleteDelay"),
@@ -342,8 +309,6 @@ def update_config(
     Docs: https://api.immich.app/endpoints/system-config/updateConfig
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any(
         [
             backup_database_cron_expression,
@@ -474,21 +439,9 @@ def update_config(
             user_delete_delay,
         ]
     )
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.system_config_dto import SystemConfigDto
-
-        system_config_dto = deserialize_request_body(json_data, SystemConfigDto)
-        kwargs["system_config_dto"] = system_config_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             backup_database_cron_expression,
             backup_database_enabled,
@@ -1249,11 +1202,10 @@ def update_config(
         if user_delete_delay is None:
             raise SystemExit("Error: --user.deleteDelay is required")
         set_nested(json_data, ["user", "deleteDelay"], user_delete_delay)
-        if json_data:
-            from immich.client.models.system_config_dto import SystemConfigDto
+        from immich.client.models.system_config_dto import SystemConfigDto
 
-            system_config_dto = deserialize_request_body(json_data, SystemConfigDto)
-            kwargs["system_config_dto"] = system_config_dto
+        system_config_dto = deserialize_request_body(json_data, SystemConfigDto)
+        kwargs["system_config_dto"] = system_config_dto
     client = ctx.obj["client"]
     api_group = client.system_config
     result = run_command(client, api_group, "update_config", **kwargs)

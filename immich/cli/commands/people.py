@@ -23,44 +23,28 @@ Docs: https://api.immich.app/endpoints/people""",
 @app.command("create-person")
 def create_person(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
     birth_date: str | None = typer.Option(
-        None, "--birthDate", help="""Person date of birth"""
+        None,
+        "--birthDate",
+        help="""Person date of birth.
+Note: the mobile app cannot currently set the birth date to null.""",
     ),
-    color: str | None = typer.Option(None, "--color", help="""Person color (hex)"""),
-    is_favorite: bool | None = typer.Option(
-        None, "--isFavorite", help="""Mark as favorite"""
-    ),
+    color: str | None = typer.Option(None, "--color"),
+    is_favorite: bool | None = typer.Option(None, "--isFavorite"),
     is_hidden: bool | None = typer.Option(
-        None, "--isHidden", help="""Person visibility (hidden)"""
+        None, "--isHidden", help="""Person visibility"""
     ),
-    name: str | None = typer.Option(None, "--name", help="""Person name"""),
+    name: str | None = typer.Option(None, "--name", help="""Person name."""),
 ) -> None:
     """Create a person
 
     Docs: https://api.immich.app/endpoints/people/createPerson
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([birth_date, color, is_favorite, is_hidden, name])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.person_create_dto import PersonCreateDto
-
-        person_create_dto = deserialize_request_body(json_data, PersonCreateDto)
-        kwargs["person_create_dto"] = person_create_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             birth_date,
             color,
@@ -81,11 +65,10 @@ def create_person(
             set_nested(json_data, ["isHidden"], is_hidden)
         if name is not None:
             set_nested(json_data, ["name"], name)
-        if json_data:
-            from immich.client.models.person_create_dto import PersonCreateDto
+        from immich.client.models.person_create_dto import PersonCreateDto
 
-            person_create_dto = deserialize_request_body(json_data, PersonCreateDto)
-            kwargs["person_create_dto"] = person_create_dto
+        person_create_dto = deserialize_request_body(json_data, PersonCreateDto)
+        kwargs["person_create_dto"] = person_create_dto
     client = ctx.obj["client"]
     api_group = client.people
     result = run_command(client, api_group, "create_person", **kwargs)
@@ -96,34 +79,17 @@ def create_person(
 @app.command("delete-people")
 def delete_people(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    ids: list[str] = typer.Option(..., "--ids", help="""IDs to process"""),
+    ids: list[str] = typer.Option(..., "--ids"),
 ) -> None:
     """Delete people
 
     Docs: https://api.immich.app/endpoints/people/deletePeople
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([ids])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.bulk_ids_dto import BulkIdsDto
-
-        bulk_ids_dto = deserialize_request_body(json_data, BulkIdsDto)
-        kwargs["bulk_ids_dto"] = bulk_ids_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             ids,
         ]
@@ -133,11 +99,10 @@ def delete_people(
         if ids is None:
             raise SystemExit("Error: --ids is required")
         set_nested(json_data, ["ids"], ids)
-        if json_data:
-            from immich.client.models.bulk_ids_dto import BulkIdsDto
+        from immich.client.models.bulk_ids_dto import BulkIdsDto
 
-            bulk_ids_dto = deserialize_request_body(json_data, BulkIdsDto)
-            kwargs["bulk_ids_dto"] = bulk_ids_dto
+        bulk_ids_dto = deserialize_request_body(json_data, BulkIdsDto)
+        kwargs["bulk_ids_dto"] = bulk_ids_dto
     client = ctx.obj["client"]
     api_group = client.people
     result = run_command(client, api_group, "delete_people", **kwargs)
@@ -148,7 +113,7 @@ def delete_people(
 @app.command("delete-person")
 def delete_person(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Person ID"""),
+    id: str,
 ) -> None:
     """Delete person
 
@@ -166,21 +131,15 @@ def delete_person(
 @app.command("get-all-people")
 def get_all_people(
     ctx: typer.Context,
-    closest_asset_id: str | None = typer.Option(
-        None, "--closest-asset-id", help="""Closest asset ID for similarity search"""
-    ),
-    closest_person_id: str | None = typer.Option(
-        None, "--closest-person-id", help="""Closest person ID for similarity search"""
-    ),
+    closest_asset_id: str | None = typer.Option(None, "--closest-asset-id"),
+    closest_person_id: str | None = typer.Option(None, "--closest-person-id"),
     page: float | None = typer.Option(
         None, "--page", help="""Page number for pagination"""
     ),
     size: float | None = typer.Option(
         None, "--size", help="""Number of items per page"""
     ),
-    with_hidden: bool | None = typer.Option(
-        None, "--with-hidden", help="""Include hidden people"""
-    ),
+    with_hidden: bool | None = typer.Option(None, "--with-hidden"),
 ) -> None:
     """Get all people
 
@@ -207,7 +166,7 @@ def get_all_people(
 @app.command("get-person")
 def get_person(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Person ID"""),
+    id: str,
 ) -> None:
     """Get a person
 
@@ -225,7 +184,7 @@ def get_person(
 @app.command("get-person-statistics")
 def get_person_statistics(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Person ID"""),
+    id: str,
 ) -> None:
     """Get person statistics
 
@@ -243,7 +202,7 @@ def get_person_statistics(
 @app.command("get-person-thumbnail")
 def get_person_thumbnail(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Person ID"""),
+    id: str,
 ) -> None:
     """Get person thumbnail
 
@@ -261,11 +220,8 @@ def get_person_thumbnail(
 @app.command("merge-person")
 def merge_person(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Target person ID to merge into"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    ids: list[str] = typer.Option(..., "--ids", help="""Person IDs to merge"""),
+    id: str,
+    ids: list[str] = typer.Option(..., "--ids"),
 ) -> None:
     """Merge people
 
@@ -273,24 +229,10 @@ def merge_person(
     """
     kwargs = {}
     kwargs["id"] = id
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([ids])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.merge_person_dto import MergePersonDto
-
-        merge_person_dto = deserialize_request_body(json_data, MergePersonDto)
-        kwargs["merge_person_dto"] = merge_person_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             ids,
         ]
@@ -300,11 +242,10 @@ def merge_person(
         if ids is None:
             raise SystemExit("Error: --ids is required")
         set_nested(json_data, ["ids"], ids)
-        if json_data:
-            from immich.client.models.merge_person_dto import MergePersonDto
+        from immich.client.models.merge_person_dto import MergePersonDto
 
-            merge_person_dto = deserialize_request_body(json_data, MergePersonDto)
-            kwargs["merge_person_dto"] = merge_person_dto
+        merge_person_dto = deserialize_request_body(json_data, MergePersonDto)
+        kwargs["merge_person_dto"] = merge_person_dto
     client = ctx.obj["client"]
     api_group = client.people
     result = run_command(client, api_group, "merge_person", **kwargs)
@@ -315,11 +256,8 @@ def merge_person(
 @app.command("reassign-faces")
 def reassign_faces(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Target person ID"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    data: list[str] = typer.Option(..., "--data", help="""Face update items"""),
+    id: str,
+    data: list[str] = typer.Option(..., "--data", help="JSON string for data"),
 ) -> None:
     """Reassign faces
 
@@ -327,24 +265,10 @@ def reassign_faces(
     """
     kwargs = {}
     kwargs["id"] = id
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([data])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.asset_face_update_dto import AssetFaceUpdateDto
-
-        asset_face_update_dto = deserialize_request_body(json_data, AssetFaceUpdateDto)
-        kwargs["asset_face_update_dto"] = asset_face_update_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             data,
         ]
@@ -355,13 +279,10 @@ def reassign_faces(
             raise SystemExit("Error: --data is required")
         value_data = json.loads(data)
         set_nested(json_data, ["data"], value_data)
-        if json_data:
-            from immich.client.models.asset_face_update_dto import AssetFaceUpdateDto
+        from immich.client.models.asset_face_update_dto import AssetFaceUpdateDto
 
-            asset_face_update_dto = deserialize_request_body(
-                json_data, AssetFaceUpdateDto
-            )
-            kwargs["asset_face_update_dto"] = asset_face_update_dto
+        asset_face_update_dto = deserialize_request_body(json_data, AssetFaceUpdateDto)
+        kwargs["asset_face_update_dto"] = asset_face_update_dto
     client = ctx.obj["client"]
     api_group = client.people
     result = run_command(client, api_group, "reassign_faces", **kwargs)
@@ -372,34 +293,17 @@ def reassign_faces(
 @app.command("update-people")
 def update_people(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    people: list[str] = typer.Option(..., "--people", help="""People to update"""),
+    people: list[str] = typer.Option(..., "--people", help="JSON string for people"),
 ) -> None:
     """Update people
 
     Docs: https://api.immich.app/endpoints/people/updatePeople
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([people])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.people_update_dto import PeopleUpdateDto
-
-        people_update_dto = deserialize_request_body(json_data, PeopleUpdateDto)
-        kwargs["people_update_dto"] = people_update_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             people,
         ]
@@ -410,11 +314,10 @@ def update_people(
             raise SystemExit("Error: --people is required")
         value_people = json.loads(people)
         set_nested(json_data, ["people"], value_people)
-        if json_data:
-            from immich.client.models.people_update_dto import PeopleUpdateDto
+        from immich.client.models.people_update_dto import PeopleUpdateDto
 
-            people_update_dto = deserialize_request_body(json_data, PeopleUpdateDto)
-            kwargs["people_update_dto"] = people_update_dto
+        people_update_dto = deserialize_request_body(json_data, PeopleUpdateDto)
+        kwargs["people_update_dto"] = people_update_dto
     client = ctx.obj["client"]
     api_group = client.people
     result = run_command(client, api_group, "update_people", **kwargs)
@@ -425,26 +328,24 @@ def update_people(
 @app.command("update-person")
 def update_person(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Person ID"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
+    id: str,
     birth_date: str | None = typer.Option(
-        None, "--birthDate", help="""Person date of birth"""
+        None,
+        "--birthDate",
+        help="""Person date of birth.
+Note: the mobile app cannot currently set the birth date to null.""",
     ),
-    color: str | None = typer.Option(None, "--color", help="""Person color (hex)"""),
+    color: str | None = typer.Option(None, "--color"),
     feature_face_asset_id: str | None = typer.Option(
         None,
         "--featureFaceAssetId",
-        help="""Asset ID used for feature face thumbnail""",
+        help="""Asset is used to get the feature face thumbnail.""",
     ),
-    is_favorite: bool | None = typer.Option(
-        None, "--isFavorite", help="""Mark as favorite"""
-    ),
+    is_favorite: bool | None = typer.Option(None, "--isFavorite"),
     is_hidden: bool | None = typer.Option(
-        None, "--isHidden", help="""Person visibility (hidden)"""
+        None, "--isHidden", help="""Person visibility"""
     ),
-    name: str | None = typer.Option(None, "--name", help="""Person name"""),
+    name: str | None = typer.Option(None, "--name", help="""Person name."""),
 ) -> None:
     """Update person
 
@@ -452,26 +353,12 @@ def update_person(
     """
     kwargs = {}
     kwargs["id"] = id
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any(
         [birth_date, color, feature_face_asset_id, is_favorite, is_hidden, name]
     )
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.person_update_dto import PersonUpdateDto
-
-        person_update_dto = deserialize_request_body(json_data, PersonUpdateDto)
-        kwargs["person_update_dto"] = person_update_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             birth_date,
             color,
@@ -495,11 +382,10 @@ def update_person(
             set_nested(json_data, ["isHidden"], is_hidden)
         if name is not None:
             set_nested(json_data, ["name"], name)
-        if json_data:
-            from immich.client.models.person_update_dto import PersonUpdateDto
+        from immich.client.models.person_update_dto import PersonUpdateDto
 
-            person_update_dto = deserialize_request_body(json_data, PersonUpdateDto)
-            kwargs["person_update_dto"] = person_update_dto
+        person_update_dto = deserialize_request_body(json_data, PersonUpdateDto)
+        kwargs["person_update_dto"] = person_update_dto
     client = ctx.obj["client"]
     api_group = client.people
     result = run_command(client, api_group, "update_person", **kwargs)

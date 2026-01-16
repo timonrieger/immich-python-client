@@ -470,17 +470,6 @@ def generate_command_function(
             request_body_info
         )
         if content_type == "application/json":
-            # Keep --json for backward compatibility
-            if "--json" in used_option_names:
-                raise ValueError(
-                    f"Option name collision in {operation_id}: '--json' already used"
-                )
-            used_option_names.add("--json")
-            lines.append(
-                '    json_str: str | None = typer.Option(None, "--json", help="Inline JSON request body"),'
-            )
-            used_param_names.add("json_str")
-
             # Flatten schema and generate dotted flags
             flattened = flatten_schema(resolved_schema, spec)
             for path_parts, leaf_schema, is_required in flattened:
@@ -569,15 +558,6 @@ def generate_command_function(
                                 f'    {param_name}: {param_type} | None = typer.Option(None, "{opt_name}"),'
                             )
         elif content_type == "multipart/form-data":
-            # Inline JSON for non-file fields
-            if "--json" in used_option_names:
-                raise ValueError(
-                    f"Option name collision in {operation_id}: '--json' already used"
-                )
-            used_option_names.add("--json")
-            lines.append(
-                '    json_str: str | None = typer.Option(None, "--json", help="Inline JSON with multipart fields (non-file)"),'
-            )
             # Add file-part options for binary fields
             props = (
                 resolved_schema.get("properties", {})
@@ -671,41 +651,19 @@ def generate_command_function(
             body_param_name = to_python_ident(request_body_model)
             model_module = to_snake_case(request_body_model)
 
-            # Check mutual exclusion: --json and dotted flags cannot both be used
-            if body_flags:
-                body_flag_params = [param_name for _, _, _, param_name, _ in body_flags]
-                lines.append(
-                    "    # Check mutual exclusion between --json and dotted flags"
-                )
-                lines.append("    has_json = json_str is not None")
-                lines.append(f"    has_flags = any([{', '.join(body_flag_params)}])")
-                lines.append("    if has_json and has_flags:")
-                lines.append(
-                    '        raise SystemExit("Error: Cannot use both --json and dotted body flags together. Use one or the other.")'
-                )
-
-                # Check if body is required but not provided
-                if body_required:
-                    lines.append("    if not has_json and not has_flags:")
-                    lines.append(
-                        '        raise SystemExit("Error: Request body is required. Provide --json or use dotted body flags.")'
-                    )
-
-            # Handle --json path (backward compatibility)
-            lines.append("    if json_str is not None:")
-            lines.append("        json_data = json.loads(json_str)")
-            lines.append(
-                f"        from immich.client.models.{model_module} import {request_body_model}"
-            )
-            lines.append(
-                f"        {body_param_name} = deserialize_request_body(json_data, {request_body_model})"
-            )
-            lines.append(f"        kwargs['{body_param_name}'] = {body_param_name}")
-
             # Handle dotted flags path
             if body_flags:
-                lines.append("    elif any([")
                 body_flag_params = [param_name for _, _, _, param_name, _ in body_flags]
+                # Check if body is required but not provided
+                if body_required:
+                    lines.append(
+                        f"    has_flags = any([{', '.join(body_flag_params)}])"
+                    )
+                    lines.append("    if not has_flags:")
+                    lines.append(
+                        '        raise SystemExit("Error: Request body is required. Use dotted body flags.")'
+                    )
+                lines.append("    if any([")
                 lines.append("        " + ",\n        ".join(body_flag_params) + ",")
                 lines.append("    ]):")
                 lines.append("        # Build body from dotted flags")
@@ -755,15 +713,16 @@ def generate_command_function(
                             )
 
                 # Validate and create model
-                lines.append("        if json_data:")
                 lines.append(
-                    f"            from immich.client.models.{model_module} import {request_body_model}"
+                    f"        from immich.client.models.{model_module} import {request_body_model}"
                 )
                 lines.append(
-                    f"            {body_param_name} = deserialize_request_body(json_data, {request_body_model})"
+                    f"        {body_param_name} = deserialize_request_body(json_data, {request_body_model})"
                 )
+                lines.append(f"        kwargs['{body_param_name}'] = {body_param_name}")
+            elif body_required:
                 lines.append(
-                    f"            kwargs['{body_param_name}'] = {body_param_name}"
+                    '    raise SystemExit("Error: Request body is required but cannot be provided via dotted flags (complex type).")'
                 )
         elif content_type == "multipart/form-data":
             props = (
@@ -772,9 +731,7 @@ def generate_command_function(
                 else {}
             )
             required_props = set(resolved_schema.get("required", []) or [])
-            lines.append(
-                "    json_data = json.loads(json_str) if json_str is not None else {}"
-            )
+            lines.append("    json_data = {}  # noqa: F841")
             lines.append("    missing: list[str] = []")
             for prop_name, prop_schema in sorted(props.items(), key=lambda kv: kv[0]):
                 if not isinstance(prop_schema, dict):
@@ -810,7 +767,7 @@ def generate_command_function(
             lines.append(
                 "        raise SystemExit("
                 "\"Error: missing required multipart fields: \" + ', '.join(missing) + "
-                '". Provide them via --json and/or file options."'
+                '". Provide them via file options."'
                 ")"
             )
 

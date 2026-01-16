@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import typer
 
 from immich.cli.runtime import (
@@ -23,11 +22,8 @@ Docs: https://api.immich.app/endpoints/memories""",
 @app.command("add-memory-assets")
 def add_memory_assets(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Memory ID"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    ids: list[str] = typer.Option(..., "--ids", help="""IDs to process"""),
+    id: str,
+    ids: list[str] = typer.Option(..., "--ids"),
 ) -> None:
     """Add assets to a memory
 
@@ -35,24 +31,10 @@ def add_memory_assets(
     """
     kwargs = {}
     kwargs["id"] = id
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([ids])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.bulk_ids_dto import BulkIdsDto
-
-        bulk_ids_dto = deserialize_request_body(json_data, BulkIdsDto)
-        kwargs["bulk_ids_dto"] = bulk_ids_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             ids,
         ]
@@ -62,11 +44,10 @@ def add_memory_assets(
         if ids is None:
             raise SystemExit("Error: --ids is required")
         set_nested(json_data, ["ids"], ids)
-        if json_data:
-            from immich.client.models.bulk_ids_dto import BulkIdsDto
+        from immich.client.models.bulk_ids_dto import BulkIdsDto
 
-            bulk_ids_dto = deserialize_request_body(json_data, BulkIdsDto)
-            kwargs["bulk_ids_dto"] = bulk_ids_dto
+        bulk_ids_dto = deserialize_request_body(json_data, BulkIdsDto)
+        kwargs["bulk_ids_dto"] = bulk_ids_dto
     client = ctx.obj["client"]
     api_group = client.memories
     result = run_command(client, api_group, "add_memory_assets", **kwargs)
@@ -77,45 +58,22 @@ def add_memory_assets(
 @app.command("create-memory")
 def create_memory(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    asset_ids: list[str] | None = typer.Option(
-        None, "--assetIds", help="""Asset IDs to associate with memory"""
-    ),
-    data_year: float = typer.Option(
-        ..., "--data.year", help="""Year for on this day memory"""
-    ),
-    is_saved: bool | None = typer.Option(None, "--isSaved", help="""Is memory saved"""),
-    memory_at: str = typer.Option(..., "--memoryAt", help="""Memory date"""),
-    seen_at: str | None = typer.Option(
-        None, "--seenAt", help="""Date when memory was seen"""
-    ),
-    type: str = typer.Option(..., "--type", help="""Memory type"""),
+    asset_ids: list[str] | None = typer.Option(None, "--assetIds"),
+    data_year: float = typer.Option(..., "--data.year"),
+    is_saved: bool | None = typer.Option(None, "--isSaved"),
+    memory_at: str = typer.Option(..., "--memoryAt"),
+    seen_at: str | None = typer.Option(None, "--seenAt"),
+    type: str = typer.Option(..., "--type"),
 ) -> None:
     """Create a memory
 
     Docs: https://api.immich.app/endpoints/memories/createMemory
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([asset_ids, data_year, is_saved, memory_at, seen_at, type])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.memory_create_dto import MemoryCreateDto
-
-        memory_create_dto = deserialize_request_body(json_data, MemoryCreateDto)
-        kwargs["memory_create_dto"] = memory_create_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             asset_ids,
             data_year,
@@ -142,11 +100,10 @@ def create_memory(
         if type is None:
             raise SystemExit("Error: --type is required")
         set_nested(json_data, ["type"], type)
-        if json_data:
-            from immich.client.models.memory_create_dto import MemoryCreateDto
+        from immich.client.models.memory_create_dto import MemoryCreateDto
 
-            memory_create_dto = deserialize_request_body(json_data, MemoryCreateDto)
-            kwargs["memory_create_dto"] = memory_create_dto
+        memory_create_dto = deserialize_request_body(json_data, MemoryCreateDto)
+        kwargs["memory_create_dto"] = memory_create_dto
     client = ctx.obj["client"]
     api_group = client.memories
     result = run_command(client, api_group, "create_memory", **kwargs)
@@ -157,7 +114,7 @@ def create_memory(
 @app.command("delete-memory")
 def delete_memory(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Memory ID"""),
+    id: str,
 ) -> None:
     """Delete a memory
 
@@ -175,7 +132,7 @@ def delete_memory(
 @app.command("get-memory")
 def get_memory(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Memory ID"""),
+    id: str,
 ) -> None:
     """Retrieve a memory
 
@@ -193,18 +150,14 @@ def get_memory(
 @app.command("memories-statistics")
 def memories_statistics(
     ctx: typer.Context,
-    for_: str | None = typer.Option(None, "--for", help="""Filter by date"""),
-    is_saved: bool | None = typer.Option(
-        None, "--is-saved", help="""Filter by saved status"""
-    ),
-    is_trashed: bool | None = typer.Option(
-        None, "--is-trashed", help="""Include trashed memories"""
-    ),
-    order: str | None = typer.Option(None, "--order", help="""Sort order"""),
+    for_: str | None = typer.Option(None, "--for"),
+    is_saved: bool | None = typer.Option(None, "--is-saved"),
+    is_trashed: bool | None = typer.Option(None, "--is-trashed"),
+    order: str | None = typer.Option(None, "--order"),
     size: int | None = typer.Option(
         None, "--size", help="""Number of memories to return"""
     ),
-    type: str | None = typer.Option(None, "--type", help="""Memory type"""),
+    type: str | None = typer.Option(None, "--type"),
 ) -> None:
     """Retrieve memories statistics
 
@@ -233,11 +186,8 @@ def memories_statistics(
 @app.command("remove-memory-assets")
 def remove_memory_assets(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Memory ID"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    ids: list[str] = typer.Option(..., "--ids", help="""IDs to process"""),
+    id: str,
+    ids: list[str] = typer.Option(..., "--ids"),
 ) -> None:
     """Remove assets from a memory
 
@@ -245,24 +195,10 @@ def remove_memory_assets(
     """
     kwargs = {}
     kwargs["id"] = id
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([ids])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.bulk_ids_dto import BulkIdsDto
-
-        bulk_ids_dto = deserialize_request_body(json_data, BulkIdsDto)
-        kwargs["bulk_ids_dto"] = bulk_ids_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             ids,
         ]
@@ -272,11 +208,10 @@ def remove_memory_assets(
         if ids is None:
             raise SystemExit("Error: --ids is required")
         set_nested(json_data, ["ids"], ids)
-        if json_data:
-            from immich.client.models.bulk_ids_dto import BulkIdsDto
+        from immich.client.models.bulk_ids_dto import BulkIdsDto
 
-            bulk_ids_dto = deserialize_request_body(json_data, BulkIdsDto)
-            kwargs["bulk_ids_dto"] = bulk_ids_dto
+        bulk_ids_dto = deserialize_request_body(json_data, BulkIdsDto)
+        kwargs["bulk_ids_dto"] = bulk_ids_dto
     client = ctx.obj["client"]
     api_group = client.memories
     result = run_command(client, api_group, "remove_memory_assets", **kwargs)
@@ -287,18 +222,14 @@ def remove_memory_assets(
 @app.command("search-memories")
 def search_memories(
     ctx: typer.Context,
-    for_: str | None = typer.Option(None, "--for", help="""Filter by date"""),
-    is_saved: bool | None = typer.Option(
-        None, "--is-saved", help="""Filter by saved status"""
-    ),
-    is_trashed: bool | None = typer.Option(
-        None, "--is-trashed", help="""Include trashed memories"""
-    ),
-    order: str | None = typer.Option(None, "--order", help="""Sort order"""),
+    for_: str | None = typer.Option(None, "--for"),
+    is_saved: bool | None = typer.Option(None, "--is-saved"),
+    is_trashed: bool | None = typer.Option(None, "--is-trashed"),
+    order: str | None = typer.Option(None, "--order"),
     size: int | None = typer.Option(
         None, "--size", help="""Number of memories to return"""
     ),
-    type: str | None = typer.Option(None, "--type", help="""Memory type"""),
+    type: str | None = typer.Option(None, "--type"),
 ) -> None:
     """Retrieve memories
 
@@ -327,15 +258,10 @@ def search_memories(
 @app.command("update-memory")
 def update_memory(
     ctx: typer.Context,
-    id: str = typer.Argument(..., help="""Memory ID"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    is_saved: bool | None = typer.Option(None, "--isSaved", help="""Is memory saved"""),
-    memory_at: str | None = typer.Option(None, "--memoryAt", help="""Memory date"""),
-    seen_at: str | None = typer.Option(
-        None, "--seenAt", help="""Date when memory was seen"""
-    ),
+    id: str,
+    is_saved: bool | None = typer.Option(None, "--isSaved"),
+    memory_at: str | None = typer.Option(None, "--memoryAt"),
+    seen_at: str | None = typer.Option(None, "--seenAt"),
 ) -> None:
     """Update a memory
 
@@ -343,24 +269,10 @@ def update_memory(
     """
     kwargs = {}
     kwargs["id"] = id
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([is_saved, memory_at, seen_at])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.memory_update_dto import MemoryUpdateDto
-
-        memory_update_dto = deserialize_request_body(json_data, MemoryUpdateDto)
-        kwargs["memory_update_dto"] = memory_update_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             is_saved,
             memory_at,
@@ -375,11 +287,10 @@ def update_memory(
             set_nested(json_data, ["memoryAt"], memory_at)
         if seen_at is not None:
             set_nested(json_data, ["seenAt"], seen_at)
-        if json_data:
-            from immich.client.models.memory_update_dto import MemoryUpdateDto
+        from immich.client.models.memory_update_dto import MemoryUpdateDto
 
-            memory_update_dto = deserialize_request_body(json_data, MemoryUpdateDto)
-            kwargs["memory_update_dto"] = memory_update_dto
+        memory_update_dto = deserialize_request_body(json_data, MemoryUpdateDto)
+        kwargs["memory_update_dto"] = memory_update_dto
     client = ctx.obj["client"]
     api_group = client.memories
     result = run_command(client, api_group, "update_memory", **kwargs)

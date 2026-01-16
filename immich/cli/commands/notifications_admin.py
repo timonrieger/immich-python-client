@@ -23,50 +23,23 @@ Docs: https://api.immich.app/endpoints/notifications-admin""",
 @app.command("create-notification")
 def create_notification(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    data: str | None = typer.Option(
-        None, "--data", help="""Additional notification data"""
-    ),
-    description: str | None = typer.Option(
-        None, "--description", help="""Notification description"""
-    ),
-    level: str | None = typer.Option(None, "--level", help="""Notification level"""),
-    read_at: str | None = typer.Option(
-        None, "--readAt", help="""Date when notification was read"""
-    ),
-    title: str = typer.Option(..., "--title", help="""Notification title"""),
-    type: str | None = typer.Option(None, "--type", help="""Notification type"""),
-    user_id: str = typer.Option(
-        ..., "--userId", help="""User ID to send notification to"""
-    ),
+    data: str | None = typer.Option(None, "--data", help="JSON string for data"),
+    description: str | None = typer.Option(None, "--description"),
+    level: str | None = typer.Option(None, "--level"),
+    read_at: str | None = typer.Option(None, "--readAt"),
+    title: str = typer.Option(..., "--title"),
+    type: str | None = typer.Option(None, "--type"),
+    user_id: str = typer.Option(..., "--userId"),
 ) -> None:
     """Create a notification
 
     Docs: https://api.immich.app/endpoints/notifications-admin/createNotification
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([data, description, level, read_at, title, type, user_id])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.notification_create_dto import NotificationCreateDto
-
-        notification_create_dto = deserialize_request_body(
-            json_data, NotificationCreateDto
-        )
-        kwargs["notification_create_dto"] = notification_create_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             data,
             description,
@@ -96,15 +69,12 @@ def create_notification(
         if user_id is None:
             raise SystemExit("Error: --userId is required")
         set_nested(json_data, ["userId"], user_id)
-        if json_data:
-            from immich.client.models.notification_create_dto import (
-                NotificationCreateDto,
-            )
+        from immich.client.models.notification_create_dto import NotificationCreateDto
 
-            notification_create_dto = deserialize_request_body(
-                json_data, NotificationCreateDto
-            )
-            kwargs["notification_create_dto"] = notification_create_dto
+        notification_create_dto = deserialize_request_body(
+            json_data, NotificationCreateDto
+        )
+        kwargs["notification_create_dto"] = notification_create_dto
     client = ctx.obj["client"]
     api_group = client.notifications_admin
     result = run_command(client, api_group, "create_notification", **kwargs)
@@ -115,11 +85,8 @@ def create_notification(
 @app.command("get-notification-template-admin")
 def get_notification_template_admin(
     ctx: typer.Context,
-    name: str = typer.Argument(..., help="""Email template name"""),
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    template: str = typer.Option(..., "--template", help="""Template name"""),
+    name: str,
+    template: str = typer.Option(..., "--template"),
 ) -> None:
     """Render email template
 
@@ -127,24 +94,10 @@ def get_notification_template_admin(
     """
     kwargs = {}
     kwargs["name"] = name
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any([template])
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.template_dto import TemplateDto
-
-        template_dto = deserialize_request_body(json_data, TemplateDto)
-        kwargs["template_dto"] = template_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             template,
         ]
@@ -154,11 +107,10 @@ def get_notification_template_admin(
         if template is None:
             raise SystemExit("Error: --template is required")
         set_nested(json_data, ["template"], template)
-        if json_data:
-            from immich.client.models.template_dto import TemplateDto
+        from immich.client.models.template_dto import TemplateDto
 
-            template_dto = deserialize_request_body(json_data, TemplateDto)
-            kwargs["template_dto"] = template_dto
+        template_dto = deserialize_request_body(json_data, TemplateDto)
+        kwargs["template_dto"] = template_dto
     client = ctx.obj["client"]
     api_group = client.notifications_admin
     result = run_command(client, api_group, "get_notification_template_admin", **kwargs)
@@ -169,44 +121,21 @@ def get_notification_template_admin(
 @app.command("send-test-email-admin")
 def send_test_email_admin(
     ctx: typer.Context,
-    json_str: str | None = typer.Option(
-        None, "--json", help="Inline JSON request body"
-    ),
-    enabled: bool = typer.Option(
-        ..., "--enabled", help="""Whether SMTP email notifications are enabled"""
-    ),
-    from_: str = typer.Option(..., "--from", help="""Email address to send from"""),
-    reply_to: str = typer.Option(
-        ..., "--replyTo", help="""Email address for replies"""
-    ),
-    transport_host: str = typer.Option(
-        ..., "--transport.host", help="""SMTP server hostname"""
-    ),
-    transport_ignore_cert: bool = typer.Option(
-        ...,
-        "--transport.ignoreCert",
-        help="""Whether to ignore SSL certificate errors""",
-    ),
-    transport_password: str = typer.Option(
-        ..., "--transport.password", help="""SMTP password"""
-    ),
-    transport_port: float = typer.Option(
-        ..., "--transport.port", help="""SMTP server port"""
-    ),
-    transport_secure: bool = typer.Option(
-        ..., "--transport.secure", help="""Whether to use secure connection (TLS/SSL)"""
-    ),
-    transport_username: str = typer.Option(
-        ..., "--transport.username", help="""SMTP username"""
-    ),
+    enabled: bool = typer.Option(..., "--enabled"),
+    from_: str = typer.Option(..., "--from"),
+    reply_to: str = typer.Option(..., "--replyTo"),
+    transport_host: str = typer.Option(..., "--transport.host"),
+    transport_ignore_cert: bool = typer.Option(..., "--transport.ignoreCert"),
+    transport_password: str = typer.Option(..., "--transport.password"),
+    transport_port: float = typer.Option(..., "--transport.port"),
+    transport_secure: bool = typer.Option(..., "--transport.secure"),
+    transport_username: str = typer.Option(..., "--transport.username"),
 ) -> None:
     """Send test email
 
     Docs: https://api.immich.app/endpoints/notifications-admin/sendTestEmailAdmin
     """
     kwargs = {}
-    # Check mutual exclusion between --json and dotted flags
-    has_json = json_str is not None
     has_flags = any(
         [
             enabled,
@@ -220,23 +149,9 @@ def send_test_email_admin(
             transport_username,
         ]
     )
-    if has_json and has_flags:
-        raise SystemExit(
-            "Error: Cannot use both --json and dotted body flags together. Use one or the other."
-        )
-    if not has_json and not has_flags:
-        raise SystemExit(
-            "Error: Request body is required. Provide --json or use dotted body flags."
-        )
-    if json_str is not None:
-        json_data = json.loads(json_str)
-        from immich.client.models.system_config_smtp_dto import SystemConfigSmtpDto
-
-        system_config_smtp_dto = deserialize_request_body(
-            json_data, SystemConfigSmtpDto
-        )
-        kwargs["system_config_smtp_dto"] = system_config_smtp_dto
-    elif any(
+    if not has_flags:
+        raise SystemExit("Error: Request body is required. Use dotted body flags.")
+    if any(
         [
             enabled,
             from_,
@@ -278,13 +193,12 @@ def send_test_email_admin(
         if transport_username is None:
             raise SystemExit("Error: --transport.username is required")
         set_nested(json_data, ["transport", "username"], transport_username)
-        if json_data:
-            from immich.client.models.system_config_smtp_dto import SystemConfigSmtpDto
+        from immich.client.models.system_config_smtp_dto import SystemConfigSmtpDto
 
-            system_config_smtp_dto = deserialize_request_body(
-                json_data, SystemConfigSmtpDto
-            )
-            kwargs["system_config_smtp_dto"] = system_config_smtp_dto
+        system_config_smtp_dto = deserialize_request_body(
+            json_data, SystemConfigSmtpDto
+        )
+        kwargs["system_config_smtp_dto"] = system_config_smtp_dto
     client = ctx.obj["client"]
     api_group = client.notifications_admin
     result = run_command(client, api_group, "send_test_email_admin", **kwargs)
