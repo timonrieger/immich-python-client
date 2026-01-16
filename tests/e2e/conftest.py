@@ -1,9 +1,20 @@
 import os
 from pathlib import Path
+from typing import AsyncGenerator
+from uuid import UUID
 
 import pytest
 
 from immich import AsyncClient
+from immich.client import (
+    ActivityCreateDto,
+    ActivityResponseDto,
+    AlbumResponseDto,
+    CreateAlbumDto,
+    LicenseKeyDto,
+    LicenseResponseDto,
+    ReactionType,
+)
 from immich.client.exceptions import BadRequestException
 from immich.client.models.admin_onboarding_update_dto import AdminOnboardingUpdateDto
 from immich.client.models.api_key_create_dto import APIKeyCreateDto
@@ -12,6 +23,9 @@ from immich.client.models.permission import Permission
 from immich.client.models.sign_up_dto import SignUpDto
 
 from tests.e2e.client.generators import make_random_image, make_random_video
+
+ACTIVATION_KEY = "4kJUNUWMq13J14zqPFm1NodRcI6MV6DeOGvQNIgrM8Sc9nv669wyEVvFw1Nz4Kb1W7zLWblOtXEQzpRRqC4r4fKjewJxfbpeo9sEsqAVIfl4Ero-Vp1Dg21-sVdDGZEAy2oeTCXAyCT5d1JqrqR6N1qTAm4xOx9ujXQRFYhjRG8uwudw7_Q49pF18Tj5OEv9qCqElxztoNck4i6O_azsmsoOQrLIENIWPh3EynBN3ESpYERdCgXO8MlWeuG14_V1HbNjnJPZDuvYg__YfMzoOEtfm1sCqEaJ2Ww-BaX7yGfuCL4XsuZlCQQNHjfscy_WywVfIZPKCiW8QR74i0cSzQ"
+LICENSE_KEY = "IMSV-6ECZ-91TE-WZRM-Q7AQ-MBN4-UW48-2CPT-71X9"
 
 
 @pytest.fixture
@@ -85,3 +99,79 @@ def test_video(tmp_path: Path) -> Path:
     vid_path = tmp_path / "test.mp4"
     vid_path.write_bytes(make_random_video())
     return vid_path
+
+
+# ########################################################
+# # Fixtures for CLI commands depending on other commands
+# ########################################################
+@pytest.fixture
+async def album(
+    client_with_api_key: AsyncClient, teardown: bool
+) -> AsyncGenerator[AlbumResponseDto, None]:
+    """Fixture to set up album for testing.
+
+    Creates an album, returns parsed album object.
+    Skips dependent tests if album creation fails.
+    """
+    # Set up: Create album
+    album = await client_with_api_key.albums.create_album(
+        CreateAlbumDto(albumName="Test Album for Activities")
+    )
+    yield album
+    if teardown:
+        await client_with_api_key.albums.delete_album(UUID(str(album.id)))
+
+
+@pytest.fixture
+def teardown(request: pytest.FixtureRequest) -> bool:
+    """Fixture to control whether teardown should be performed.
+
+    Can be parametrized in tests to override the default True value.
+    """
+    # Check if teardown was parametrized
+    if hasattr(request, "param"):
+        return request.param
+    return True
+
+
+@pytest.fixture
+async def activity(
+    client_with_api_key: AsyncClient,
+    album: AlbumResponseDto,
+    activity_type: ReactionType,
+    teardown: bool,
+) -> AsyncGenerator[ActivityResponseDto, None]:
+    """Fixture to set up activity for testing.
+
+    Creates an activity with the specified type, returns parsed activity object.
+    Skips dependent tests if activity creation fails.
+    """
+    # Set up: Create activity
+    activity = await client_with_api_key.activities.create_activity(
+        ActivityCreateDto(
+            albumId=UUID(str(album.id)),
+            type=activity_type,
+            comment="Test comment" if activity_type == ReactionType.COMMENT else None,
+        )
+    )
+    yield activity
+    if teardown:
+        await client_with_api_key.activities.delete_activity(UUID(str(activity.id)))
+
+
+@pytest.fixture
+async def license(
+    client_with_api_key: AsyncClient, teardown: bool
+) -> AsyncGenerator[LicenseResponseDto, None]:
+    """Fixture to set up license for testing.
+
+    Sets a license, returns parsed license object.
+    Skips dependent tests if license setup fails.
+    Note: This requires valid license keys. Tests may skip if license keys are not available.
+    """
+    license = await client_with_api_key.server.set_server_license(
+        LicenseKeyDto(licenseKey=LICENSE_KEY, activationKey=ACTIVATION_KEY)
+    )
+    yield license
+    if teardown:
+        await client_with_api_key.server.delete_server_license()

@@ -825,7 +825,7 @@ def generate_tag_app(
     return "\n".join(lines)
 
 
-def main() -> int:
+def main() -> None:
     """Main codegen entrypoint."""
     parser = argparse.ArgumentParser(
         description="Generate Immich CLI from OpenAPI specification."
