@@ -6,7 +6,7 @@ from typer.testing import CliRunner
 from immich.cli.app import app as cli_app
 from immich.client.models.license_response_dto import LicenseResponseDto
 
-from tests.e2e.cli.conftest import ACTIVATION_KEY, LICENSE_KEY
+from tests.e2e.conftest import ACTIVATION_KEY, LICENSE_KEY
 from immich.client.models.server_about_response_dto import ServerAboutResponseDto
 from immich.client.models.server_apk_links_dto import ServerApkLinksDto
 from immich.client.models.server_config_dto import ServerConfigDto
@@ -174,8 +174,24 @@ def test_ping_server(runner: CliRunner) -> None:
 
 
 @pytest.mark.e2e
-def test_set_server_license(license: LicenseResponseDto) -> None:
+def test_set_server_license(runner: CliRunner) -> None:
     """Test set-server-license command and validate response structure."""
+    result = runner.invoke(
+        cli_app,
+        [
+            "--format",
+            "json",
+            "server",
+            "set-server-license",
+            "--licenseKey",
+            LICENSE_KEY,
+            "--activationKey",
+            ACTIVATION_KEY,
+        ],
+    )
+    assert result.exit_code == 0, result.stdout + result.stderr
+    response_data = json.loads(result.output)
+    license = LicenseResponseDto.model_validate(response_data)
     assert license.license_key == LICENSE_KEY
     assert license.activation_key == ACTIVATION_KEY
 
@@ -198,7 +214,7 @@ def test_get_server_license_after_set(
 
 @pytest.mark.e2e
 def test_get_server_license_before_set(runner: CliRunner) -> None:
-    """Test get-server-license command - requires license to be set."""
+    """Test get-server-license command without license set."""
     result = runner.invoke(
         cli_app,
         ["--format", "json", "server", "get-server-license"],
@@ -208,6 +224,7 @@ def test_get_server_license_before_set(runner: CliRunner) -> None:
 
 
 @pytest.mark.e2e
+@pytest.mark.parametrize("teardown", [False])
 def test_delete_server_license(runner: CliRunner, license: LicenseResponseDto) -> None:
     """Test delete-server-license command - requires license to be set first."""
     result = runner.invoke(

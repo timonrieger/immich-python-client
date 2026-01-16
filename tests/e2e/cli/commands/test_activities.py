@@ -15,16 +15,38 @@ from immich.client.models.reaction_type import ReactionType
 @pytest.mark.e2e
 @pytest.mark.parametrize("activity_type", [ReactionType.LIKE, ReactionType.COMMENT])
 def test_create_activity(
-    activity: ActivityResponseDto, activity_type: ReactionType
+    runner: CliRunner, album: AlbumResponseDto, activity_type: ReactionType
 ) -> None:
     """Test create-activity command with different activity types and validate response structure."""
-    assert activity.type == activity_type.value
+    activity_args = [
+        "--format",
+        "json",
+        "activities",
+        "create-activity",
+        "--albumId",
+        str(album.id),
+        "--type",
+        activity_type.value,
+    ]
+    if activity_type == ReactionType.COMMENT:
+        activity_args.extend(["--comment", "Test comment"])
+
+    activity_result = runner.invoke(cli_app, activity_args)
+    assert activity_result.exit_code == 0, (
+        activity_result.stdout + activity_result.stderr
+    )
+    response_data = json.loads(activity_result.output)
+    activity = ActivityResponseDto.model_validate(response_data)
+    assert activity.type == activity_type
     if activity_type == ReactionType.COMMENT:
         assert activity.comment == "Test comment"
+    else:
+        assert activity.comment is None
 
 
 @pytest.mark.e2e
 @pytest.mark.parametrize("activity_type", [ReactionType.LIKE])
+@pytest.mark.parametrize("teardown", [False])
 def test_delete_activity(runner: CliRunner, activity: ActivityResponseDto) -> None:
     """Test delete-activity command and validate response structure."""
     result = runner.invoke(
