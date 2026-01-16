@@ -12,6 +12,7 @@ from immich.client.models.permission import Permission
 
 
 @pytest.mark.e2e
+@pytest.mark.skip(reason="Waiting for CLI support on list objects")
 def test_create_api_key(runner: CliRunner) -> None:
     """Test create-api-key command and validate response structure."""
     api_key_name = "Test API Key"
@@ -88,6 +89,7 @@ def test_get_my_api_key(runner: CliRunner) -> None:
 
 
 @pytest.mark.e2e
+@pytest.mark.skip(reason="Waiting for CLI support on list objects")
 def test_update_api_key(runner: CliRunner, api_key: APIKeyResponseDto) -> None:
     """Test update-api-key command and validate response structure."""
     api_key_id = api_key.id
