@@ -28,7 +28,7 @@ def create_session(
         None, "--deviceType", help="""Device type"""
     ),
     duration: float | None = typer.Option(
-        None, "--duration", help="""Session duration in seconds"""
+        None, "--duration", help="""Session duration in seconds""", min=1
     ),
 ) -> None:
     """Create a session

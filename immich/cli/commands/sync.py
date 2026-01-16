@@ -87,7 +87,7 @@ def get_full_sync_for_user(
         None, "--lastId", help="""Last asset ID (pagination)"""
     ),
     limit: int = typer.Option(
-        ..., "--limit", help="""Maximum number of assets to return"""
+        ..., "--limit", help="""Maximum number of assets to return""", min=1
     ),
     updated_until: datetime = typer.Option(
         ..., "--updatedUntil", help="""Sync assets updated until this date"""

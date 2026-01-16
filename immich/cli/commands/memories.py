@@ -56,7 +56,7 @@ def create_memory(
         None, "--assetIds", help="""Asset IDs to associate with memory"""
     ),
     data_year: float = typer.Option(
-        ..., "--data.year", help="""Year for on this day memory"""
+        ..., "--data.year", help="""Year for on this day memory""", min=1
     ),
     is_saved: bool | None = typer.Option(None, "--isSaved", help="""Is memory saved"""),
     memory_at: datetime = typer.Option(..., "--memoryAt", help="""Memory date"""),
@@ -142,7 +142,7 @@ def memories_statistics(
         None, "--order", help="""Sort order"""
     ),
     size: int | None = typer.Option(
-        None, "--size", help="""Number of memories to return"""
+        None, "--size", help="""Number of memories to return""", min=1
     ),
     type: MemoryType | None = typer.Option(None, "--type", help="""Memory type"""),
 ) -> None:
@@ -211,7 +211,7 @@ def search_memories(
         None, "--order", help="""Sort order"""
     ),
     size: int | None = typer.Option(
-        None, "--size", help="""Number of memories to return"""
+        None, "--size", help="""Number of memories to return""", min=1
     ),
     type: MemoryType | None = typer.Option(None, "--type", help="""Memory type"""),
 ) -> None:

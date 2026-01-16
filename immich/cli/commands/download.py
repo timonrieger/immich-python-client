@@ -69,7 +69,7 @@ def get_download_info(
         None, "--albumId", help="""Album ID to download"""
     ),
     archive_size: int | None = typer.Option(
-        None, "--archiveSize", help="""Archive size limit in bytes"""
+        None, "--archiveSize", help="""Archive size limit in bytes""", min=1
     ),
     asset_ids: list[str] | None = typer.Option(
         None, "--assetIds", help="""Asset IDs to download"""

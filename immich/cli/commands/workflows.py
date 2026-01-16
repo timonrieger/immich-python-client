@@ -27,7 +27,9 @@ def create_workflow(
     actions: list[str] = typer.Option(
         ...,
         "--actions",
-        help="""Workflow actions. Example: --actions key1=value1,key2=value2""",
+        help="""Workflow actions
+
+Example: --actions key1=value1,key2=value2""",
     ),
     description: str | None = typer.Option(
         None, "--description", help="""Workflow description"""
@@ -36,7 +38,9 @@ def create_workflow(
     filters: list[str] = typer.Option(
         ...,
         "--filters",
-        help="""Workflow filters. Example: --filters key1=value1,key2=value2""",
+        help="""Workflow filters
+
+Example: --filters key1=value1,key2=value2""",
     ),
     name: str = typer.Option(..., "--name", help="""Workflow name"""),
     trigger_type: str = typer.Option(..., "--triggerType", help="""Trigger type"""),
@@ -127,7 +131,9 @@ def update_workflow(
     actions: list[str] | None = typer.Option(
         None,
         "--actions",
-        help="""Workflow actions. Example: --actions key1=value1,key2=value2""",
+        help="""Workflow actions
+
+Example: --actions key1=value1,key2=value2""",
     ),
     description: str | None = typer.Option(
         None, "--description", help="""Workflow description"""
@@ -136,7 +142,9 @@ def update_workflow(
     filters: list[str] | None = typer.Option(
         None,
         "--filters",
-        help="""Workflow filters. Example: --filters key1=value1,key2=value2""",
+        help="""Workflow filters
+
+Example: --filters key1=value1,key2=value2""",
     ),
     name: str | None = typer.Option(None, "--name", help="""Workflow name"""),
     trigger_type: str | None = typer.Option(

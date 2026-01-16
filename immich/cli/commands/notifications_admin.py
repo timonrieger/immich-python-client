@@ -28,7 +28,9 @@ def create_notification(
     data: str | None = typer.Option(
         None,
         "--data",
-        help="""Additional notification data. Example: --data key1=value1,key2=value2""",
+        help="""Additional notification data
+
+Example: --data key1=value1,key2=value2""",
     ),
     description: str | None = typer.Option(
         None, "--description", help="""Notification description"""
@@ -132,7 +134,7 @@ def send_test_email_admin(
         ..., "--transport.password", help="""SMTP password"""
     ),
     transport_port: float = typer.Option(
-        ..., "--transport.port", help="""SMTP server port"""
+        ..., "--transport.port", help="""SMTP server port""", min=0, max=65535
     ),
     transport_secure: bool = typer.Option(
         ..., "--transport.secure", help="""Whether to use secure connection (TLS/SSL)"""

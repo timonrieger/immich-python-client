@@ -274,7 +274,7 @@ def update_my_preferences(
         None, "--cast.gCastEnabled", help="""Whether Google Cast is enabled"""
     ),
     download_archive_size: int | None = typer.Option(
-        None, "--download.archiveSize", help="""Maximum archive size in bytes"""
+        None, "--download.archiveSize", help="""Maximum archive size in bytes""", min=1
     ),
     download_include_embedded_videos: bool | None = typer.Option(
         None,
@@ -303,7 +303,7 @@ def update_my_preferences(
         None, "--folders.sidebarWeb", help="""Whether folders appear in web sidebar"""
     ),
     memories_duration: int | None = typer.Option(
-        None, "--memories.duration", help="""Memory duration in seconds"""
+        None, "--memories.duration", help="""Memory duration in seconds""", min=1
     ),
     memories_enabled: bool | None = typer.Option(
         None, "--memories.enabled", help="""Whether memories are enabled"""

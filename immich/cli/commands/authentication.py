@@ -27,9 +27,19 @@ def change_password(
         None, "--invalidateSessions", help="""Invalidate all other sessions"""
     ),
     new_password: str = typer.Option(
-        ..., "--newPassword", help="""New password (min 8 characters)"""
+        ...,
+        "--newPassword",
+        help="""New password (min 8 characters)
+
+Example: password""",
     ),
-    password: str = typer.Option(..., "--password", help="""Current password"""),
+    password: str = typer.Option(
+        ...,
+        "--password",
+        help="""Current password
+
+Example: password""",
+    ),
 ) -> None:
     """Change password
 
@@ -59,7 +69,11 @@ def change_password(
 def change_pin_code(
     ctx: typer.Context,
     new_pin_code: str = typer.Option(
-        ..., "--newPinCode", help="""New PIN code (4-6 digits)"""
+        ...,
+        "--newPinCode",
+        help="""New PIN code (4-6 digits)
+
+Example: 123456""",
     ),
     password: str | None = typer.Option(
         None,
@@ -67,7 +81,11 @@ def change_pin_code(
         help="""User password (required if PIN code is not provided)""",
     ),
     pin_code: str | None = typer.Option(
-        None, "--pinCode", help="""New PIN code (4-6 digits)"""
+        None,
+        "--pinCode",
+        help="""New PIN code (4-6 digits)
+
+Example: 123456""",
     ),
 ) -> None:
     """Change pin code
@@ -196,8 +214,20 @@ def lock_auth_session(
 @app.command("login")
 def login(
     ctx: typer.Context,
-    email: str = typer.Option(..., "--email", help="""User email"""),
-    password: str = typer.Option(..., "--password", help="""User password"""),
+    email: str = typer.Option(
+        ...,
+        "--email",
+        help="""User email
+
+Example: testuser@email.com""",
+    ),
+    password: str = typer.Option(
+        ...,
+        "--password",
+        help="""User password
+
+Example: password""",
+    ),
 ) -> None:
     """Login
 
@@ -262,7 +292,11 @@ def reset_pin_code(
         help="""User password (required if PIN code is not provided)""",
     ),
     pin_code: str | None = typer.Option(
-        None, "--pinCode", help="""New PIN code (4-6 digits)"""
+        None,
+        "--pinCode",
+        help="""New PIN code (4-6 digits)
+
+Example: 123456""",
     ),
 ) -> None:
     """Reset pin code
@@ -292,7 +326,13 @@ def reset_pin_code(
 @app.command("setup-pin-code")
 def setup_pin_code(
     ctx: typer.Context,
-    pin_code: str = typer.Option(..., "--pinCode", help="""PIN code (4-6 digits)"""),
+    pin_code: str = typer.Option(
+        ...,
+        "--pinCode",
+        help="""PIN code (4-6 digits)
+
+Example: 123456""",
+    ),
 ) -> None:
     """Setup pin code
 
@@ -318,9 +358,27 @@ def setup_pin_code(
 @app.command("sign-up-admin")
 def sign_up_admin(
     ctx: typer.Context,
-    email: str = typer.Option(..., "--email", help="""User email"""),
-    name: str = typer.Option(..., "--name", help="""User name"""),
-    password: str = typer.Option(..., "--password", help="""User password"""),
+    email: str = typer.Option(
+        ...,
+        "--email",
+        help="""User email
+
+Example: testuser@email.com""",
+    ),
+    name: str = typer.Option(
+        ...,
+        "--name",
+        help="""User name
+
+Example: Admin""",
+    ),
+    password: str = typer.Option(
+        ...,
+        "--password",
+        help="""User password
+
+Example: password""",
+    ),
 ) -> None:
     """Register admin
 
@@ -407,7 +465,11 @@ def unlock_auth_session(
         help="""User password (required if PIN code is not provided)""",
     ),
     pin_code: str | None = typer.Option(
-        None, "--pinCode", help="""New PIN code (4-6 digits)"""
+        None,
+        "--pinCode",
+        help="""New PIN code (4-6 digits)
+
+Example: 123456""",
     ),
 ) -> None:
     """Unlock auth session

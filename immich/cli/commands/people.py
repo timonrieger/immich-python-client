@@ -119,10 +119,10 @@ def get_all_people(
         None, "--closest-person-id", help="""Closest person ID for similarity search"""
     ),
     page: float | None = typer.Option(
-        None, "--page", help="""Page number for pagination"""
+        None, "--page", help="""Page number for pagination""", min=1
     ),
     size: float | None = typer.Option(
-        None, "--size", help="""Number of items per page"""
+        None, "--size", help="""Number of items per page""", min=1, max=1000
     ),
     with_hidden: str | None = typer.Option(
         None, "--with-hidden", help="""Include hidden people"""
@@ -235,7 +235,9 @@ def reassign_faces(
     data: list[str] = typer.Option(
         ...,
         "--data",
-        help="""Face update items. Example: --data key1=value1,key2=value2""",
+        help="""Face update items
+
+Example: --data key1=value1,key2=value2""",
     ),
 ) -> None:
     """Reassign faces
@@ -267,7 +269,9 @@ def update_people(
     people: list[str] = typer.Option(
         ...,
         "--people",
-        help="""People to update. Example: --people key1=value1,key2=value2""",
+        help="""People to update
+
+Example: --people key1=value1,key2=value2""",
     ),
 ) -> None:
     """Update people

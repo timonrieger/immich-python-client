@@ -325,6 +325,10 @@ def generate_command_function(
             else:  # header
                 param_type = python_type_from_schema(schema, spec)
 
+            # Extract min/max constraints if available
+            minimum = schema.get("minimum")
+            maximum = schema.get("maximum")
+
             # Generate Typer option
             if description:
                 description_str = python_triple_quoted_str(description)
@@ -332,14 +336,16 @@ def generate_command_function(
             else:
                 help_arg = ""
 
-            if required:
-                lines.append(
-                    f'    {param_name}: {param_type} = typer.Option(..., "--{flag_name}"{help_arg}),'
-                )
-            else:
-                lines.append(
-                    f'    {param_name}: {param_type} | None = typer.Option(None, "--{flag_name}"{help_arg}),'
-                )
+            # Build min/max arguments
+            min_arg = f", min={minimum}" if minimum is not None else ""
+            max_arg = f", max={maximum}" if maximum is not None else ""
+
+            # Define type with optional None based on required
+            type_str = param_type if required else f"{param_type} | None"
+            default_value = "..." if required else "None"
+            lines.append(
+                f'    {param_name}: {type_str} = typer.Option({default_value}, "--{flag_name}"{help_arg}{min_arg}{max_arg}),'
+            )
 
         processed_params.append(
             (
@@ -367,13 +373,6 @@ def generate_command_function(
             flattened = flatten_schema(resolved_schema, spec)
             for path_parts, leaf_schema, is_required in flattened:
                 opt_name = option_name_for_path(path_parts)
-
-                # Check for collisions
-                if opt_name in used_option_names:
-                    raise ValueError(
-                        f"Option name collision in {operation_id}: '{opt_name}' already used. "
-                        f"Path: {'.'.join(path_parts)}"
-                    )
                 used_option_names.add(opt_name)
 
                 # Generate Python parameter name from path
@@ -396,18 +395,30 @@ def generate_command_function(
                 is_complex = is_complex_type(leaf_schema, spec)
                 description = leaf_schema.get("description", "")
 
+                # Extract min/max constraints if available
+                minimum = leaf_schema.get("minimum")
+                maximum = leaf_schema.get("maximum")
+
                 body_flags.append(
                     (path_parts, leaf_schema, is_required, param_name, opt_name)
                 )
 
                 # Emit Typer option
-                # Construct description
+                # Construct description with example and complex help
+                example = leaf_schema.get("example")
+                description_parts = [description] if description else []
+
+                if example is not None:
+                    description_parts.append(f"Example: {example}")
+
                 if is_complex:
-                    complex_help = f"Example: --{param_name} key1=value1,key2=value2"
-                    if description:
-                        description = f"{description}. {complex_help}"
-                    else:
-                        description = complex_help
+                    description_parts.append(
+                        f"Example: --{param_name} key1=value1,key2=value2"
+                    )
+
+                description = (
+                    "\n\n".join(description_parts) if description_parts else ""
+                )
                 description_str = (
                     python_triple_quoted_str(description) if description else ""
                 )
@@ -417,8 +428,12 @@ def generate_command_function(
                 default_value = "..." if is_required else "None"
                 help_arg = f", help={description_str}" if description_str else ""
 
+                # Build min/max arguments
+                min_arg = f", min={minimum}" if minimum is not None else ""
+                max_arg = f", max={maximum}" if maximum is not None else ""
+
                 lines.append(
-                    f'    {param_name}: {type_str} = typer.Option({default_value}, "{opt_name}"{help_arg}),'
+                    f'    {param_name}: {type_str} = typer.Option({default_value}, "{opt_name}"{help_arg}{min_arg}{max_arg}),'
                 )
         elif content_type == "multipart/form-data":
             # Add file-part options for binary fields

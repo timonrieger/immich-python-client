@@ -75,7 +75,7 @@ def update_config(
     ),
     backup_database_enabled: bool = typer.Option(..., "--backup.database.enabled"),
     backup_database_keep_last_amount: float = typer.Option(
-        ..., "--backup.database.keepLastAmount"
+        ..., "--backup.database.keepLastAmount", min=1
     ),
     ffmpeg_accel: str = typer.Option(..., "--ffmpeg.accel"),
     ffmpeg_accel_decode: bool = typer.Option(..., "--ffmpeg.accelDecode"),
@@ -88,19 +88,19 @@ def update_config(
     ffmpeg_accepted_video_codecs: list[str] = typer.Option(
         ..., "--ffmpeg.acceptedVideoCodecs"
     ),
-    ffmpeg_bframes: int = typer.Option(..., "--ffmpeg.bframes"),
+    ffmpeg_bframes: int = typer.Option(..., "--ffmpeg.bframes", min=-1, max=16),
     ffmpeg_cq_mode: str = typer.Option(..., "--ffmpeg.cqMode"),
-    ffmpeg_crf: int = typer.Option(..., "--ffmpeg.crf"),
-    ffmpeg_gop_size: int = typer.Option(..., "--ffmpeg.gopSize"),
+    ffmpeg_crf: int = typer.Option(..., "--ffmpeg.crf", min=0, max=51),
+    ffmpeg_gop_size: int = typer.Option(..., "--ffmpeg.gopSize", min=0),
     ffmpeg_max_bitrate: str = typer.Option(..., "--ffmpeg.maxBitrate"),
     ffmpeg_preferred_hw_device: str = typer.Option(..., "--ffmpeg.preferredHwDevice"),
     ffmpeg_preset: str = typer.Option(..., "--ffmpeg.preset"),
-    ffmpeg_refs: int = typer.Option(..., "--ffmpeg.refs"),
+    ffmpeg_refs: int = typer.Option(..., "--ffmpeg.refs", min=0, max=6),
     ffmpeg_target_audio_codec: str = typer.Option(..., "--ffmpeg.targetAudioCodec"),
     ffmpeg_target_resolution: str = typer.Option(..., "--ffmpeg.targetResolution"),
     ffmpeg_target_video_codec: str = typer.Option(..., "--ffmpeg.targetVideoCodec"),
     ffmpeg_temporal_aq: bool = typer.Option(..., "--ffmpeg.temporalAQ"),
-    ffmpeg_threads: int = typer.Option(..., "--ffmpeg.threads"),
+    ffmpeg_threads: int = typer.Option(..., "--ffmpeg.threads", min=0),
     ffmpeg_tonemap: str = typer.Option(..., "--ffmpeg.tonemap"),
     ffmpeg_transcode: str = typer.Option(..., "--ffmpeg.transcode"),
     ffmpeg_two_pass: bool = typer.Option(..., "--ffmpeg.twoPass"),
@@ -108,41 +108,55 @@ def update_config(
     image_extract_embedded: bool = typer.Option(..., "--image.extractEmbedded"),
     image_fullsize_enabled: bool = typer.Option(..., "--image.fullsize.enabled"),
     image_fullsize_format: str = typer.Option(..., "--image.fullsize.format"),
-    image_fullsize_quality: int = typer.Option(..., "--image.fullsize.quality"),
+    image_fullsize_quality: int = typer.Option(
+        ..., "--image.fullsize.quality", min=1, max=100
+    ),
     image_preview_format: str = typer.Option(..., "--image.preview.format"),
-    image_preview_quality: int = typer.Option(..., "--image.preview.quality"),
-    image_preview_size: int = typer.Option(..., "--image.preview.size"),
+    image_preview_quality: int = typer.Option(
+        ..., "--image.preview.quality", min=1, max=100
+    ),
+    image_preview_size: int = typer.Option(..., "--image.preview.size", min=1),
     image_thumbnail_format: str = typer.Option(..., "--image.thumbnail.format"),
-    image_thumbnail_quality: int = typer.Option(..., "--image.thumbnail.quality"),
-    image_thumbnail_size: int = typer.Option(..., "--image.thumbnail.size"),
+    image_thumbnail_quality: int = typer.Option(
+        ..., "--image.thumbnail.quality", min=1, max=100
+    ),
+    image_thumbnail_size: int = typer.Option(..., "--image.thumbnail.size", min=1),
     job_background_task_concurrency: int = typer.Option(
-        ..., "--job.backgroundTask.concurrency"
+        ..., "--job.backgroundTask.concurrency", min=1
     ),
-    job_editor_concurrency: int = typer.Option(..., "--job.editor.concurrency"),
+    job_editor_concurrency: int = typer.Option(..., "--job.editor.concurrency", min=1),
     job_face_detection_concurrency: int = typer.Option(
-        ..., "--job.faceDetection.concurrency"
+        ..., "--job.faceDetection.concurrency", min=1
     ),
-    job_library_concurrency: int = typer.Option(..., "--job.library.concurrency"),
+    job_library_concurrency: int = typer.Option(
+        ..., "--job.library.concurrency", min=1
+    ),
     job_metadata_extraction_concurrency: int = typer.Option(
-        ..., "--job.metadataExtraction.concurrency"
+        ..., "--job.metadataExtraction.concurrency", min=1
     ),
-    job_migration_concurrency: int = typer.Option(..., "--job.migration.concurrency"),
+    job_migration_concurrency: int = typer.Option(
+        ..., "--job.migration.concurrency", min=1
+    ),
     job_notifications_concurrency: int = typer.Option(
-        ..., "--job.notifications.concurrency"
+        ..., "--job.notifications.concurrency", min=1
     ),
-    job_ocr_concurrency: int = typer.Option(..., "--job.ocr.concurrency"),
-    job_search_concurrency: int = typer.Option(..., "--job.search.concurrency"),
-    job_sidecar_concurrency: int = typer.Option(..., "--job.sidecar.concurrency"),
+    job_ocr_concurrency: int = typer.Option(..., "--job.ocr.concurrency", min=1),
+    job_search_concurrency: int = typer.Option(..., "--job.search.concurrency", min=1),
+    job_sidecar_concurrency: int = typer.Option(
+        ..., "--job.sidecar.concurrency", min=1
+    ),
     job_smart_search_concurrency: int = typer.Option(
-        ..., "--job.smartSearch.concurrency"
+        ..., "--job.smartSearch.concurrency", min=1
     ),
     job_thumbnail_generation_concurrency: int = typer.Option(
-        ..., "--job.thumbnailGeneration.concurrency"
+        ..., "--job.thumbnailGeneration.concurrency", min=1
     ),
     job_video_conversion_concurrency: int = typer.Option(
-        ..., "--job.videoConversion.concurrency"
+        ..., "--job.videoConversion.concurrency", min=1
     ),
-    job_workflow_concurrency: int = typer.Option(..., "--job.workflow.concurrency"),
+    job_workflow_concurrency: int = typer.Option(
+        ..., "--job.workflow.concurrency", min=1
+    ),
     library_scan_cron_expression: str = typer.Option(
         ..., "--library.scan.cronExpression"
     ),
@@ -174,6 +188,8 @@ def update_config(
         ...,
         "--machineLearning.duplicateDetection.maxDistance",
         help="""Maximum distance threshold for duplicate detection (0.001-0.1)""",
+        min=0.001,
+        max=0.1,
     ),
     machine_learning_enabled: bool = typer.Option(..., "--machineLearning.enabled"),
     machine_learning_facial_recognition_enabled: bool = typer.Option(
@@ -185,16 +201,21 @@ def update_config(
         ...,
         "--machineLearning.facialRecognition.maxDistance",
         help="""Maximum distance threshold for face recognition (0.1-2)""",
+        min=0.1,
+        max=2,
     ),
     machine_learning_facial_recognition_min_faces: int = typer.Option(
         ...,
         "--machineLearning.facialRecognition.minFaces",
         help="""Minimum number of faces required for recognition""",
+        min=1,
     ),
     machine_learning_facial_recognition_min_score: float = typer.Option(
         ...,
         "--machineLearning.facialRecognition.minScore",
         help="""Minimum confidence score for face detection (0.1-1)""",
+        min=0.1,
+        max=1,
     ),
     machine_learning_facial_recognition_model_name: str = typer.Option(
         ...,
@@ -208,16 +229,21 @@ def update_config(
         ...,
         "--machineLearning.ocr.maxResolution",
         help="""Maximum resolution for OCR processing""",
+        min=1,
     ),
     machine_learning_ocr_min_detection_score: float = typer.Option(
         ...,
         "--machineLearning.ocr.minDetectionScore",
         help="""Minimum confidence score for text detection (0.1-1)""",
+        min=0.1,
+        max=1,
     ),
     machine_learning_ocr_min_recognition_score: float = typer.Option(
         ...,
         "--machineLearning.ocr.minRecognitionScore",
         help="""Minimum confidence score for text recognition (0.1-1)""",
+        min=0.1,
+        max=1,
     ),
     machine_learning_ocr_model_name: str = typer.Option(
         ..., "--machineLearning.ocr.modelName", help="""Name of the model to use"""
@@ -267,7 +293,11 @@ def update_config(
         ..., "--notifications.smtp.transport.password", help="""SMTP password"""
     ),
     notifications_smtp_transport_port: float = typer.Option(
-        ..., "--notifications.smtp.transport.port", help="""SMTP server port"""
+        ...,
+        "--notifications.smtp.transport.port",
+        help="""SMTP server port""",
+        min=0,
+        max=65535,
     ),
     notifications_smtp_transport_secure: bool = typer.Option(
         ...,
@@ -282,7 +312,9 @@ def update_config(
     oauth_button_text: str = typer.Option(..., "--oauth.buttonText"),
     oauth_client_id: str = typer.Option(..., "--oauth.clientId"),
     oauth_client_secret: str = typer.Option(..., "--oauth.clientSecret"),
-    oauth_default_storage_quota: int = typer.Option(..., "--oauth.defaultStorageQuota"),
+    oauth_default_storage_quota: int = typer.Option(
+        ..., "--oauth.defaultStorageQuota", min=0
+    ),
     oauth_enabled: bool = typer.Option(..., "--oauth.enabled"),
     oauth_issuer_url: str = typer.Option(..., "--oauth.issuerUrl"),
     oauth_mobile_override_enabled: bool = typer.Option(
@@ -297,7 +329,7 @@ def update_config(
     oauth_signing_algorithm: str = typer.Option(..., "--oauth.signingAlgorithm"),
     oauth_storage_label_claim: str = typer.Option(..., "--oauth.storageLabelClaim"),
     oauth_storage_quota_claim: str = typer.Option(..., "--oauth.storageQuotaClaim"),
-    oauth_timeout: int = typer.Option(..., "--oauth.timeout"),
+    oauth_timeout: int = typer.Option(..., "--oauth.timeout", min=1),
     oauth_token_endpoint_auth_method: str = typer.Option(
         ..., "--oauth.tokenEndpointAuthMethod"
     ),
@@ -323,9 +355,9 @@ def update_config(
     theme_custom_css: str = typer.Option(
         ..., "--theme.customCss", help="""Custom CSS for theming"""
     ),
-    trash_days: int = typer.Option(..., "--trash.days"),
+    trash_days: int = typer.Option(..., "--trash.days", min=0),
     trash_enabled: bool = typer.Option(..., "--trash.enabled"),
-    user_delete_delay: int = typer.Option(..., "--user.deleteDelay"),
+    user_delete_delay: int = typer.Option(..., "--user.deleteDelay", min=1),
 ) -> None:
     """Update system configuration
 

@@ -36,7 +36,7 @@ def create_user_admin(
     ),
     password: str = typer.Option(..., "--password", help="""User password"""),
     quota_size_in_bytes: int | None = typer.Option(
-        None, "--quotaSizeInBytes", help="""Storage quota in bytes"""
+        None, "--quotaSizeInBytes", help="""Storage quota in bytes""", min=0
     ),
     should_change_password: bool | None = typer.Option(
         None, "--shouldChangePassword", help="""Require password change on next login"""
@@ -277,9 +277,15 @@ def update_user_admin(
     ),
     name: str | None = typer.Option(None, "--name", help="""User name"""),
     password: str | None = typer.Option(None, "--password", help="""User password"""),
-    pin_code: str | None = typer.Option(None, "--pinCode", help="""PIN code"""),
+    pin_code: str | None = typer.Option(
+        None,
+        "--pinCode",
+        help="""PIN code
+
+Example: 123456""",
+    ),
     quota_size_in_bytes: int | None = typer.Option(
-        None, "--quotaSizeInBytes", help="""Storage quota in bytes"""
+        None, "--quotaSizeInBytes", help="""Storage quota in bytes""", min=0
     ),
     should_change_password: bool | None = typer.Option(
         None, "--shouldChangePassword", help="""Require password change on next login"""
@@ -365,7 +371,7 @@ def update_user_preferences_admin(
         None, "--cast.gCastEnabled", help="""Whether Google Cast is enabled"""
     ),
     download_archive_size: int | None = typer.Option(
-        None, "--download.archiveSize", help="""Maximum archive size in bytes"""
+        None, "--download.archiveSize", help="""Maximum archive size in bytes""", min=1
     ),
     download_include_embedded_videos: bool | None = typer.Option(
         None,
@@ -394,7 +400,7 @@ def update_user_preferences_admin(
         None, "--folders.sidebarWeb", help="""Whether folders appear in web sidebar"""
     ),
     memories_duration: int | None = typer.Option(
-        None, "--memories.duration", help="""Memory duration in seconds"""
+        None, "--memories.duration", help="""Memory duration in seconds""", min=1
     ),
     memories_enabled: bool | None = typer.Option(
         None, "--memories.enabled", help="""Whether memories are enabled"""

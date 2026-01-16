@@ -104,7 +104,9 @@ def add_users_to_album(
     album_users: list[str] = typer.Option(
         ...,
         "--albumUsers",
-        help="""Album users to add. Example: --album_users key1=value1,key2=value2""",
+        help="""Album users to add
+
+Example: --album_users key1=value1,key2=value2""",
     ),
 ) -> None:
     """Share album with users
@@ -137,7 +139,9 @@ def create_album(
     album_users: list[str] | None = typer.Option(
         None,
         "--albumUsers",
-        help="""Album users. Example: --album_users key1=value1,key2=value2""",
+        help="""Album users
+
+Example: --album_users key1=value1,key2=value2""",
     ),
     asset_ids: list[str] | None = typer.Option(
         None, "--assetIds", help="""Initial asset IDs"""

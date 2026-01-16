@@ -150,7 +150,7 @@ def search_asset_statistics(
         None, "--personIds", help="""Filter by person IDs"""
     ),
     rating: float | None = typer.Option(
-        None, "--rating", help="""Filter by rating (-1 to 5)"""
+        None, "--rating", help="""Filter by rating (-1 to 5)""", min=-1, max=5
     ),
     state: str | None = typer.Option(
         None, "--state", help="""Filter by state/province name"""
@@ -390,7 +390,7 @@ def search_assets(
     original_path: str | None = typer.Option(
         None, "--originalPath", help="""Filter by original file path"""
     ),
-    page: float | None = typer.Option(None, "--page", help="""Page number"""),
+    page: float | None = typer.Option(None, "--page", help="""Page number""", min=1),
     person_ids: list[str] | None = typer.Option(
         None, "--personIds", help="""Filter by person IDs"""
     ),
@@ -398,10 +398,10 @@ def search_assets(
         None, "--previewPath", help="""Filter by preview file path"""
     ),
     rating: float | None = typer.Option(
-        None, "--rating", help="""Filter by rating (-1 to 5)"""
+        None, "--rating", help="""Filter by rating (-1 to 5)""", min=-1, max=5
     ),
     size: float | None = typer.Option(
-        None, "--size", help="""Number of results to return"""
+        None, "--size", help="""Number of results to return""", min=1, max=1000
     ),
     state: str | None = typer.Option(
         None, "--state", help="""Filter by state/province name"""
@@ -691,7 +691,7 @@ def search_large_assets(
     ),
     make: str | None = typer.Option(None, "--make", help="""Filter by camera make"""),
     min_file_size: int | None = typer.Option(
-        None, "--min-file-size", help="""Minimum file size in bytes"""
+        None, "--min-file-size", help="""Minimum file size in bytes""", min=0
     ),
     model: str | None = typer.Option(
         None, "--model", help="""Filter by camera model"""
@@ -703,10 +703,10 @@ def search_large_assets(
         None, "--person-ids", help="""Filter by person IDs"""
     ),
     rating: float | None = typer.Option(
-        None, "--rating", help="""Filter by rating (-1 to 5)"""
+        None, "--rating", help="""Filter by rating (-1 to 5)""", min=-1, max=5
     ),
     size: float | None = typer.Option(
-        None, "--size", help="""Number of results to return"""
+        None, "--size", help="""Number of results to return""", min=1, max=1000
     ),
     state: str | None = typer.Option(
         None, "--state", help="""Filter by state/province name"""
@@ -910,10 +910,10 @@ def search_random(
         None, "--personIds", help="""Filter by person IDs"""
     ),
     rating: float | None = typer.Option(
-        None, "--rating", help="""Filter by rating (-1 to 5)"""
+        None, "--rating", help="""Filter by rating (-1 to 5)""", min=-1, max=5
     ),
     size: float | None = typer.Option(
-        None, "--size", help="""Number of results to return"""
+        None, "--size", help="""Number of results to return""", min=1, max=1000
     ),
     state: str | None = typer.Option(
         None, "--state", help="""Filter by state/province name"""
@@ -1164,7 +1164,7 @@ def search_smart(
     ocr: str | None = typer.Option(
         None, "--ocr", help="""Filter by OCR text content"""
     ),
-    page: float | None = typer.Option(None, "--page", help="""Page number"""),
+    page: float | None = typer.Option(None, "--page", help="""Page number""", min=1),
     person_ids: list[str] | None = typer.Option(
         None, "--personIds", help="""Filter by person IDs"""
     ),
@@ -1175,10 +1175,10 @@ def search_smart(
         None, "--queryAssetId", help="""Asset ID to use as search reference"""
     ),
     rating: float | None = typer.Option(
-        None, "--rating", help="""Filter by rating (-1 to 5)"""
+        None, "--rating", help="""Filter by rating (-1 to 5)""", min=-1, max=5
     ),
     size: float | None = typer.Option(
-        None, "--size", help="""Number of results to return"""
+        None, "--size", help="""Number of results to return""", min=1, max=1000
     ),
     state: str | None = typer.Option(
         None, "--state", help="""Filter by state/province name"""

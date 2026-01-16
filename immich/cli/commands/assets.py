@@ -29,7 +29,9 @@ def check_bulk_upload(
     assets: list[str] = typer.Option(
         ...,
         "--assets",
-        help="""Assets to check. Example: --assets key1=value1,key2=value2""",
+        help="""Assets to check
+
+Example: --assets key1=value1,key2=value2""",
     ),
 ) -> None:
     """Check bulk upload
@@ -203,7 +205,9 @@ def delete_bulk_asset_metadata(
     items: list[str] = typer.Option(
         ...,
         "--items",
-        help="""Metadata items to delete. Example: --items key1=value1,key2=value2""",
+        help="""Metadata items to delete
+
+Example: --items key1=value1,key2=value2""",
     ),
 ) -> None:
     """Delete asset metadata
@@ -271,7 +275,9 @@ def edit_asset(
     edits: list[str] = typer.Option(
         ...,
         "--edits",
-        help="""List of edit actions to apply (crop, rotate, or mirror). Example: --edits key1=value1,key2=value2""",
+        help="""List of edit actions to apply (crop, rotate, or mirror)
+
+Example: --edits key1=value1,key2=value2""",
     ),
 ) -> None:
     """Apply edits to an existing asset
@@ -451,7 +457,7 @@ def get_asset_statistics(
 def get_random(
     ctx: typer.Context,
     count: float | None = typer.Option(
-        None, "--count", help="""Number of random assets to return"""
+        None, "--count", help="""Number of random assets to return""", min=1
     ),
 ) -> None:
     """Get random assets
@@ -632,7 +638,9 @@ def update_asset(
     longitude: float | None = typer.Option(
         None, "--longitude", help="""Longitude coordinate"""
     ),
-    rating: float | None = typer.Option(None, "--rating", help="""Rating (-1 to 5)"""),
+    rating: float | None = typer.Option(
+        None, "--rating", help="""Rating (-1 to 5)""", min=-1, max=5
+    ),
     visibility: str | None = typer.Option(
         None, "--visibility", help="""Asset visibility"""
     ),
@@ -703,7 +711,9 @@ def update_asset_metadata(
     items: list[str] = typer.Option(
         ...,
         "--items",
-        help="""Metadata items to upsert. Example: --items key1=value1,key2=value2""",
+        help="""Metadata items to upsert
+
+Example: --items key1=value1,key2=value2""",
     ),
 ) -> None:
     """Update asset metadata
@@ -758,7 +768,9 @@ def update_assets(
     longitude: float | None = typer.Option(
         None, "--longitude", help="""Longitude coordinate"""
     ),
-    rating: float | None = typer.Option(None, "--rating", help="""Rating (-1 to 5)"""),
+    rating: float | None = typer.Option(
+        None, "--rating", help="""Rating (-1 to 5)""", min=-1, max=5
+    ),
     time_zone: str | None = typer.Option(
         None, "--timeZone", help="""Time zone (IANA timezone)"""
     ),
@@ -841,7 +853,9 @@ def update_bulk_asset_metadata(
     items: list[str] = typer.Option(
         ...,
         "--items",
-        help="""Metadata items to upsert. Example: --items key1=value1,key2=value2""",
+        help="""Metadata items to upsert
+
+Example: --items key1=value1,key2=value2""",
     ),
 ) -> None:
     """Upsert asset metadata
