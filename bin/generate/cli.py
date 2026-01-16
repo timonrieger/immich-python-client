@@ -263,18 +263,12 @@ def generate_command_function(
     func_name = to_snake_case(operation_id)
     cmd_name = to_kebab_case(operation_id)
 
-    # Extract parameters
-    path_params: list[dict[str, Any]] = []
-    query_params: list[dict[str, Any]] = []
-    header_params: list[dict[str, Any]] = []
-
+    # Extract and process parameters
+    param_data: list[tuple[dict[str, Any], str]] = []  # (param, location)
     for param in operation.get("parameters", []):
-        if param["in"] == "path":
-            path_params.append(param)
-        elif param["in"] == "query":
-            query_params.append(param)
-        elif param["in"] == "header":
-            header_params.append(param)
+        param_in = param["in"]
+        if param_in in ("path", "query", "header"):
+            param_data.append((param, param_in))
 
     # Get request body info
     request_body_info = get_request_body_info(operation, spec)
@@ -287,97 +281,77 @@ def generate_command_function(
     # Track Python argument names to avoid duplicate arguments in the generated
     # function signature (e.g. path param `id` colliding with body field `id`).
     used_param_names: set[str] = {"ctx"}
-
-    # Path parameters (required positional)
-    for param in sorted(path_params, key=lambda p: p["name"]):
-        param_name = to_python_ident(param["name"])
-        used_param_names.add(param_name)
-        schema = param.get("schema", {"type": "string"})
-        param_type = python_type_from_schema(schema, spec)
-        required = param.get("required", False)
-        if required:
-            lines.append(f"    {param_name}: {param_type},")
-
     # Track all option names for collision detection
     used_option_names: set[str] = set()
     # Track boolean query params for conversion
     boolean_query_params: set[str] = set()
 
-    # Query parameters (optional flags)
-    for param in sorted(query_params, key=lambda p: p["name"]):
+    # Process all parameters (path, query, header)
+    processed_params: list[tuple[dict[str, Any], str, str, str, str, bool, bool]] = []
+    # (param, location, param_name, param_type, flag_name, required, is_boolean_query)
+
+    for param, location in sorted(
+        param_data, key=lambda x: (x[1] != "path", x[0]["name"])
+    ):
         openapi_name = param["name"]
         param_name = to_python_ident(openapi_name)
         used_param_names.add(param_name)
         schema = param.get("schema", {"type": "string"})
-        # Convert boolean query params to str to allow explicit true/false values
-        # This matches server behavior where shared=true, shared=false, and undefined are distinct
-        schema_type = schema.get("type")
-        if schema_type == "boolean":
-            param_type = "str"
-            boolean_query_params.add(param_name)
-        else:
+        required = param.get("required", False)
+        description = param.get("description", "")
+        flag_name = to_kebab_case(openapi_name)
+        full_opt_name = f"--{flag_name}"
+        is_boolean_query = False
+
+        if location == "path":
+            # Path parameters (required positional)
             param_type = python_type_from_schema(schema, spec)
-        flag_name = to_kebab_case(openapi_name)
-        full_opt_name = f"--{flag_name}"
-        description = param.get("description", "")
-
-        used_option_names.add(full_opt_name)
-
-        required = param.get("required", False)
-        if description:
-            description_str = python_triple_quoted_str(description)
             if required:
-                lines.append(
-                    f'    {param_name}: {param_type} = typer.Option(..., "--{flag_name}", help={description_str}),'
-                )
-            else:
-                lines.append(
-                    f'    {param_name}: {param_type} | None = typer.Option(None, "--{flag_name}", help={description_str}),'
-                )
+                lines.append(f"    {param_name}: {param_type},")
         else:
+            # Query and header parameters (optional flags)
+            used_option_names.add(full_opt_name)
+
+            if location == "query":
+                # Convert boolean query params to str to allow explicit true/false values
+                # This matches server behavior where shared=true, shared=false, and undefined are distinct
+                schema_type = schema.get("type")
+                if schema_type == "boolean":
+                    param_type = "str"
+                    is_boolean_query = True
+                    boolean_query_params.add(param_name)
+                else:
+                    param_type = python_type_from_schema(schema, spec)
+            else:  # header
+                param_type = python_type_from_schema(schema, spec)
+
+            # Generate Typer option
+            if description:
+                description_str = python_triple_quoted_str(description)
+                help_arg = f", help={description_str}"
+            else:
+                help_arg = ""
+
             if required:
                 lines.append(
-                    f'    {param_name}: {param_type} = typer.Option(..., "--{flag_name}"),'
+                    f'    {param_name}: {param_type} = typer.Option(..., "--{flag_name}"{help_arg}),'
                 )
             else:
                 lines.append(
-                    f'    {param_name}: {param_type} | None = typer.Option(None, "--{flag_name}"),'
+                    f'    {param_name}: {param_type} | None = typer.Option(None, "--{flag_name}"{help_arg}),'
                 )
 
-    # Header parameters (optional flags)
-    for param in sorted(header_params, key=lambda p: p["name"]):
-        openapi_name = param["name"]
-        param_name = to_python_ident(openapi_name)
-        used_param_names.add(param_name)
-        schema = param.get("schema", {"type": "string"})
-        param_type = python_type_from_schema(schema, spec)
-        flag_name = to_kebab_case(openapi_name)
-        full_opt_name = f"--{flag_name}"
-        description = param.get("description", "")
-
-        # Check for collisions
-        used_option_names.add(full_opt_name)
-
-        required = param.get("required", False)
-        if description:
-            description_str = python_triple_quoted_str(description)
-            if required:
-                lines.append(
-                    f'    {param_name}: {param_type} = typer.Option(..., "--{flag_name}", help={description_str}),'
-                )
-            else:
-                lines.append(
-                    f'    {param_name}: {param_type} | None = typer.Option(None, "--{flag_name}", help={description_str}),'
-                )
-        else:
-            if required:
-                lines.append(
-                    f'    {param_name}: {param_type} = typer.Option(..., "--{flag_name}"),'
-                )
-            else:
-                lines.append(
-                    f'    {param_name}: {param_type} | None = typer.Option(None, "--{flag_name}"),'
-                )
+        processed_params.append(
+            (
+                param,
+                location,
+                param_name,
+                param_type,
+                flag_name,
+                required,
+                is_boolean_query,
+            )
+        )
 
     # Request body options
     body_flags: list[
@@ -505,37 +479,36 @@ def generate_command_function(
     # Build kwargs
     lines.append("    kwargs = {}")
 
-    # Add path params
-    for param in path_params:
-        openapi_name = param["name"]
-        param_name = to_python_ident(openapi_name)
-        lines.append(f"    kwargs['{param_name}'] = {param_name}")
-
-    # Add query params
-    for param in query_params:
-        openapi_name = param["name"]
-        param_name = to_python_ident(openapi_name)
-        required = param.get("required", False)
-        # Convert boolean query params from string "true"/"false" to actual booleans
-        if param_name in boolean_query_params:
-            lines.append(f"    if {param_name} is not None:")
-            lines.append(
-                f"        kwargs['{param_name}'] = {param_name}.lower() == 'true'"
-            )
-        else:
-            if required:
-                lines.append(f"    kwargs['{param_name}'] = {param_name}")
-            else:
+    # Add all params to kwargs
+    for (
+        param,
+        location,
+        param_name,
+        param_type,
+        flag_name,
+        required,
+        is_boolean_query,
+    ) in processed_params:
+        if location == "path":
+            # Path params are always required and added directly
+            lines.append(f"    kwargs['{param_name}'] = {param_name}")
+        elif location == "query":
+            # Convert boolean query params from string "true"/"false" to actual booleans
+            if is_boolean_query:
                 lines.append(f"    if {param_name} is not None:")
-                lines.append(f"        kwargs['{param_name}'] = {param_name}")
-
-    # Add header params
-    for param in header_params:
-        openapi_name = param["name"]
-        param_name = to_python_ident(openapi_name)
-        required = param.get("required", False)
-        lines.append(f"    if {param_name} is not None:")
-        lines.append(f"        kwargs['{param_name}'] = {param_name}")
+                lines.append(
+                    f"        kwargs['{param_name}'] = {param_name}.lower() == 'true'"
+                )
+            else:
+                if required:
+                    lines.append(f"    kwargs['{param_name}'] = {param_name}")
+                else:
+                    lines.append(f"    if {param_name} is not None:")
+                    lines.append(f"        kwargs['{param_name}'] = {param_name}")
+        else:  # header
+            # Header params are always optional
+            lines.append(f"    if {param_name} is not None:")
+            lines.append(f"        kwargs['{param_name}'] = {param_name}")
 
     # Handle request body
     if request_body_info:

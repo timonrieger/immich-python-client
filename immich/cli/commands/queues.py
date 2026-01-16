@@ -1,6 +1,5 @@
 """Generated CLI commands for Queues tag (auto-generated, do not edit)."""
 
-# noqa: F405
 from __future__ import annotations
 
 import typer

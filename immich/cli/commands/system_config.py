@@ -1,6 +1,5 @@
 """Generated CLI commands for System config tag (auto-generated, do not edit)."""
 
-# noqa: F405
 from __future__ import annotations
 
 import typer

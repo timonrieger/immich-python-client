@@ -1,6 +1,5 @@
 """Generated CLI commands for Search tag (auto-generated, do not edit)."""
 
-# noqa: F405
 from __future__ import annotations
 
 from datetime import datetime

@@ -1,6 +1,5 @@
 """Generated CLI commands for Duplicates tag (auto-generated, do not edit)."""
 
-# noqa: F405
 from __future__ import annotations
 
 import typer

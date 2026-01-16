@@ -1,6 +1,5 @@
 """Generated CLI commands for API keys tag (auto-generated, do not edit)."""
 
-# noqa: F405
 from __future__ import annotations
 
 import typer

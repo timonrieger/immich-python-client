@@ -1,6 +1,5 @@
 """Generated CLI commands for Users tag (auto-generated, do not edit)."""
 
-# noqa: F405
 from __future__ import annotations
 
 from pathlib import Path
