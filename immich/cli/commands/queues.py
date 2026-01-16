@@ -74,7 +74,9 @@ def get_queue(
 def get_queue_jobs(
     ctx: typer.Context,
     name: QueueName,
-    status: list[QueueJobStatus] | None = typer.Option(None, "--status"),
+    status: list[QueueJobStatus] | None = typer.Option(
+        None, "--status", help="""Filter by job status"""
+    ),
 ) -> None:
     """Retrieve queue jobs
 
@@ -109,7 +111,9 @@ def get_queues(
 def update_queue(
     ctx: typer.Context,
     name: QueueName,
-    is_paused: bool | None = typer.Option(None, "--isPaused"),
+    is_paused: bool | None = typer.Option(
+        None, "--isPaused", help="""Whether to pause the queue"""
+    ),
 ) -> None:
     """Update a queue
 

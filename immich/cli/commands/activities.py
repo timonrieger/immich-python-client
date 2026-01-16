@@ -23,10 +23,14 @@ Docs: https://api.immich.app/endpoints/activities""",
 @app.command("create-activity")
 def create_activity(
     ctx: typer.Context,
-    album_id: str = typer.Option(..., "--albumId"),
-    asset_id: str | None = typer.Option(None, "--assetId"),
-    comment: str | None = typer.Option(None, "--comment"),
-    type: str = typer.Option(..., "--type"),
+    album_id: str = typer.Option(..., "--albumId", help="""Album ID"""),
+    asset_id: str | None = typer.Option(
+        None, "--assetId", help="""Asset ID (if activity is for an asset)"""
+    ),
+    comment: str | None = typer.Option(
+        None, "--comment", help="""Comment text (required if type is comment)"""
+    ),
+    type: str = typer.Option(..., "--type", help="""Activity type (like or comment)"""),
 ) -> None:
     """Create an activity
 
@@ -74,11 +78,17 @@ def delete_activity(
 @app.command("get-activities")
 def get_activities(
     ctx: typer.Context,
-    album_id: str = typer.Option(..., "--album-id"),
-    asset_id: str | None = typer.Option(None, "--asset-id"),
-    level: ReactionLevel | None = typer.Option(None, "--level"),
-    type: ReactionType | None = typer.Option(None, "--type"),
-    user_id: str | None = typer.Option(None, "--user-id"),
+    album_id: str = typer.Option(..., "--album-id", help="""Album ID"""),
+    asset_id: str | None = typer.Option(
+        None, "--asset-id", help="""Asset ID (if activity is for an asset)"""
+    ),
+    level: ReactionLevel | None = typer.Option(
+        None, "--level", help="""Filter by activity level"""
+    ),
+    type: ReactionType | None = typer.Option(
+        None, "--type", help="""Filter by activity type"""
+    ),
+    user_id: str | None = typer.Option(None, "--user-id", help="""Filter by user ID"""),
 ) -> None:
     """List all activities
 
@@ -103,8 +113,10 @@ def get_activities(
 @app.command("get-activity-statistics")
 def get_activity_statistics(
     ctx: typer.Context,
-    album_id: str = typer.Option(..., "--album-id"),
-    asset_id: str | None = typer.Option(None, "--asset-id"),
+    album_id: str = typer.Option(..., "--album-id", help="""Album ID"""),
+    asset_id: str | None = typer.Option(
+        None, "--asset-id", help="""Asset ID (if activity is for an asset)"""
+    ),
 ) -> None:
     """Retrieve activity statistics
 

@@ -27,17 +27,19 @@ def create_workflow(
     actions: list[str] = typer.Option(
         ...,
         "--actions",
-        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
+        help="""Workflow actions. Example: --actions key1=value1,key2=value2""",
     ),
-    description: str | None = typer.Option(None, "--description"),
-    enabled: bool | None = typer.Option(None, "--enabled"),
+    description: str | None = typer.Option(
+        None, "--description", help="""Workflow description"""
+    ),
+    enabled: bool | None = typer.Option(None, "--enabled", help="""Workflow enabled"""),
     filters: list[str] = typer.Option(
         ...,
         "--filters",
-        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
+        help="""Workflow filters. Example: --filters key1=value1,key2=value2""",
     ),
-    name: str = typer.Option(..., "--name"),
-    trigger_type: str = typer.Option(..., "--triggerType"),
+    name: str = typer.Option(..., "--name", help="""Workflow name"""),
+    trigger_type: str = typer.Option(..., "--triggerType", help="""Trigger type"""),
 ) -> None:
     """Create a workflow
 
@@ -125,17 +127,21 @@ def update_workflow(
     actions: list[str] | None = typer.Option(
         None,
         "--actions",
-        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
+        help="""Workflow actions. Example: --actions key1=value1,key2=value2""",
     ),
-    description: str | None = typer.Option(None, "--description"),
-    enabled: bool | None = typer.Option(None, "--enabled"),
+    description: str | None = typer.Option(
+        None, "--description", help="""Workflow description"""
+    ),
+    enabled: bool | None = typer.Option(None, "--enabled", help="""Workflow enabled"""),
     filters: list[str] | None = typer.Option(
         None,
         "--filters",
-        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
+        help="""Workflow filters. Example: --filters key1=value1,key2=value2""",
     ),
-    name: str | None = typer.Option(None, "--name"),
-    trigger_type: str | None = typer.Option(None, "--triggerType"),
+    name: str | None = typer.Option(None, "--name", help="""Workflow name"""),
+    trigger_type: str | None = typer.Option(
+        None, "--triggerType", help="""Trigger type"""
+    ),
 ) -> None:
     """Update a workflow
 

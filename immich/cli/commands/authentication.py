@@ -23,9 +23,13 @@ Docs: https://api.immich.app/endpoints/authentication""",
 @app.command("change-password")
 def change_password(
     ctx: typer.Context,
-    invalidate_sessions: bool | None = typer.Option(None, "--invalidateSessions"),
-    new_password: str = typer.Option(..., "--newPassword"),
-    password: str = typer.Option(..., "--password"),
+    invalidate_sessions: bool | None = typer.Option(
+        None, "--invalidateSessions", help="""Invalidate all other sessions"""
+    ),
+    new_password: str = typer.Option(
+        ..., "--newPassword", help="""New password (min 8 characters)"""
+    ),
+    password: str = typer.Option(..., "--password", help="""Current password"""),
 ) -> None:
     """Change password
 
@@ -54,9 +58,17 @@ def change_password(
 @app.command("change-pin-code")
 def change_pin_code(
     ctx: typer.Context,
-    new_pin_code: str = typer.Option(..., "--newPinCode"),
-    password: str | None = typer.Option(None, "--password"),
-    pin_code: str | None = typer.Option(None, "--pinCode"),
+    new_pin_code: str = typer.Option(
+        ..., "--newPinCode", help="""New PIN code (4-6 digits)"""
+    ),
+    password: str | None = typer.Option(
+        None,
+        "--password",
+        help="""User password (required if PIN code is not provided)""",
+    ),
+    pin_code: str | None = typer.Option(
+        None, "--pinCode", help="""New PIN code (4-6 digits)"""
+    ),
 ) -> None:
     """Change pin code
 
@@ -86,9 +98,11 @@ def change_pin_code(
 @app.command("finish-o-auth")
 def finish_o_auth(
     ctx: typer.Context,
-    code_verifier: str | None = typer.Option(None, "--codeVerifier"),
-    state: str | None = typer.Option(None, "--state"),
-    url: str = typer.Option(..., "--url"),
+    code_verifier: str | None = typer.Option(
+        None, "--codeVerifier", help="""OAuth code verifier (PKCE)"""
+    ),
+    state: str | None = typer.Option(None, "--state", help="""OAuth state parameter"""),
+    url: str = typer.Option(..., "--url", help="""OAuth callback URL"""),
 ) -> None:
     """Finish OAuth
 
@@ -133,9 +147,11 @@ def get_auth_status(
 @app.command("link-o-auth-account")
 def link_o_auth_account(
     ctx: typer.Context,
-    code_verifier: str | None = typer.Option(None, "--codeVerifier"),
-    state: str | None = typer.Option(None, "--state"),
-    url: str = typer.Option(..., "--url"),
+    code_verifier: str | None = typer.Option(
+        None, "--codeVerifier", help="""OAuth code verifier (PKCE)"""
+    ),
+    state: str | None = typer.Option(None, "--state", help="""OAuth state parameter"""),
+    url: str = typer.Option(..., "--url", help="""OAuth callback URL"""),
 ) -> None:
     """Link OAuth account
 
@@ -180,8 +196,8 @@ def lock_auth_session(
 @app.command("login")
 def login(
     ctx: typer.Context,
-    email: str = typer.Option(..., "--email"),
-    password: str = typer.Option(..., "--password"),
+    email: str = typer.Option(..., "--email", help="""User email"""),
+    password: str = typer.Option(..., "--password", help="""User password"""),
 ) -> None:
     """Login
 
@@ -240,8 +256,14 @@ def redirect_o_auth_to_mobile(
 @app.command("reset-pin-code")
 def reset_pin_code(
     ctx: typer.Context,
-    password: str | None = typer.Option(None, "--password"),
-    pin_code: str | None = typer.Option(None, "--pinCode"),
+    password: str | None = typer.Option(
+        None,
+        "--password",
+        help="""User password (required if PIN code is not provided)""",
+    ),
+    pin_code: str | None = typer.Option(
+        None, "--pinCode", help="""New PIN code (4-6 digits)"""
+    ),
 ) -> None:
     """Reset pin code
 
@@ -270,7 +292,7 @@ def reset_pin_code(
 @app.command("setup-pin-code")
 def setup_pin_code(
     ctx: typer.Context,
-    pin_code: str = typer.Option(..., "--pinCode"),
+    pin_code: str = typer.Option(..., "--pinCode", help="""PIN code (4-6 digits)"""),
 ) -> None:
     """Setup pin code
 
@@ -296,9 +318,9 @@ def setup_pin_code(
 @app.command("sign-up-admin")
 def sign_up_admin(
     ctx: typer.Context,
-    email: str = typer.Option(..., "--email"),
-    name: str = typer.Option(..., "--name"),
-    password: str = typer.Option(..., "--password"),
+    email: str = typer.Option(..., "--email", help="""User email"""),
+    name: str = typer.Option(..., "--name", help="""User name"""),
+    password: str = typer.Option(..., "--password", help="""User password"""),
 ) -> None:
     """Register admin
 
@@ -326,9 +348,13 @@ def sign_up_admin(
 @app.command("start-o-auth")
 def start_o_auth(
     ctx: typer.Context,
-    code_challenge: str | None = typer.Option(None, "--codeChallenge"),
-    redirect_uri: str = typer.Option(..., "--redirectUri"),
-    state: str | None = typer.Option(None, "--state"),
+    code_challenge: str | None = typer.Option(
+        None, "--codeChallenge", help="""OAuth code challenge (PKCE)"""
+    ),
+    redirect_uri: str = typer.Option(
+        ..., "--redirectUri", help="""OAuth redirect URI"""
+    ),
+    state: str | None = typer.Option(None, "--state", help="""OAuth state parameter"""),
 ) -> None:
     """Start OAuth
 
@@ -375,8 +401,14 @@ def unlink_o_auth_account(
 @app.command("unlock-auth-session")
 def unlock_auth_session(
     ctx: typer.Context,
-    password: str | None = typer.Option(None, "--password"),
-    pin_code: str | None = typer.Option(None, "--pinCode"),
+    password: str | None = typer.Option(
+        None,
+        "--password",
+        help="""User password (required if PIN code is not provided)""",
+    ),
+    pin_code: str | None = typer.Option(
+        None, "--pinCode", help="""New PIN code (4-6 digits)"""
+    ),
 ) -> None:
     """Unlock auth session
 

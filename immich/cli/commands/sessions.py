@@ -23,10 +23,12 @@ Docs: https://api.immich.app/endpoints/sessions""",
 @app.command("create-session")
 def create_session(
     ctx: typer.Context,
-    device_os: str | None = typer.Option(None, "--deviceOS"),
-    device_type: str | None = typer.Option(None, "--deviceType"),
+    device_os: str | None = typer.Option(None, "--deviceOS", help="""Device OS"""),
+    device_type: str | None = typer.Option(
+        None, "--deviceType", help="""Device type"""
+    ),
     duration: float | None = typer.Option(
-        None, "--duration", help="""session duration, in seconds"""
+        None, "--duration", help="""Session duration in seconds"""
     ),
 ) -> None:
     """Create a session
@@ -123,7 +125,9 @@ def lock_session(
 def update_session(
     ctx: typer.Context,
     id: str,
-    is_pending_sync_reset: bool | None = typer.Option(None, "--isPendingSyncReset"),
+    is_pending_sync_reset: bool | None = typer.Option(
+        None, "--isPendingSyncReset", help="""Reset pending sync state"""
+    ),
 ) -> None:
     """Update a session
 

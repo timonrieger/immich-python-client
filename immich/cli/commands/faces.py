@@ -23,14 +23,18 @@ Docs: https://api.immich.app/endpoints/faces""",
 @app.command("create-face")
 def create_face(
     ctx: typer.Context,
-    asset_id: str = typer.Option(..., "--assetId"),
-    height: int = typer.Option(..., "--height"),
-    image_height: int = typer.Option(..., "--imageHeight"),
-    image_width: int = typer.Option(..., "--imageWidth"),
-    person_id: str = typer.Option(..., "--personId"),
-    width: int = typer.Option(..., "--width"),
-    x: int = typer.Option(..., "--x"),
-    y: int = typer.Option(..., "--y"),
+    asset_id: str = typer.Option(..., "--assetId", help="""Asset ID"""),
+    height: int = typer.Option(..., "--height", help="""Face bounding box height"""),
+    image_height: int = typer.Option(
+        ..., "--imageHeight", help="""Image height in pixels"""
+    ),
+    image_width: int = typer.Option(
+        ..., "--imageWidth", help="""Image width in pixels"""
+    ),
+    person_id: str = typer.Option(..., "--personId", help="""Person ID"""),
+    width: int = typer.Option(..., "--width", help="""Face bounding box width"""),
+    x: int = typer.Option(..., "--x", help="""Face bounding box X coordinate"""),
+    y: int = typer.Option(..., "--y", help="""Face bounding box Y coordinate"""),
 ) -> None:
     """Create a face
 
@@ -66,7 +70,9 @@ def create_face(
 def delete_face(
     ctx: typer.Context,
     id: str,
-    force: bool = typer.Option(..., "--force"),
+    force: bool = typer.Option(
+        ..., "--force", help="""Force delete even if person has other faces"""
+    ),
 ) -> None:
     """Delete a face
 
@@ -93,7 +99,7 @@ def delete_face(
 @app.command("get-faces")
 def get_faces(
     ctx: typer.Context,
-    id: str = typer.Option(..., "--id"),
+    id: str = typer.Option(..., "--id", help="""Asset ID to retrieve faces for"""),
 ) -> None:
     """Retrieve faces for asset
 
@@ -111,7 +117,7 @@ def get_faces(
 def reassign_faces_by_id(
     ctx: typer.Context,
     id: str,
-    body_id: str = typer.Option(..., "--id"),
+    body_id: str = typer.Option(..., "--id", help="""Face ID"""),
 ) -> None:
     """Re-assign a face to another person
 

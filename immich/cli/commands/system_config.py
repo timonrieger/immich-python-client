@@ -160,47 +160,67 @@ def update_config(
         ..., "--machineLearning.availabilityChecks.timeout"
     ),
     machine_learning_clip_enabled: bool = typer.Option(
-        ..., "--machineLearning.clip.enabled"
+        ..., "--machineLearning.clip.enabled", help="""Whether the task is enabled"""
     ),
     machine_learning_clip_model_name: str = typer.Option(
-        ..., "--machineLearning.clip.modelName"
+        ..., "--machineLearning.clip.modelName", help="""Name of the model to use"""
     ),
     machine_learning_duplicate_detection_enabled: bool = typer.Option(
-        ..., "--machineLearning.duplicateDetection.enabled"
+        ...,
+        "--machineLearning.duplicateDetection.enabled",
+        help="""Whether the task is enabled""",
     ),
     machine_learning_duplicate_detection_max_distance: float = typer.Option(
-        ..., "--machineLearning.duplicateDetection.maxDistance"
+        ...,
+        "--machineLearning.duplicateDetection.maxDistance",
+        help="""Maximum distance threshold for duplicate detection (0.001-0.1)""",
     ),
     machine_learning_enabled: bool = typer.Option(..., "--machineLearning.enabled"),
     machine_learning_facial_recognition_enabled: bool = typer.Option(
-        ..., "--machineLearning.facialRecognition.enabled"
+        ...,
+        "--machineLearning.facialRecognition.enabled",
+        help="""Whether the task is enabled""",
     ),
     machine_learning_facial_recognition_max_distance: float = typer.Option(
-        ..., "--machineLearning.facialRecognition.maxDistance"
+        ...,
+        "--machineLearning.facialRecognition.maxDistance",
+        help="""Maximum distance threshold for face recognition (0.1-2)""",
     ),
     machine_learning_facial_recognition_min_faces: int = typer.Option(
-        ..., "--machineLearning.facialRecognition.minFaces"
+        ...,
+        "--machineLearning.facialRecognition.minFaces",
+        help="""Minimum number of faces required for recognition""",
     ),
     machine_learning_facial_recognition_min_score: float = typer.Option(
-        ..., "--machineLearning.facialRecognition.minScore"
+        ...,
+        "--machineLearning.facialRecognition.minScore",
+        help="""Minimum confidence score for face detection (0.1-1)""",
     ),
     machine_learning_facial_recognition_model_name: str = typer.Option(
-        ..., "--machineLearning.facialRecognition.modelName"
+        ...,
+        "--machineLearning.facialRecognition.modelName",
+        help="""Name of the model to use""",
     ),
     machine_learning_ocr_enabled: bool = typer.Option(
-        ..., "--machineLearning.ocr.enabled"
+        ..., "--machineLearning.ocr.enabled", help="""Whether the task is enabled"""
     ),
     machine_learning_ocr_max_resolution: int = typer.Option(
-        ..., "--machineLearning.ocr.maxResolution"
+        ...,
+        "--machineLearning.ocr.maxResolution",
+        help="""Maximum resolution for OCR processing""",
     ),
     machine_learning_ocr_min_detection_score: float = typer.Option(
-        ..., "--machineLearning.ocr.minDetectionScore"
+        ...,
+        "--machineLearning.ocr.minDetectionScore",
+        help="""Minimum confidence score for text detection (0.1-1)""",
     ),
     machine_learning_ocr_min_recognition_score: float = typer.Option(
-        ..., "--machineLearning.ocr.minRecognitionScore"
+        ...,
+        "--machineLearning.ocr.minRecognitionScore",
+        help="""Minimum confidence score for text recognition (0.1-1)""",
     ),
     machine_learning_ocr_model_name: str = typer.Option(
-        ..., "--machineLearning.ocr.modelName"
+        ..., "--machineLearning.ocr.modelName", help="""Name of the model to use"""
     ),
     machine_learning_urls: list[str] = typer.Option(..., "--machineLearning.urls"),
     map_dark_style: str = typer.Option(..., "--map.darkStyle"),
@@ -225,29 +245,37 @@ def update_config(
         ..., "--nightlyTasks.syncQuotaUsage"
     ),
     notifications_smtp_enabled: bool = typer.Option(
-        ..., "--notifications.smtp.enabled"
+        ...,
+        "--notifications.smtp.enabled",
+        help="""Whether SMTP email notifications are enabled""",
     ),
-    notifications_smtp_from_: str = typer.Option(..., "--notifications.smtp.from"),
+    notifications_smtp_from_: str = typer.Option(
+        ..., "--notifications.smtp.from", help="""Email address to send from"""
+    ),
     notifications_smtp_reply_to: str = typer.Option(
-        ..., "--notifications.smtp.replyTo"
+        ..., "--notifications.smtp.replyTo", help="""Email address for replies"""
     ),
     notifications_smtp_transport_host: str = typer.Option(
-        ..., "--notifications.smtp.transport.host"
+        ..., "--notifications.smtp.transport.host", help="""SMTP server hostname"""
     ),
     notifications_smtp_transport_ignore_cert: bool = typer.Option(
-        ..., "--notifications.smtp.transport.ignoreCert"
+        ...,
+        "--notifications.smtp.transport.ignoreCert",
+        help="""Whether to ignore SSL certificate errors""",
     ),
     notifications_smtp_transport_password: str = typer.Option(
-        ..., "--notifications.smtp.transport.password"
+        ..., "--notifications.smtp.transport.password", help="""SMTP password"""
     ),
     notifications_smtp_transport_port: float = typer.Option(
-        ..., "--notifications.smtp.transport.port"
+        ..., "--notifications.smtp.transport.port", help="""SMTP server port"""
     ),
     notifications_smtp_transport_secure: bool = typer.Option(
-        ..., "--notifications.smtp.transport.secure"
+        ...,
+        "--notifications.smtp.transport.secure",
+        help="""Whether to use secure connection (TLS/SSL)""",
     ),
     notifications_smtp_transport_username: str = typer.Option(
-        ..., "--notifications.smtp.transport.username"
+        ..., "--notifications.smtp.transport.username", help="""SMTP username"""
     ),
     oauth_auto_launch: bool = typer.Option(..., "--oauth.autoLaunch"),
     oauth_auto_register: bool = typer.Option(..., "--oauth.autoRegister"),
@@ -292,7 +320,9 @@ def update_config(
     templates_email_welcome_template: str = typer.Option(
         ..., "--templates.email.welcomeTemplate"
     ),
-    theme_custom_css: str = typer.Option(..., "--theme.customCss"),
+    theme_custom_css: str = typer.Option(
+        ..., "--theme.customCss", help="""Custom CSS for theming"""
+    ),
     trash_days: int = typer.Option(..., "--trash.days"),
     trash_enabled: bool = typer.Option(..., "--trash.enabled"),
     user_delete_delay: int = typer.Option(..., "--user.deleteDelay"),

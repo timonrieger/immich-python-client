@@ -40,7 +40,7 @@ def delete_duplicate(
 @app.command("delete-duplicates")
 def delete_duplicates(
     ctx: typer.Context,
-    ids: list[str] = typer.Option(..., "--ids"),
+    ids: list[str] = typer.Option(..., "--ids", help="""IDs to process"""),
 ) -> None:
     """Delete duplicates
 

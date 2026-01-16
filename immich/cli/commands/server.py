@@ -233,8 +233,12 @@ def ping_server(
 @app.command("set-server-license")
 def set_server_license(
     ctx: typer.Context,
-    activation_key: str = typer.Option(..., "--activationKey"),
-    license_key: str = typer.Option(..., "--licenseKey"),
+    activation_key: str = typer.Option(
+        ..., "--activationKey", help="""Activation key"""
+    ),
+    license_key: str = typer.Option(
+        ..., "--licenseKey", help="""License key (format: IM(SV|CL)(-XXXX){8})"""
+    ),
 ) -> None:
     """Set server product key
 

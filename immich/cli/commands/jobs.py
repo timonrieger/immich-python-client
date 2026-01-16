@@ -23,7 +23,7 @@ Docs: https://api.immich.app/endpoints/jobs""",
 @app.command("create-job")
 def create_job(
     ctx: typer.Context,
-    name: str = typer.Option(..., "--name"),
+    name: str = typer.Option(..., "--name", help="""Job name"""),
 ) -> None:
     """Create a manual job
 
@@ -65,8 +65,10 @@ def get_queues_legacy(
 def run_queue_command_legacy(
     ctx: typer.Context,
     name: QueueName,
-    command: str = typer.Option(..., "--command"),
-    force: bool | None = typer.Option(None, "--force"),
+    command: str = typer.Option(..., "--command", help="""Queue command to execute"""),
+    force: bool | None = typer.Option(
+        None, "--force", help="""Force the command execution (if applicable)"""
+    ),
 ) -> None:
     """Run jobs
 

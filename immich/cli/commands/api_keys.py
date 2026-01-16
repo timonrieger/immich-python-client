@@ -23,8 +23,10 @@ Docs: https://api.immich.app/endpoints/api-keys""",
 @app.command("create-api-key")
 def create_api_key(
     ctx: typer.Context,
-    name: str | None = typer.Option(None, "--name"),
-    permissions: list[str] = typer.Option(..., "--permissions"),
+    name: str | None = typer.Option(None, "--name", help="""API key name"""),
+    permissions: list[str] = typer.Option(
+        ..., "--permissions", help="""List of permissions"""
+    ),
 ) -> None:
     """Create an API key
 
@@ -117,8 +119,10 @@ def get_my_api_key(
 def update_api_key(
     ctx: typer.Context,
     id: str,
-    name: str | None = typer.Option(None, "--name"),
-    permissions: list[str] | None = typer.Option(None, "--permissions"),
+    name: str | None = typer.Option(None, "--name", help="""API key name"""),
+    permissions: list[str] | None = typer.Option(
+        None, "--permissions", help="""List of permissions"""
+    ),
 ) -> None:
     """Update an API key
 

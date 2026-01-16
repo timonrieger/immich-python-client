@@ -401,45 +401,25 @@ def generate_command_function(
                 )
 
                 # Emit Typer option
-                if description:
-                    description_str = python_triple_quoted_str(description)
-                    if is_required:
-                        if is_complex:
-                            lines.append(
-                                f'    {param_name}: {param_type} = typer.Option(..., "{opt_name}", help={description_str}),'
-                            )
-                        else:
-                            lines.append(
-                                f'    {param_name}: {param_type} = typer.Option(..., "{opt_name}", help={description_str}),'
-                            )
+                # Construct description
+                if is_complex:
+                    complex_help = f"Example: --{param_name} key1=value1,key2=value2"
+                    if description:
+                        description = f"{description}. {complex_help}"
                     else:
-                        if is_complex:
-                            lines.append(
-                                f'    {param_name}: {param_type} | None = typer.Option(None, "{opt_name}", help={description_str}),'
-                            )
-                        else:
-                            lines.append(
-                                f'    {param_name}: {param_type} | None = typer.Option(None, "{opt_name}", help={description_str}),'
-                            )
-                else:
-                    if is_required:
-                        if is_complex:
-                            lines.append(
-                                f'    {param_name}: {param_type} = typer.Option(..., "{opt_name}", help="key=value pairs (repeatable); e.g. key1=value1,key2=value2"),'
-                            )
-                        else:
-                            lines.append(
-                                f'    {param_name}: {param_type} = typer.Option(..., "{opt_name}"),'
-                            )
-                    else:
-                        if is_complex:
-                            lines.append(
-                                f'    {param_name}: {param_type} | None = typer.Option(None, "{opt_name}", help="key=value pairs (repeatable); e.g. key1=value1,key2=value2"),'
-                            )
-                        else:
-                            lines.append(
-                                f'    {param_name}: {param_type} | None = typer.Option(None, "{opt_name}"),'
-                            )
+                        description = complex_help
+                description_str = (
+                    python_triple_quoted_str(description) if description else ""
+                )
+
+                # Define type with optional None
+                type_str = param_type if is_required else f"{param_type} | None"
+                default_value = "..." if is_required else "None"
+                help_arg = f", help={description_str}" if description_str else ""
+
+                lines.append(
+                    f'    {param_name}: {type_str} = typer.Option({default_value}, "{opt_name}"{help_arg}),'
+                )
         elif content_type == "multipart/form-data":
             # Add file-part options for binary fields
             props = (

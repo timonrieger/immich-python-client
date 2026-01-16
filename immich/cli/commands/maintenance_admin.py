@@ -23,7 +23,7 @@ Docs: https://api.immich.app/endpoints/maintenance-admin""",
 @app.command("maintenance-login")
 def maintenance_login(
     ctx: typer.Context,
-    token: str | None = typer.Option(None, "--token"),
+    token: str | None = typer.Option(None, "--token", help="""Maintenance token"""),
 ) -> None:
     """Log into maintenance mode
 
@@ -52,7 +52,7 @@ def maintenance_login(
 @app.command("set-maintenance-mode")
 def set_maintenance_mode(
     ctx: typer.Context,
-    action: str = typer.Option(..., "--action"),
+    action: str = typer.Option(..., "--action", help="""Maintenance action"""),
 ) -> None:
     """Set maintenance mode
 

@@ -29,7 +29,7 @@ def check_bulk_upload(
     assets: list[str] = typer.Option(
         ...,
         "--assets",
-        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
+        help="""Assets to check. Example: --assets key1=value1,key2=value2""",
     ),
 ) -> None:
     """Check bulk upload
@@ -61,8 +61,10 @@ def check_bulk_upload(
 @app.command("check-existing-assets")
 def check_existing_assets(
     ctx: typer.Context,
-    device_asset_ids: list[str] = typer.Option(..., "--deviceAssetIds"),
-    device_id: str = typer.Option(..., "--deviceId"),
+    device_asset_ids: list[str] = typer.Option(
+        ..., "--deviceAssetIds", help="""Device asset IDs to check"""
+    ),
+    device_id: str = typer.Option(..., "--deviceId", help="""Device ID"""),
 ) -> None:
     """Check existing assets
 
@@ -93,13 +95,23 @@ def check_existing_assets(
 @app.command("copy-asset")
 def copy_asset(
     ctx: typer.Context,
-    albums: bool | None = typer.Option(None, "--albums"),
-    favorite: bool | None = typer.Option(None, "--favorite"),
-    shared_links: bool | None = typer.Option(None, "--sharedLinks"),
-    sidecar: bool | None = typer.Option(None, "--sidecar"),
-    source_id: str = typer.Option(..., "--sourceId"),
-    stack: bool | None = typer.Option(None, "--stack"),
-    target_id: str = typer.Option(..., "--targetId"),
+    albums: bool | None = typer.Option(
+        None, "--albums", help="""Copy album associations"""
+    ),
+    favorite: bool | None = typer.Option(
+        None, "--favorite", help="""Copy favorite status"""
+    ),
+    shared_links: bool | None = typer.Option(
+        None, "--sharedLinks", help="""Copy shared links"""
+    ),
+    sidecar: bool | None = typer.Option(
+        None, "--sidecar", help="""Copy sidecar file"""
+    ),
+    source_id: str = typer.Option(..., "--sourceId", help="""Source asset ID"""),
+    stack: bool | None = typer.Option(
+        None, "--stack", help="""Copy stack association"""
+    ),
+    target_id: str = typer.Option(..., "--targetId", help="""Target asset ID"""),
 ) -> None:
     """Copy asset
 
@@ -157,8 +169,10 @@ def delete_asset_metadata(
 @app.command("delete-assets")
 def delete_assets(
     ctx: typer.Context,
-    force: bool | None = typer.Option(None, "--force"),
-    ids: list[str] = typer.Option(..., "--ids"),
+    force: bool | None = typer.Option(
+        None, "--force", help="""Force delete even if in use"""
+    ),
+    ids: list[str] = typer.Option(..., "--ids", help="""IDs to process"""),
 ) -> None:
     """Delete assets
 
@@ -189,7 +203,7 @@ def delete_bulk_asset_metadata(
     items: list[str] = typer.Option(
         ...,
         "--items",
-        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
+        help="""Metadata items to delete. Example: --items key1=value1,key2=value2""",
     ),
 ) -> None:
     """Delete asset metadata
@@ -222,9 +236,15 @@ def delete_bulk_asset_metadata(
 def download_asset(
     ctx: typer.Context,
     id: str,
-    edited: str | None = typer.Option(None, "--edited"),
-    key: str | None = typer.Option(None, "--key"),
-    slug: str | None = typer.Option(None, "--slug"),
+    edited: str | None = typer.Option(
+        None, "--edited", help="""Return edited asset if available"""
+    ),
+    key: str | None = typer.Option(
+        None, "--key", help="""Access key for shared links"""
+    ),
+    slug: str | None = typer.Option(
+        None, "--slug", help="""Access slug for shared links"""
+    ),
 ) -> None:
     """Download original asset
 
@@ -248,7 +268,11 @@ def download_asset(
 def edit_asset(
     ctx: typer.Context,
     id: str,
-    edits: list[str] = typer.Option(..., "--edits", help="""list of edits"""),
+    edits: list[str] = typer.Option(
+        ...,
+        "--edits",
+        help="""List of edit actions to apply (crop, rotate, or mirror). Example: --edits key1=value1,key2=value2""",
+    ),
 ) -> None:
     """Apply edits to an existing asset
 
@@ -317,8 +341,12 @@ def get_asset_edits(
 def get_asset_info(
     ctx: typer.Context,
     id: str,
-    key: str | None = typer.Option(None, "--key"),
-    slug: str | None = typer.Option(None, "--slug"),
+    key: str | None = typer.Option(
+        None, "--key", help="""Access key for shared links"""
+    ),
+    slug: str | None = typer.Option(
+        None, "--slug", help="""Access slug for shared links"""
+    ),
 ) -> None:
     """Retrieve an asset
 
@@ -392,9 +420,15 @@ def get_asset_ocr(
 @app.command("get-asset-statistics")
 def get_asset_statistics(
     ctx: typer.Context,
-    is_favorite: str | None = typer.Option(None, "--is-favorite"),
-    is_trashed: str | None = typer.Option(None, "--is-trashed"),
-    visibility: AssetVisibility | None = typer.Option(None, "--visibility"),
+    is_favorite: str | None = typer.Option(
+        None, "--is-favorite", help="""Filter by favorite status"""
+    ),
+    is_trashed: str | None = typer.Option(
+        None, "--is-trashed", help="""Filter by trash status"""
+    ),
+    visibility: AssetVisibility | None = typer.Option(
+        None, "--visibility", help="""Filter by visibility"""
+    ),
 ) -> None:
     """Get asset statistics
 
@@ -416,7 +450,9 @@ def get_asset_statistics(
 @app.command("get-random")
 def get_random(
     ctx: typer.Context,
-    count: float | None = typer.Option(None, "--count"),
+    count: float | None = typer.Option(
+        None, "--count", help="""Number of random assets to return"""
+    ),
 ) -> None:
     """Get random assets
 
@@ -435,8 +471,12 @@ def get_random(
 def play_asset_video(
     ctx: typer.Context,
     id: str,
-    key: str | None = typer.Option(None, "--key"),
-    slug: str | None = typer.Option(None, "--slug"),
+    key: str | None = typer.Option(
+        None, "--key", help="""Access key for shared links"""
+    ),
+    slug: str | None = typer.Option(
+        None, "--slug", help="""Access slug for shared links"""
+    ),
 ) -> None:
     """Play asset video
 
@@ -475,8 +515,12 @@ def remove_asset_edits(
 def replace_asset(
     ctx: typer.Context,
     id: str,
-    key: str | None = typer.Option(None, "--key"),
-    slug: str | None = typer.Option(None, "--slug"),
+    key: str | None = typer.Option(
+        None, "--key", help="""Access key for shared links"""
+    ),
+    slug: str | None = typer.Option(
+        None, "--slug", help="""Access slug for shared links"""
+    ),
     asset_data: Path = typer.Option(
         ..., "--asset-data", help="File to upload for assetData"
     ),
@@ -541,8 +585,8 @@ def replace_asset(
 @app.command("run-asset-jobs")
 def run_asset_jobs(
     ctx: typer.Context,
-    asset_ids: list[str] = typer.Option(..., "--assetIds"),
-    name: str = typer.Option(..., "--name"),
+    asset_ids: list[str] = typer.Option(..., "--assetIds", help="""Asset IDs"""),
+    name: str = typer.Option(..., "--name", help="""Job name"""),
 ) -> None:
     """Run an asset job
 
@@ -570,14 +614,28 @@ def run_asset_jobs(
 def update_asset(
     ctx: typer.Context,
     id: str,
-    date_time_original: str | None = typer.Option(None, "--dateTimeOriginal"),
-    description: str | None = typer.Option(None, "--description"),
-    is_favorite: bool | None = typer.Option(None, "--isFavorite"),
-    latitude: float | None = typer.Option(None, "--latitude"),
-    live_photo_video_id: str | None = typer.Option(None, "--livePhotoVideoId"),
-    longitude: float | None = typer.Option(None, "--longitude"),
-    rating: float | None = typer.Option(None, "--rating"),
-    visibility: str | None = typer.Option(None, "--visibility"),
+    date_time_original: str | None = typer.Option(
+        None, "--dateTimeOriginal", help="""Original date and time"""
+    ),
+    description: str | None = typer.Option(
+        None, "--description", help="""Asset description"""
+    ),
+    is_favorite: bool | None = typer.Option(
+        None, "--isFavorite", help="""Mark as favorite"""
+    ),
+    latitude: float | None = typer.Option(
+        None, "--latitude", help="""Latitude coordinate"""
+    ),
+    live_photo_video_id: str | None = typer.Option(
+        None, "--livePhotoVideoId", help="""Live photo video ID"""
+    ),
+    longitude: float | None = typer.Option(
+        None, "--longitude", help="""Longitude coordinate"""
+    ),
+    rating: float | None = typer.Option(None, "--rating", help="""Rating (-1 to 5)"""),
+    visibility: str | None = typer.Option(
+        None, "--visibility", help="""Asset visibility"""
+    ),
 ) -> None:
     """Update an asset
 
@@ -645,7 +703,7 @@ def update_asset_metadata(
     items: list[str] = typer.Option(
         ...,
         "--items",
-        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
+        help="""Metadata items to upsert. Example: --items key1=value1,key2=value2""",
     ),
 ) -> None:
     """Update asset metadata
@@ -678,17 +736,35 @@ def update_asset_metadata(
 @app.command("update-assets")
 def update_assets(
     ctx: typer.Context,
-    date_time_original: str | None = typer.Option(None, "--dateTimeOriginal"),
-    date_time_relative: float | None = typer.Option(None, "--dateTimeRelative"),
-    description: str | None = typer.Option(None, "--description"),
-    duplicate_id: str | None = typer.Option(None, "--duplicateId"),
-    ids: list[str] = typer.Option(..., "--ids"),
-    is_favorite: bool | None = typer.Option(None, "--isFavorite"),
-    latitude: float | None = typer.Option(None, "--latitude"),
-    longitude: float | None = typer.Option(None, "--longitude"),
-    rating: float | None = typer.Option(None, "--rating"),
-    time_zone: str | None = typer.Option(None, "--timeZone"),
-    visibility: str | None = typer.Option(None, "--visibility"),
+    date_time_original: str | None = typer.Option(
+        None, "--dateTimeOriginal", help="""Original date and time"""
+    ),
+    date_time_relative: float | None = typer.Option(
+        None, "--dateTimeRelative", help="""Relative time offset in seconds"""
+    ),
+    description: str | None = typer.Option(
+        None, "--description", help="""Asset description"""
+    ),
+    duplicate_id: str | None = typer.Option(
+        None, "--duplicateId", help="""Duplicate asset ID"""
+    ),
+    ids: list[str] = typer.Option(..., "--ids", help="""Asset IDs to update"""),
+    is_favorite: bool | None = typer.Option(
+        None, "--isFavorite", help="""Mark as favorite"""
+    ),
+    latitude: float | None = typer.Option(
+        None, "--latitude", help="""Latitude coordinate"""
+    ),
+    longitude: float | None = typer.Option(
+        None, "--longitude", help="""Longitude coordinate"""
+    ),
+    rating: float | None = typer.Option(None, "--rating", help="""Rating (-1 to 5)"""),
+    time_zone: str | None = typer.Option(
+        None, "--timeZone", help="""Time zone (IANA timezone)"""
+    ),
+    visibility: str | None = typer.Option(
+        None, "--visibility", help="""Asset visibility"""
+    ),
 ) -> None:
     """Update assets
 
@@ -765,7 +841,7 @@ def update_bulk_asset_metadata(
     items: list[str] = typer.Option(
         ...,
         "--items",
-        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
+        help="""Metadata items to upsert. Example: --items key1=value1,key2=value2""",
     ),
 ) -> None:
     """Upsert asset metadata
@@ -797,8 +873,12 @@ def update_bulk_asset_metadata(
 @app.command("upload-asset")
 def upload_asset(
     ctx: typer.Context,
-    key: str | None = typer.Option(None, "--key"),
-    slug: str | None = typer.Option(None, "--slug"),
+    key: str | None = typer.Option(
+        None, "--key", help="""Access key for shared links"""
+    ),
+    slug: str | None = typer.Option(
+        None, "--slug", help="""Access slug for shared links"""
+    ),
     x_immich_checksum: str | None = typer.Option(
         None,
         "--x-immich-checksum",
@@ -891,10 +971,18 @@ def upload_asset(
 def view_asset(
     ctx: typer.Context,
     id: str,
-    edited: str | None = typer.Option(None, "--edited"),
-    key: str | None = typer.Option(None, "--key"),
-    size: AssetMediaSize | None = typer.Option(None, "--size"),
-    slug: str | None = typer.Option(None, "--slug"),
+    edited: str | None = typer.Option(
+        None, "--edited", help="""Return edited asset if available"""
+    ),
+    key: str | None = typer.Option(
+        None, "--key", help="""Access key for shared links"""
+    ),
+    size: AssetMediaSize | None = typer.Option(
+        None, "--size", help="""Asset media size"""
+    ),
+    slug: str | None = typer.Option(
+        None, "--slug", help="""Access slug for shared links"""
+    ),
 ) -> None:
     """View asset thumbnail
 

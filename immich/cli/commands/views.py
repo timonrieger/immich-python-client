@@ -18,7 +18,7 @@ Docs: https://api.immich.app/endpoints/views""",
 @app.command("get-assets-by-original-path")
 def get_assets_by_original_path(
     ctx: typer.Context,
-    path: str = typer.Option(..., "--path"),
+    path: str = typer.Option(..., "--path", help="""Original path of the folder"""),
 ) -> None:
     """Retrieve assets by original path
 

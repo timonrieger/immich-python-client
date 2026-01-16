@@ -28,14 +28,20 @@ def create_notification(
     data: str | None = typer.Option(
         None,
         "--data",
-        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
+        help="""Additional notification data. Example: --data key1=value1,key2=value2""",
     ),
-    description: str | None = typer.Option(None, "--description"),
-    level: str | None = typer.Option(None, "--level"),
-    read_at: datetime | None = typer.Option(None, "--readAt"),
-    title: str = typer.Option(..., "--title"),
-    type: str | None = typer.Option(None, "--type"),
-    user_id: str = typer.Option(..., "--userId"),
+    description: str | None = typer.Option(
+        None, "--description", help="""Notification description"""
+    ),
+    level: str | None = typer.Option(None, "--level", help="""Notification level"""),
+    read_at: datetime | None = typer.Option(
+        None, "--readAt", help="""Date when notification was read"""
+    ),
+    title: str = typer.Option(..., "--title", help="""Notification title"""),
+    type: str | None = typer.Option(None, "--type", help="""Notification type"""),
+    user_id: str = typer.Option(
+        ..., "--userId", help="""User ID to send notification to"""
+    ),
 ) -> None:
     """Create a notification
 
@@ -78,7 +84,7 @@ def create_notification(
 def get_notification_template_admin(
     ctx: typer.Context,
     name: str,
-    template: str = typer.Option(..., "--template"),
+    template: str = typer.Option(..., "--template", help="""Template name"""),
 ) -> None:
     """Render email template
 
@@ -107,15 +113,33 @@ def get_notification_template_admin(
 @app.command("send-test-email-admin")
 def send_test_email_admin(
     ctx: typer.Context,
-    enabled: bool = typer.Option(..., "--enabled"),
-    from_: str = typer.Option(..., "--from"),
-    reply_to: str = typer.Option(..., "--replyTo"),
-    transport_host: str = typer.Option(..., "--transport.host"),
-    transport_ignore_cert: bool = typer.Option(..., "--transport.ignoreCert"),
-    transport_password: str = typer.Option(..., "--transport.password"),
-    transport_port: float = typer.Option(..., "--transport.port"),
-    transport_secure: bool = typer.Option(..., "--transport.secure"),
-    transport_username: str = typer.Option(..., "--transport.username"),
+    enabled: bool = typer.Option(
+        ..., "--enabled", help="""Whether SMTP email notifications are enabled"""
+    ),
+    from_: str = typer.Option(..., "--from", help="""Email address to send from"""),
+    reply_to: str = typer.Option(
+        ..., "--replyTo", help="""Email address for replies"""
+    ),
+    transport_host: str = typer.Option(
+        ..., "--transport.host", help="""SMTP server hostname"""
+    ),
+    transport_ignore_cert: bool = typer.Option(
+        ...,
+        "--transport.ignoreCert",
+        help="""Whether to ignore SSL certificate errors""",
+    ),
+    transport_password: str = typer.Option(
+        ..., "--transport.password", help="""SMTP password"""
+    ),
+    transport_port: float = typer.Option(
+        ..., "--transport.port", help="""SMTP server port"""
+    ),
+    transport_secure: bool = typer.Option(
+        ..., "--transport.secure", help="""Whether to use secure connection (TLS/SSL)"""
+    ),
+    transport_username: str = typer.Option(
+        ..., "--transport.username", help="""SMTP username"""
+    ),
 ) -> None:
     """Send test email
 

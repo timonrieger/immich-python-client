@@ -23,7 +23,9 @@ Docs: https://api.immich.app/endpoints/partners""",
 @app.command("create-partner")
 def create_partner(
     ctx: typer.Context,
-    shared_with_id: str = typer.Option(..., "--sharedWithId"),
+    shared_with_id: str = typer.Option(
+        ..., "--sharedWithId", help="""User ID to share with"""
+    ),
 ) -> None:
     """Create a partner
 
@@ -66,7 +68,9 @@ def create_partner_deprecated(
 @app.command("get-partners")
 def get_partners(
     ctx: typer.Context,
-    direction: PartnerDirection = typer.Option(..., "--direction"),
+    direction: PartnerDirection = typer.Option(
+        ..., "--direction", help="""Partner direction"""
+    ),
 ) -> None:
     """Retrieve partners
 
@@ -101,7 +105,9 @@ def remove_partner(
 def update_partner(
     ctx: typer.Context,
     id: str,
-    in_timeline: bool = typer.Option(..., "--inTimeline"),
+    in_timeline: bool = typer.Option(
+        ..., "--inTimeline", help="""Show partner assets in timeline"""
+    ),
 ) -> None:
     """Update a partner
 

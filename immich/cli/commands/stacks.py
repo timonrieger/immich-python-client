@@ -24,7 +24,7 @@ Docs: https://api.immich.app/endpoints/stacks""",
 def create_stack(
     ctx: typer.Context,
     asset_ids: list[str] = typer.Option(
-        ..., "--assetIds", help="""first asset becomes the primary"""
+        ..., "--assetIds", help="""Asset IDs (first becomes primary, min 2)"""
     ),
 ) -> None:
     """Create a stack
@@ -68,7 +68,7 @@ def delete_stack(
 @app.command("delete-stacks")
 def delete_stacks(
     ctx: typer.Context,
-    ids: list[str] = typer.Option(..., "--ids"),
+    ids: list[str] = typer.Option(..., "--ids", help="""IDs to process"""),
 ) -> None:
     """Delete stacks
 
@@ -130,7 +130,9 @@ def remove_asset_from_stack(
 @app.command("search-stacks")
 def search_stacks(
     ctx: typer.Context,
-    primary_asset_id: str | None = typer.Option(None, "--primary-asset-id"),
+    primary_asset_id: str | None = typer.Option(
+        None, "--primary-asset-id", help="""Filter by primary asset ID"""
+    ),
 ) -> None:
     """Retrieve stacks
 
@@ -149,7 +151,9 @@ def search_stacks(
 def update_stack(
     ctx: typer.Context,
     id: str,
-    primary_asset_id: str | None = typer.Option(None, "--primaryAssetId"),
+    primary_asset_id: str | None = typer.Option(
+        None, "--primaryAssetId", help="""Primary asset ID"""
+    ),
 ) -> None:
     """Update a stack
 

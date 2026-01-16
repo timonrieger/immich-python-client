@@ -23,9 +23,13 @@ Docs: https://api.immich.app/endpoints/download""",
 @app.command("download-archive")
 def download_archive(
     ctx: typer.Context,
-    key: str | None = typer.Option(None, "--key"),
-    slug: str | None = typer.Option(None, "--slug"),
-    asset_ids: list[str] = typer.Option(..., "--assetIds"),
+    key: str | None = typer.Option(
+        None, "--key", help="""Access key for shared links"""
+    ),
+    slug: str | None = typer.Option(
+        None, "--slug", help="""Access slug for shared links"""
+    ),
+    asset_ids: list[str] = typer.Option(..., "--assetIds", help="""Asset IDs"""),
 ) -> None:
     """Download asset archive
 
@@ -55,12 +59,24 @@ def download_archive(
 @app.command("get-download-info")
 def get_download_info(
     ctx: typer.Context,
-    key: str | None = typer.Option(None, "--key"),
-    slug: str | None = typer.Option(None, "--slug"),
-    album_id: str | None = typer.Option(None, "--albumId"),
-    archive_size: int | None = typer.Option(None, "--archiveSize"),
-    asset_ids: list[str] | None = typer.Option(None, "--assetIds"),
-    user_id: str | None = typer.Option(None, "--userId"),
+    key: str | None = typer.Option(
+        None, "--key", help="""Access key for shared links"""
+    ),
+    slug: str | None = typer.Option(
+        None, "--slug", help="""Access slug for shared links"""
+    ),
+    album_id: str | None = typer.Option(
+        None, "--albumId", help="""Album ID to download"""
+    ),
+    archive_size: int | None = typer.Option(
+        None, "--archiveSize", help="""Archive size limit in bytes"""
+    ),
+    asset_ids: list[str] | None = typer.Option(
+        None, "--assetIds", help="""Asset IDs to download"""
+    ),
+    user_id: str | None = typer.Option(
+        None, "--userId", help="""User ID to download assets from"""
+    ),
 ) -> None:
     """Retrieve download information
 

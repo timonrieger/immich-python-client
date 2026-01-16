@@ -23,10 +23,14 @@ Docs: https://api.immich.app/endpoints/libraries""",
 @app.command("create-library")
 def create_library(
     ctx: typer.Context,
-    exclusion_patterns: list[str] | None = typer.Option(None, "--exclusionPatterns"),
-    import_paths: list[str] | None = typer.Option(None, "--importPaths"),
-    name: str | None = typer.Option(None, "--name"),
-    owner_id: str = typer.Option(..., "--ownerId"),
+    exclusion_patterns: list[str] | None = typer.Option(
+        None, "--exclusionPatterns", help="""Exclusion patterns (max 128)"""
+    ),
+    import_paths: list[str] | None = typer.Option(
+        None, "--importPaths", help="""Import paths (max 128)"""
+    ),
+    name: str | None = typer.Option(None, "--name", help="""Library name"""),
+    owner_id: str = typer.Option(..., "--ownerId", help="""Owner user ID"""),
 ) -> None:
     """Create a library
 
@@ -142,9 +146,13 @@ def scan_library(
 def update_library(
     ctx: typer.Context,
     id: str,
-    exclusion_patterns: list[str] | None = typer.Option(None, "--exclusionPatterns"),
-    import_paths: list[str] | None = typer.Option(None, "--importPaths"),
-    name: str | None = typer.Option(None, "--name"),
+    exclusion_patterns: list[str] | None = typer.Option(
+        None, "--exclusionPatterns", help="""Exclusion patterns (max 128)"""
+    ),
+    import_paths: list[str] | None = typer.Option(
+        None, "--importPaths", help="""Import paths (max 128)"""
+    ),
+    name: str | None = typer.Option(None, "--name", help="""Library name"""),
 ) -> None:
     """Update a library
 
@@ -177,8 +185,12 @@ def update_library(
 def validate(
     ctx: typer.Context,
     id: str,
-    exclusion_patterns: list[str] | None = typer.Option(None, "--exclusionPatterns"),
-    import_paths: list[str] | None = typer.Option(None, "--importPaths"),
+    exclusion_patterns: list[str] | None = typer.Option(
+        None, "--exclusionPatterns", help="""Exclusion patterns (max 128)"""
+    ),
+    import_paths: list[str] | None = typer.Option(
+        None, "--importPaths", help="""Import paths to validate (max 128)"""
+    ),
 ) -> None:
     """Validate library settings
 

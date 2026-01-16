@@ -25,17 +25,16 @@ Docs: https://api.immich.app/endpoints/people""",
 def create_person(
     ctx: typer.Context,
     birth_date: str | None = typer.Option(
-        None,
-        "--birthDate",
-        help="""Person date of birth.
-Note: the mobile app cannot currently set the birth date to null.""",
+        None, "--birthDate", help="""Person date of birth"""
     ),
-    color: str | None = typer.Option(None, "--color"),
-    is_favorite: bool | None = typer.Option(None, "--isFavorite"),
+    color: str | None = typer.Option(None, "--color", help="""Person color (hex)"""),
+    is_favorite: bool | None = typer.Option(
+        None, "--isFavorite", help="""Mark as favorite"""
+    ),
     is_hidden: bool | None = typer.Option(
-        None, "--isHidden", help="""Person visibility"""
+        None, "--isHidden", help="""Person visibility (hidden)"""
     ),
-    name: str | None = typer.Option(None, "--name", help="""Person name."""),
+    name: str | None = typer.Option(None, "--name", help="""Person name"""),
 ) -> None:
     """Create a person
 
@@ -70,7 +69,7 @@ Note: the mobile app cannot currently set the birth date to null.""",
 @app.command("delete-people")
 def delete_people(
     ctx: typer.Context,
-    ids: list[str] = typer.Option(..., "--ids"),
+    ids: list[str] = typer.Option(..., "--ids", help="""IDs to process"""),
 ) -> None:
     """Delete people
 
@@ -113,15 +112,21 @@ def delete_person(
 @app.command("get-all-people")
 def get_all_people(
     ctx: typer.Context,
-    closest_asset_id: str | None = typer.Option(None, "--closest-asset-id"),
-    closest_person_id: str | None = typer.Option(None, "--closest-person-id"),
+    closest_asset_id: str | None = typer.Option(
+        None, "--closest-asset-id", help="""Closest asset ID for similarity search"""
+    ),
+    closest_person_id: str | None = typer.Option(
+        None, "--closest-person-id", help="""Closest person ID for similarity search"""
+    ),
     page: float | None = typer.Option(
         None, "--page", help="""Page number for pagination"""
     ),
     size: float | None = typer.Option(
         None, "--size", help="""Number of items per page"""
     ),
-    with_hidden: str | None = typer.Option(None, "--with-hidden"),
+    with_hidden: str | None = typer.Option(
+        None, "--with-hidden", help="""Include hidden people"""
+    ),
 ) -> None:
     """Get all people
 
@@ -199,7 +204,7 @@ def get_person_thumbnail(
 def merge_person(
     ctx: typer.Context,
     id: str,
-    ids: list[str] = typer.Option(..., "--ids"),
+    ids: list[str] = typer.Option(..., "--ids", help="""Person IDs to merge"""),
 ) -> None:
     """Merge people
 
@@ -228,7 +233,9 @@ def reassign_faces(
     ctx: typer.Context,
     id: str,
     data: list[str] = typer.Option(
-        ..., "--data", help="key=value pairs (repeatable); e.g. key1=value1,key2=value2"
+        ...,
+        "--data",
+        help="""Face update items. Example: --data key1=value1,key2=value2""",
     ),
 ) -> None:
     """Reassign faces
@@ -260,7 +267,7 @@ def update_people(
     people: list[str] = typer.Option(
         ...,
         "--people",
-        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
+        help="""People to update. Example: --people key1=value1,key2=value2""",
     ),
 ) -> None:
     """Update people
@@ -290,22 +297,21 @@ def update_person(
     ctx: typer.Context,
     id: str,
     birth_date: str | None = typer.Option(
-        None,
-        "--birthDate",
-        help="""Person date of birth.
-Note: the mobile app cannot currently set the birth date to null.""",
+        None, "--birthDate", help="""Person date of birth"""
     ),
-    color: str | None = typer.Option(None, "--color"),
+    color: str | None = typer.Option(None, "--color", help="""Person color (hex)"""),
     feature_face_asset_id: str | None = typer.Option(
         None,
         "--featureFaceAssetId",
-        help="""Asset is used to get the feature face thumbnail.""",
+        help="""Asset ID used for feature face thumbnail""",
     ),
-    is_favorite: bool | None = typer.Option(None, "--isFavorite"),
+    is_favorite: bool | None = typer.Option(
+        None, "--isFavorite", help="""Mark as favorite"""
+    ),
     is_hidden: bool | None = typer.Option(
-        None, "--isHidden", help="""Person visibility"""
+        None, "--isHidden", help="""Person visibility (hidden)"""
     ),
-    name: str | None = typer.Option(None, "--name", help="""Person name."""),
+    name: str | None = typer.Option(None, "--name", help="""Person name"""),
 ) -> None:
     """Update person
 

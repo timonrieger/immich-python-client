@@ -54,13 +54,23 @@ def get_explore_data(
 @app.command("get-search-suggestions")
 def get_search_suggestions(
     ctx: typer.Context,
-    country: str | None = typer.Option(None, "--country"),
-    include_null: str | None = typer.Option(None, "--include-null"),
-    lens_model: str | None = typer.Option(None, "--lens-model"),
-    make: str | None = typer.Option(None, "--make"),
-    model: str | None = typer.Option(None, "--model"),
-    state: str | None = typer.Option(None, "--state"),
-    type: SearchSuggestionType = typer.Option(..., "--type"),
+    country: str | None = typer.Option(None, "--country", help="""Filter by country"""),
+    include_null: str | None = typer.Option(
+        None, "--include-null", help="""Include null values in suggestions"""
+    ),
+    lens_model: str | None = typer.Option(
+        None, "--lens-model", help="""Filter by lens model"""
+    ),
+    make: str | None = typer.Option(None, "--make", help="""Filter by camera make"""),
+    model: str | None = typer.Option(
+        None, "--model", help="""Filter by camera model"""
+    ),
+    state: str | None = typer.Option(
+        None, "--state", help="""Filter by state/province"""
+    ),
+    type: SearchSuggestionType = typer.Option(
+        ..., "--type", help="""Suggestion type"""
+    ),
 ) -> None:
     """Retrieve search suggestions
 
@@ -89,35 +99,87 @@ def get_search_suggestions(
 @app.command("search-asset-statistics")
 def search_asset_statistics(
     ctx: typer.Context,
-    album_ids: list[str] | None = typer.Option(None, "--albumIds"),
-    city: str | None = typer.Option(None, "--city"),
-    country: str | None = typer.Option(None, "--country"),
-    created_after: datetime | None = typer.Option(None, "--createdAfter"),
-    created_before: datetime | None = typer.Option(None, "--createdBefore"),
-    description: str | None = typer.Option(None, "--description"),
-    device_id: str | None = typer.Option(None, "--deviceId"),
-    is_encoded: bool | None = typer.Option(None, "--isEncoded"),
-    is_favorite: bool | None = typer.Option(None, "--isFavorite"),
-    is_motion: bool | None = typer.Option(None, "--isMotion"),
-    is_not_in_album: bool | None = typer.Option(None, "--isNotInAlbum"),
-    is_offline: bool | None = typer.Option(None, "--isOffline"),
-    lens_model: str | None = typer.Option(None, "--lensModel"),
-    library_id: str | None = typer.Option(None, "--libraryId"),
-    make: str | None = typer.Option(None, "--make"),
-    model: str | None = typer.Option(None, "--model"),
-    ocr: str | None = typer.Option(None, "--ocr"),
-    person_ids: list[str] | None = typer.Option(None, "--personIds"),
-    rating: float | None = typer.Option(None, "--rating"),
-    state: str | None = typer.Option(None, "--state"),
-    tag_ids: list[str] | None = typer.Option(None, "--tagIds"),
-    taken_after: datetime | None = typer.Option(None, "--takenAfter"),
-    taken_before: datetime | None = typer.Option(None, "--takenBefore"),
-    trashed_after: datetime | None = typer.Option(None, "--trashedAfter"),
-    trashed_before: datetime | None = typer.Option(None, "--trashedBefore"),
-    type: str | None = typer.Option(None, "--type"),
-    updated_after: datetime | None = typer.Option(None, "--updatedAfter"),
-    updated_before: datetime | None = typer.Option(None, "--updatedBefore"),
-    visibility: str | None = typer.Option(None, "--visibility"),
+    album_ids: list[str] | None = typer.Option(
+        None, "--albumIds", help="""Filter by album IDs"""
+    ),
+    city: str | None = typer.Option(None, "--city", help="""Filter by city name"""),
+    country: str | None = typer.Option(
+        None, "--country", help="""Filter by country name"""
+    ),
+    created_after: datetime | None = typer.Option(
+        None, "--createdAfter", help="""Filter by creation date (after)"""
+    ),
+    created_before: datetime | None = typer.Option(
+        None, "--createdBefore", help="""Filter by creation date (before)"""
+    ),
+    description: str | None = typer.Option(
+        None, "--description", help="""Filter by description text"""
+    ),
+    device_id: str | None = typer.Option(
+        None, "--deviceId", help="""Device ID to filter by"""
+    ),
+    is_encoded: bool | None = typer.Option(
+        None, "--isEncoded", help="""Filter by encoded status"""
+    ),
+    is_favorite: bool | None = typer.Option(
+        None, "--isFavorite", help="""Filter by favorite status"""
+    ),
+    is_motion: bool | None = typer.Option(
+        None, "--isMotion", help="""Filter by motion photo status"""
+    ),
+    is_not_in_album: bool | None = typer.Option(
+        None, "--isNotInAlbum", help="""Filter assets not in any album"""
+    ),
+    is_offline: bool | None = typer.Option(
+        None, "--isOffline", help="""Filter by offline status"""
+    ),
+    lens_model: str | None = typer.Option(
+        None, "--lensModel", help="""Filter by lens model"""
+    ),
+    library_id: str | None = typer.Option(
+        None, "--libraryId", help="""Library ID to filter by"""
+    ),
+    make: str | None = typer.Option(None, "--make", help="""Filter by camera make"""),
+    model: str | None = typer.Option(
+        None, "--model", help="""Filter by camera model"""
+    ),
+    ocr: str | None = typer.Option(
+        None, "--ocr", help="""Filter by OCR text content"""
+    ),
+    person_ids: list[str] | None = typer.Option(
+        None, "--personIds", help="""Filter by person IDs"""
+    ),
+    rating: float | None = typer.Option(
+        None, "--rating", help="""Filter by rating (-1 to 5)"""
+    ),
+    state: str | None = typer.Option(
+        None, "--state", help="""Filter by state/province name"""
+    ),
+    tag_ids: list[str] | None = typer.Option(
+        None, "--tagIds", help="""Filter by tag IDs"""
+    ),
+    taken_after: datetime | None = typer.Option(
+        None, "--takenAfter", help="""Filter by taken date (after)"""
+    ),
+    taken_before: datetime | None = typer.Option(
+        None, "--takenBefore", help="""Filter by taken date (before)"""
+    ),
+    trashed_after: datetime | None = typer.Option(
+        None, "--trashedAfter", help="""Filter by trash date (after)"""
+    ),
+    trashed_before: datetime | None = typer.Option(
+        None, "--trashedBefore", help="""Filter by trash date (before)"""
+    ),
+    type: str | None = typer.Option(None, "--type", help="""Asset type"""),
+    updated_after: datetime | None = typer.Option(
+        None, "--updatedAfter", help="""Filter by update date (after)"""
+    ),
+    updated_before: datetime | None = typer.Option(
+        None, "--updatedBefore", help="""Filter by update date (before)"""
+    ),
+    visibility: str | None = typer.Option(
+        None, "--visibility", help="""Asset visibility"""
+    ),
 ) -> None:
     """Search asset statistics
 
@@ -264,50 +326,126 @@ def search_asset_statistics(
 @app.command("search-assets")
 def search_assets(
     ctx: typer.Context,
-    album_ids: list[str] | None = typer.Option(None, "--albumIds"),
-    checksum: str | None = typer.Option(None, "--checksum"),
-    city: str | None = typer.Option(None, "--city"),
-    country: str | None = typer.Option(None, "--country"),
-    created_after: datetime | None = typer.Option(None, "--createdAfter"),
-    created_before: datetime | None = typer.Option(None, "--createdBefore"),
-    description: str | None = typer.Option(None, "--description"),
-    device_asset_id: str | None = typer.Option(None, "--deviceAssetId"),
-    device_id: str | None = typer.Option(None, "--deviceId"),
-    encoded_video_path: str | None = typer.Option(None, "--encodedVideoPath"),
-    id: str | None = typer.Option(None, "--id"),
-    is_encoded: bool | None = typer.Option(None, "--isEncoded"),
-    is_favorite: bool | None = typer.Option(None, "--isFavorite"),
-    is_motion: bool | None = typer.Option(None, "--isMotion"),
-    is_not_in_album: bool | None = typer.Option(None, "--isNotInAlbum"),
-    is_offline: bool | None = typer.Option(None, "--isOffline"),
-    lens_model: str | None = typer.Option(None, "--lensModel"),
-    library_id: str | None = typer.Option(None, "--libraryId"),
-    make: str | None = typer.Option(None, "--make"),
-    model: str | None = typer.Option(None, "--model"),
-    ocr: str | None = typer.Option(None, "--ocr"),
-    order: str | None = typer.Option(None, "--order"),
-    original_file_name: str | None = typer.Option(None, "--originalFileName"),
-    original_path: str | None = typer.Option(None, "--originalPath"),
-    page: float | None = typer.Option(None, "--page"),
-    person_ids: list[str] | None = typer.Option(None, "--personIds"),
-    preview_path: str | None = typer.Option(None, "--previewPath"),
-    rating: float | None = typer.Option(None, "--rating"),
-    size: float | None = typer.Option(None, "--size"),
-    state: str | None = typer.Option(None, "--state"),
-    tag_ids: list[str] | None = typer.Option(None, "--tagIds"),
-    taken_after: datetime | None = typer.Option(None, "--takenAfter"),
-    taken_before: datetime | None = typer.Option(None, "--takenBefore"),
-    thumbnail_path: str | None = typer.Option(None, "--thumbnailPath"),
-    trashed_after: datetime | None = typer.Option(None, "--trashedAfter"),
-    trashed_before: datetime | None = typer.Option(None, "--trashedBefore"),
-    type: str | None = typer.Option(None, "--type"),
-    updated_after: datetime | None = typer.Option(None, "--updatedAfter"),
-    updated_before: datetime | None = typer.Option(None, "--updatedBefore"),
-    visibility: str | None = typer.Option(None, "--visibility"),
-    with_deleted: bool | None = typer.Option(None, "--withDeleted"),
-    with_exif: bool | None = typer.Option(None, "--withExif"),
-    with_people: bool | None = typer.Option(None, "--withPeople"),
-    with_stacked: bool | None = typer.Option(None, "--withStacked"),
+    album_ids: list[str] | None = typer.Option(
+        None, "--albumIds", help="""Filter by album IDs"""
+    ),
+    checksum: str | None = typer.Option(
+        None, "--checksum", help="""Filter by file checksum"""
+    ),
+    city: str | None = typer.Option(None, "--city", help="""Filter by city name"""),
+    country: str | None = typer.Option(
+        None, "--country", help="""Filter by country name"""
+    ),
+    created_after: datetime | None = typer.Option(
+        None, "--createdAfter", help="""Filter by creation date (after)"""
+    ),
+    created_before: datetime | None = typer.Option(
+        None, "--createdBefore", help="""Filter by creation date (before)"""
+    ),
+    description: str | None = typer.Option(
+        None, "--description", help="""Filter by description text"""
+    ),
+    device_asset_id: str | None = typer.Option(
+        None, "--deviceAssetId", help="""Filter by device asset ID"""
+    ),
+    device_id: str | None = typer.Option(
+        None, "--deviceId", help="""Device ID to filter by"""
+    ),
+    encoded_video_path: str | None = typer.Option(
+        None, "--encodedVideoPath", help="""Filter by encoded video file path"""
+    ),
+    id: str | None = typer.Option(None, "--id", help="""Filter by asset ID"""),
+    is_encoded: bool | None = typer.Option(
+        None, "--isEncoded", help="""Filter by encoded status"""
+    ),
+    is_favorite: bool | None = typer.Option(
+        None, "--isFavorite", help="""Filter by favorite status"""
+    ),
+    is_motion: bool | None = typer.Option(
+        None, "--isMotion", help="""Filter by motion photo status"""
+    ),
+    is_not_in_album: bool | None = typer.Option(
+        None, "--isNotInAlbum", help="""Filter assets not in any album"""
+    ),
+    is_offline: bool | None = typer.Option(
+        None, "--isOffline", help="""Filter by offline status"""
+    ),
+    lens_model: str | None = typer.Option(
+        None, "--lensModel", help="""Filter by lens model"""
+    ),
+    library_id: str | None = typer.Option(
+        None, "--libraryId", help="""Library ID to filter by"""
+    ),
+    make: str | None = typer.Option(None, "--make", help="""Filter by camera make"""),
+    model: str | None = typer.Option(
+        None, "--model", help="""Filter by camera model"""
+    ),
+    ocr: str | None = typer.Option(
+        None, "--ocr", help="""Filter by OCR text content"""
+    ),
+    order: str | None = typer.Option(None, "--order", help="""Asset sort order"""),
+    original_file_name: str | None = typer.Option(
+        None, "--originalFileName", help="""Filter by original file name"""
+    ),
+    original_path: str | None = typer.Option(
+        None, "--originalPath", help="""Filter by original file path"""
+    ),
+    page: float | None = typer.Option(None, "--page", help="""Page number"""),
+    person_ids: list[str] | None = typer.Option(
+        None, "--personIds", help="""Filter by person IDs"""
+    ),
+    preview_path: str | None = typer.Option(
+        None, "--previewPath", help="""Filter by preview file path"""
+    ),
+    rating: float | None = typer.Option(
+        None, "--rating", help="""Filter by rating (-1 to 5)"""
+    ),
+    size: float | None = typer.Option(
+        None, "--size", help="""Number of results to return"""
+    ),
+    state: str | None = typer.Option(
+        None, "--state", help="""Filter by state/province name"""
+    ),
+    tag_ids: list[str] | None = typer.Option(
+        None, "--tagIds", help="""Filter by tag IDs"""
+    ),
+    taken_after: datetime | None = typer.Option(
+        None, "--takenAfter", help="""Filter by taken date (after)"""
+    ),
+    taken_before: datetime | None = typer.Option(
+        None, "--takenBefore", help="""Filter by taken date (before)"""
+    ),
+    thumbnail_path: str | None = typer.Option(
+        None, "--thumbnailPath", help="""Filter by thumbnail file path"""
+    ),
+    trashed_after: datetime | None = typer.Option(
+        None, "--trashedAfter", help="""Filter by trash date (after)"""
+    ),
+    trashed_before: datetime | None = typer.Option(
+        None, "--trashedBefore", help="""Filter by trash date (before)"""
+    ),
+    type: str | None = typer.Option(None, "--type", help="""Asset type"""),
+    updated_after: datetime | None = typer.Option(
+        None, "--updatedAfter", help="""Filter by update date (after)"""
+    ),
+    updated_before: datetime | None = typer.Option(
+        None, "--updatedBefore", help="""Filter by update date (before)"""
+    ),
+    visibility: str | None = typer.Option(
+        None, "--visibility", help="""Asset visibility"""
+    ),
+    with_deleted: bool | None = typer.Option(
+        None, "--withDeleted", help="""Include deleted assets"""
+    ),
+    with_exif: bool | None = typer.Option(
+        None, "--withExif", help="""Include EXIF data in response"""
+    ),
+    with_people: bool | None = typer.Option(
+        None, "--withPeople", help="""Include assets with people"""
+    ),
+    with_stacked: bool | None = typer.Option(
+        None, "--withStacked", help="""Include stacked assets"""
+    ),
 ) -> None:
     """Search assets by metadata
 
@@ -514,38 +652,98 @@ def search_assets(
 @app.command("search-large-assets")
 def search_large_assets(
     ctx: typer.Context,
-    album_ids: list[str] | None = typer.Option(None, "--album-ids"),
-    city: str | None = typer.Option(None, "--city"),
-    country: str | None = typer.Option(None, "--country"),
-    created_after: datetime | None = typer.Option(None, "--created-after"),
-    created_before: datetime | None = typer.Option(None, "--created-before"),
-    device_id: str | None = typer.Option(None, "--device-id"),
-    is_encoded: str | None = typer.Option(None, "--is-encoded"),
-    is_favorite: str | None = typer.Option(None, "--is-favorite"),
-    is_motion: str | None = typer.Option(None, "--is-motion"),
-    is_not_in_album: str | None = typer.Option(None, "--is-not-in-album"),
-    is_offline: str | None = typer.Option(None, "--is-offline"),
-    lens_model: str | None = typer.Option(None, "--lens-model"),
-    library_id: str | None = typer.Option(None, "--library-id"),
-    make: str | None = typer.Option(None, "--make"),
-    min_file_size: int | None = typer.Option(None, "--min-file-size"),
-    model: str | None = typer.Option(None, "--model"),
-    ocr: str | None = typer.Option(None, "--ocr"),
-    person_ids: list[str] | None = typer.Option(None, "--person-ids"),
-    rating: float | None = typer.Option(None, "--rating"),
-    size: float | None = typer.Option(None, "--size"),
-    state: str | None = typer.Option(None, "--state"),
-    tag_ids: list[str] | None = typer.Option(None, "--tag-ids"),
-    taken_after: datetime | None = typer.Option(None, "--taken-after"),
-    taken_before: datetime | None = typer.Option(None, "--taken-before"),
-    trashed_after: datetime | None = typer.Option(None, "--trashed-after"),
-    trashed_before: datetime | None = typer.Option(None, "--trashed-before"),
-    type: AssetTypeEnum | None = typer.Option(None, "--type"),
-    updated_after: datetime | None = typer.Option(None, "--updated-after"),
-    updated_before: datetime | None = typer.Option(None, "--updated-before"),
-    visibility: AssetVisibility | None = typer.Option(None, "--visibility"),
-    with_deleted: str | None = typer.Option(None, "--with-deleted"),
-    with_exif: str | None = typer.Option(None, "--with-exif"),
+    album_ids: list[str] | None = typer.Option(
+        None, "--album-ids", help="""Filter by album IDs"""
+    ),
+    city: str | None = typer.Option(None, "--city", help="""Filter by city name"""),
+    country: str | None = typer.Option(
+        None, "--country", help="""Filter by country name"""
+    ),
+    created_after: datetime | None = typer.Option(
+        None, "--created-after", help="""Filter by creation date (after)"""
+    ),
+    created_before: datetime | None = typer.Option(
+        None, "--created-before", help="""Filter by creation date (before)"""
+    ),
+    device_id: str | None = typer.Option(
+        None, "--device-id", help="""Device ID to filter by"""
+    ),
+    is_encoded: str | None = typer.Option(
+        None, "--is-encoded", help="""Filter by encoded status"""
+    ),
+    is_favorite: str | None = typer.Option(
+        None, "--is-favorite", help="""Filter by favorite status"""
+    ),
+    is_motion: str | None = typer.Option(
+        None, "--is-motion", help="""Filter by motion photo status"""
+    ),
+    is_not_in_album: str | None = typer.Option(
+        None, "--is-not-in-album", help="""Filter assets not in any album"""
+    ),
+    is_offline: str | None = typer.Option(
+        None, "--is-offline", help="""Filter by offline status"""
+    ),
+    lens_model: str | None = typer.Option(
+        None, "--lens-model", help="""Filter by lens model"""
+    ),
+    library_id: str | None = typer.Option(
+        None, "--library-id", help="""Library ID to filter by"""
+    ),
+    make: str | None = typer.Option(None, "--make", help="""Filter by camera make"""),
+    min_file_size: int | None = typer.Option(
+        None, "--min-file-size", help="""Minimum file size in bytes"""
+    ),
+    model: str | None = typer.Option(
+        None, "--model", help="""Filter by camera model"""
+    ),
+    ocr: str | None = typer.Option(
+        None, "--ocr", help="""Filter by OCR text content"""
+    ),
+    person_ids: list[str] | None = typer.Option(
+        None, "--person-ids", help="""Filter by person IDs"""
+    ),
+    rating: float | None = typer.Option(
+        None, "--rating", help="""Filter by rating (-1 to 5)"""
+    ),
+    size: float | None = typer.Option(
+        None, "--size", help="""Number of results to return"""
+    ),
+    state: str | None = typer.Option(
+        None, "--state", help="""Filter by state/province name"""
+    ),
+    tag_ids: list[str] | None = typer.Option(
+        None, "--tag-ids", help="""Filter by tag IDs"""
+    ),
+    taken_after: datetime | None = typer.Option(
+        None, "--taken-after", help="""Filter by taken date (after)"""
+    ),
+    taken_before: datetime | None = typer.Option(
+        None, "--taken-before", help="""Filter by taken date (before)"""
+    ),
+    trashed_after: datetime | None = typer.Option(
+        None, "--trashed-after", help="""Filter by trash date (after)"""
+    ),
+    trashed_before: datetime | None = typer.Option(
+        None, "--trashed-before", help="""Filter by trash date (before)"""
+    ),
+    type: AssetTypeEnum | None = typer.Option(
+        None, "--type", help="""Asset type filter"""
+    ),
+    updated_after: datetime | None = typer.Option(
+        None, "--updated-after", help="""Filter by update date (after)"""
+    ),
+    updated_before: datetime | None = typer.Option(
+        None, "--updated-before", help="""Filter by update date (before)"""
+    ),
+    visibility: AssetVisibility | None = typer.Option(
+        None, "--visibility", help="""Filter by visibility"""
+    ),
+    with_deleted: str | None = typer.Option(
+        None, "--with-deleted", help="""Include deleted assets"""
+    ),
+    with_exif: str | None = typer.Option(
+        None, "--with-exif", help="""Include EXIF data in response"""
+    ),
 ) -> None:
     """Search large assets
 
@@ -625,8 +823,10 @@ def search_large_assets(
 @app.command("search-person")
 def search_person(
     ctx: typer.Context,
-    name: str = typer.Option(..., "--name"),
-    with_hidden: str | None = typer.Option(None, "--with-hidden"),
+    name: str = typer.Option(..., "--name", help="""Person name to search for"""),
+    with_hidden: str | None = typer.Option(
+        None, "--with-hidden", help="""Include hidden people"""
+    ),
 ) -> None:
     """Search people
 
@@ -645,7 +845,7 @@ def search_person(
 @app.command("search-places")
 def search_places(
     ctx: typer.Context,
-    name: str = typer.Option(..., "--name"),
+    name: str = typer.Option(..., "--name", help="""Place name to search for"""),
 ) -> None:
     """Search places
 
@@ -662,39 +862,99 @@ def search_places(
 @app.command("search-random")
 def search_random(
     ctx: typer.Context,
-    album_ids: list[str] | None = typer.Option(None, "--albumIds"),
-    city: str | None = typer.Option(None, "--city"),
-    country: str | None = typer.Option(None, "--country"),
-    created_after: datetime | None = typer.Option(None, "--createdAfter"),
-    created_before: datetime | None = typer.Option(None, "--createdBefore"),
-    device_id: str | None = typer.Option(None, "--deviceId"),
-    is_encoded: bool | None = typer.Option(None, "--isEncoded"),
-    is_favorite: bool | None = typer.Option(None, "--isFavorite"),
-    is_motion: bool | None = typer.Option(None, "--isMotion"),
-    is_not_in_album: bool | None = typer.Option(None, "--isNotInAlbum"),
-    is_offline: bool | None = typer.Option(None, "--isOffline"),
-    lens_model: str | None = typer.Option(None, "--lensModel"),
-    library_id: str | None = typer.Option(None, "--libraryId"),
-    make: str | None = typer.Option(None, "--make"),
-    model: str | None = typer.Option(None, "--model"),
-    ocr: str | None = typer.Option(None, "--ocr"),
-    person_ids: list[str] | None = typer.Option(None, "--personIds"),
-    rating: float | None = typer.Option(None, "--rating"),
-    size: float | None = typer.Option(None, "--size"),
-    state: str | None = typer.Option(None, "--state"),
-    tag_ids: list[str] | None = typer.Option(None, "--tagIds"),
-    taken_after: datetime | None = typer.Option(None, "--takenAfter"),
-    taken_before: datetime | None = typer.Option(None, "--takenBefore"),
-    trashed_after: datetime | None = typer.Option(None, "--trashedAfter"),
-    trashed_before: datetime | None = typer.Option(None, "--trashedBefore"),
-    type: str | None = typer.Option(None, "--type"),
-    updated_after: datetime | None = typer.Option(None, "--updatedAfter"),
-    updated_before: datetime | None = typer.Option(None, "--updatedBefore"),
-    visibility: str | None = typer.Option(None, "--visibility"),
-    with_deleted: bool | None = typer.Option(None, "--withDeleted"),
-    with_exif: bool | None = typer.Option(None, "--withExif"),
-    with_people: bool | None = typer.Option(None, "--withPeople"),
-    with_stacked: bool | None = typer.Option(None, "--withStacked"),
+    album_ids: list[str] | None = typer.Option(
+        None, "--albumIds", help="""Filter by album IDs"""
+    ),
+    city: str | None = typer.Option(None, "--city", help="""Filter by city name"""),
+    country: str | None = typer.Option(
+        None, "--country", help="""Filter by country name"""
+    ),
+    created_after: datetime | None = typer.Option(
+        None, "--createdAfter", help="""Filter by creation date (after)"""
+    ),
+    created_before: datetime | None = typer.Option(
+        None, "--createdBefore", help="""Filter by creation date (before)"""
+    ),
+    device_id: str | None = typer.Option(
+        None, "--deviceId", help="""Device ID to filter by"""
+    ),
+    is_encoded: bool | None = typer.Option(
+        None, "--isEncoded", help="""Filter by encoded status"""
+    ),
+    is_favorite: bool | None = typer.Option(
+        None, "--isFavorite", help="""Filter by favorite status"""
+    ),
+    is_motion: bool | None = typer.Option(
+        None, "--isMotion", help="""Filter by motion photo status"""
+    ),
+    is_not_in_album: bool | None = typer.Option(
+        None, "--isNotInAlbum", help="""Filter assets not in any album"""
+    ),
+    is_offline: bool | None = typer.Option(
+        None, "--isOffline", help="""Filter by offline status"""
+    ),
+    lens_model: str | None = typer.Option(
+        None, "--lensModel", help="""Filter by lens model"""
+    ),
+    library_id: str | None = typer.Option(
+        None, "--libraryId", help="""Library ID to filter by"""
+    ),
+    make: str | None = typer.Option(None, "--make", help="""Filter by camera make"""),
+    model: str | None = typer.Option(
+        None, "--model", help="""Filter by camera model"""
+    ),
+    ocr: str | None = typer.Option(
+        None, "--ocr", help="""Filter by OCR text content"""
+    ),
+    person_ids: list[str] | None = typer.Option(
+        None, "--personIds", help="""Filter by person IDs"""
+    ),
+    rating: float | None = typer.Option(
+        None, "--rating", help="""Filter by rating (-1 to 5)"""
+    ),
+    size: float | None = typer.Option(
+        None, "--size", help="""Number of results to return"""
+    ),
+    state: str | None = typer.Option(
+        None, "--state", help="""Filter by state/province name"""
+    ),
+    tag_ids: list[str] | None = typer.Option(
+        None, "--tagIds", help="""Filter by tag IDs"""
+    ),
+    taken_after: datetime | None = typer.Option(
+        None, "--takenAfter", help="""Filter by taken date (after)"""
+    ),
+    taken_before: datetime | None = typer.Option(
+        None, "--takenBefore", help="""Filter by taken date (before)"""
+    ),
+    trashed_after: datetime | None = typer.Option(
+        None, "--trashedAfter", help="""Filter by trash date (after)"""
+    ),
+    trashed_before: datetime | None = typer.Option(
+        None, "--trashedBefore", help="""Filter by trash date (before)"""
+    ),
+    type: str | None = typer.Option(None, "--type", help="""Asset type"""),
+    updated_after: datetime | None = typer.Option(
+        None, "--updatedAfter", help="""Filter by update date (after)"""
+    ),
+    updated_before: datetime | None = typer.Option(
+        None, "--updatedBefore", help="""Filter by update date (before)"""
+    ),
+    visibility: str | None = typer.Option(
+        None, "--visibility", help="""Asset visibility"""
+    ),
+    with_deleted: bool | None = typer.Option(
+        None, "--withDeleted", help="""Include deleted assets"""
+    ),
+    with_exif: bool | None = typer.Option(
+        None, "--withExif", help="""Include EXIF data in response"""
+    ),
+    with_people: bool | None = typer.Option(
+        None, "--withPeople", help="""Include assets with people"""
+    ),
+    with_stacked: bool | None = typer.Option(
+        None, "--withStacked", help="""Include stacked assets"""
+    ),
 ) -> None:
     """Search random assets
 
@@ -857,41 +1117,103 @@ def search_random(
 @app.command("search-smart")
 def search_smart(
     ctx: typer.Context,
-    album_ids: list[str] | None = typer.Option(None, "--albumIds"),
-    city: str | None = typer.Option(None, "--city"),
-    country: str | None = typer.Option(None, "--country"),
-    created_after: datetime | None = typer.Option(None, "--createdAfter"),
-    created_before: datetime | None = typer.Option(None, "--createdBefore"),
-    device_id: str | None = typer.Option(None, "--deviceId"),
-    is_encoded: bool | None = typer.Option(None, "--isEncoded"),
-    is_favorite: bool | None = typer.Option(None, "--isFavorite"),
-    is_motion: bool | None = typer.Option(None, "--isMotion"),
-    is_not_in_album: bool | None = typer.Option(None, "--isNotInAlbum"),
-    is_offline: bool | None = typer.Option(None, "--isOffline"),
-    language: str | None = typer.Option(None, "--language"),
-    lens_model: str | None = typer.Option(None, "--lensModel"),
-    library_id: str | None = typer.Option(None, "--libraryId"),
-    make: str | None = typer.Option(None, "--make"),
-    model: str | None = typer.Option(None, "--model"),
-    ocr: str | None = typer.Option(None, "--ocr"),
-    page: float | None = typer.Option(None, "--page"),
-    person_ids: list[str] | None = typer.Option(None, "--personIds"),
-    query: str | None = typer.Option(None, "--query"),
-    query_asset_id: str | None = typer.Option(None, "--queryAssetId"),
-    rating: float | None = typer.Option(None, "--rating"),
-    size: float | None = typer.Option(None, "--size"),
-    state: str | None = typer.Option(None, "--state"),
-    tag_ids: list[str] | None = typer.Option(None, "--tagIds"),
-    taken_after: datetime | None = typer.Option(None, "--takenAfter"),
-    taken_before: datetime | None = typer.Option(None, "--takenBefore"),
-    trashed_after: datetime | None = typer.Option(None, "--trashedAfter"),
-    trashed_before: datetime | None = typer.Option(None, "--trashedBefore"),
-    type: str | None = typer.Option(None, "--type"),
-    updated_after: datetime | None = typer.Option(None, "--updatedAfter"),
-    updated_before: datetime | None = typer.Option(None, "--updatedBefore"),
-    visibility: str | None = typer.Option(None, "--visibility"),
-    with_deleted: bool | None = typer.Option(None, "--withDeleted"),
-    with_exif: bool | None = typer.Option(None, "--withExif"),
+    album_ids: list[str] | None = typer.Option(
+        None, "--albumIds", help="""Filter by album IDs"""
+    ),
+    city: str | None = typer.Option(None, "--city", help="""Filter by city name"""),
+    country: str | None = typer.Option(
+        None, "--country", help="""Filter by country name"""
+    ),
+    created_after: datetime | None = typer.Option(
+        None, "--createdAfter", help="""Filter by creation date (after)"""
+    ),
+    created_before: datetime | None = typer.Option(
+        None, "--createdBefore", help="""Filter by creation date (before)"""
+    ),
+    device_id: str | None = typer.Option(
+        None, "--deviceId", help="""Device ID to filter by"""
+    ),
+    is_encoded: bool | None = typer.Option(
+        None, "--isEncoded", help="""Filter by encoded status"""
+    ),
+    is_favorite: bool | None = typer.Option(
+        None, "--isFavorite", help="""Filter by favorite status"""
+    ),
+    is_motion: bool | None = typer.Option(
+        None, "--isMotion", help="""Filter by motion photo status"""
+    ),
+    is_not_in_album: bool | None = typer.Option(
+        None, "--isNotInAlbum", help="""Filter assets not in any album"""
+    ),
+    is_offline: bool | None = typer.Option(
+        None, "--isOffline", help="""Filter by offline status"""
+    ),
+    language: str | None = typer.Option(
+        None, "--language", help="""Search language code"""
+    ),
+    lens_model: str | None = typer.Option(
+        None, "--lensModel", help="""Filter by lens model"""
+    ),
+    library_id: str | None = typer.Option(
+        None, "--libraryId", help="""Library ID to filter by"""
+    ),
+    make: str | None = typer.Option(None, "--make", help="""Filter by camera make"""),
+    model: str | None = typer.Option(
+        None, "--model", help="""Filter by camera model"""
+    ),
+    ocr: str | None = typer.Option(
+        None, "--ocr", help="""Filter by OCR text content"""
+    ),
+    page: float | None = typer.Option(None, "--page", help="""Page number"""),
+    person_ids: list[str] | None = typer.Option(
+        None, "--personIds", help="""Filter by person IDs"""
+    ),
+    query: str | None = typer.Option(
+        None, "--query", help="""Natural language search query"""
+    ),
+    query_asset_id: str | None = typer.Option(
+        None, "--queryAssetId", help="""Asset ID to use as search reference"""
+    ),
+    rating: float | None = typer.Option(
+        None, "--rating", help="""Filter by rating (-1 to 5)"""
+    ),
+    size: float | None = typer.Option(
+        None, "--size", help="""Number of results to return"""
+    ),
+    state: str | None = typer.Option(
+        None, "--state", help="""Filter by state/province name"""
+    ),
+    tag_ids: list[str] | None = typer.Option(
+        None, "--tagIds", help="""Filter by tag IDs"""
+    ),
+    taken_after: datetime | None = typer.Option(
+        None, "--takenAfter", help="""Filter by taken date (after)"""
+    ),
+    taken_before: datetime | None = typer.Option(
+        None, "--takenBefore", help="""Filter by taken date (before)"""
+    ),
+    trashed_after: datetime | None = typer.Option(
+        None, "--trashedAfter", help="""Filter by trash date (after)"""
+    ),
+    trashed_before: datetime | None = typer.Option(
+        None, "--trashedBefore", help="""Filter by trash date (before)"""
+    ),
+    type: str | None = typer.Option(None, "--type", help="""Asset type"""),
+    updated_after: datetime | None = typer.Option(
+        None, "--updatedAfter", help="""Filter by update date (after)"""
+    ),
+    updated_before: datetime | None = typer.Option(
+        None, "--updatedBefore", help="""Filter by update date (before)"""
+    ),
+    visibility: str | None = typer.Option(
+        None, "--visibility", help="""Asset visibility"""
+    ),
+    with_deleted: bool | None = typer.Option(
+        None, "--withDeleted", help="""Include deleted assets"""
+    ),
+    with_exif: bool | None = typer.Option(
+        None, "--withExif", help="""Include EXIF data in response"""
+    ),
 ) -> None:
     """Smart asset search
 
