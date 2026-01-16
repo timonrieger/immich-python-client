@@ -1,5 +1,6 @@
 """Generated CLI commands for Users tag (auto-generated, do not edit)."""
 
+# noqa: F405
 from __future__ import annotations
 
 from pathlib import Path
@@ -12,6 +13,7 @@ from immich.cli.runtime import (
     run_command,
     set_nested,
 )
+from immich.client.models import *
 
 app = typer.Typer(
     help="""Endpoints for viewing and updating the current users, including product key information, profile picture data, onboarding progress, and more.

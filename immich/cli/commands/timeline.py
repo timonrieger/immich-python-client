@@ -1,10 +1,12 @@
 """Generated CLI commands for Timeline tag (auto-generated, do not edit)."""
 
+# noqa: F405
 from __future__ import annotations
 
 import typer
 
 from immich.cli.runtime import print_response, run_command
+from immich.client.models import *
 
 app = typer.Typer(
     help="""Specialized endpoints related to the timeline implementation used in the web application. External applications or tools should not use or rely on these endpoints, as they are subject to change without notice.
@@ -31,7 +33,7 @@ def get_time_bucket(
         help="""Filter by trash status (true for trashed assets only, false for non-trashed only)""",
     ),
     key: str | None = typer.Option(None, "--key"),
-    order: str | None = typer.Option(
+    order: AssetOrder | None = typer.Option(
         None,
         "--order",
         help="""Sort order for assets within time buckets (ASC for oldest first, DESC for newest first)""",
@@ -53,7 +55,7 @@ def get_time_bucket(
     user_id: str | None = typer.Option(
         None, "--user-id", help="""Filter assets by specific user ID"""
     ),
-    visibility: str | None = typer.Option(
+    visibility: AssetVisibility | None = typer.Option(
         None,
         "--visibility",
         help="""Filter by asset visibility status (ARCHIVE, TIMELINE, HIDDEN, LOCKED)""",
@@ -125,7 +127,7 @@ def get_time_buckets(
         help="""Filter by trash status (true for trashed assets only, false for non-trashed only)""",
     ),
     key: str | None = typer.Option(None, "--key"),
-    order: str | None = typer.Option(
+    order: AssetOrder | None = typer.Option(
         None,
         "--order",
         help="""Sort order for assets within time buckets (ASC for oldest first, DESC for newest first)""",
@@ -142,7 +144,7 @@ def get_time_buckets(
     user_id: str | None = typer.Option(
         None, "--user-id", help="""Filter assets by specific user ID"""
     ),
-    visibility: str | None = typer.Option(
+    visibility: AssetVisibility | None = typer.Option(
         None,
         "--visibility",
         help="""Filter by asset visibility status (ARCHIVE, TIMELINE, HIDDEN, LOCKED)""",

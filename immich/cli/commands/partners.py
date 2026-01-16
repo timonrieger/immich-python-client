@@ -1,5 +1,6 @@
 """Generated CLI commands for Partners tag (auto-generated, do not edit)."""
 
+# noqa: F405
 from __future__ import annotations
 
 import typer
@@ -10,6 +11,7 @@ from immich.cli.runtime import (
     run_command,
     set_nested,
 )
+from immich.client.models import *
 
 app = typer.Typer(
     help="""A partner is a link with another user that allows sharing of assets between two users.
@@ -65,7 +67,7 @@ def create_partner_deprecated(
 @app.command("get-partners")
 def get_partners(
     ctx: typer.Context,
-    direction: str = typer.Option(..., "--direction"),
+    direction: PartnerDirection = typer.Option(..., "--direction"),
 ) -> None:
     """Retrieve partners
 

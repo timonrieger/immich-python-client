@@ -1,5 +1,6 @@
 """Generated CLI commands for Shared links tag (auto-generated, do not edit)."""
 
+# noqa: F405
 from __future__ import annotations
 
 from datetime import datetime
@@ -11,6 +12,7 @@ from immich.cli.runtime import (
     run_command,
     set_nested,
 )
+from immich.client.models import *
 
 app = typer.Typer(
     help="""A shared link is a public url that provides access to a specific album, asset, or collection of assets. A shared link can be protected with a password, include a specific slug, allow or disallow downloads, and optionally include an expiration date.

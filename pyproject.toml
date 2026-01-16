@@ -83,7 +83,7 @@ module-name = "immich"
 module-root = ""
 
 [tool.ruff]
-lint.ignore = ["E721", "F403"]
+lint.ignore = ["F403", "F405"]
 
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"

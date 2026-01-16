@@ -1,10 +1,12 @@
 """Generated CLI commands for Plugins tag (auto-generated, do not edit)."""
 
+# noqa: F405
 from __future__ import annotations
 
 import typer
 
 from immich.cli.runtime import print_response, run_command
+from immich.client.models import *
 
 app = typer.Typer(
     help="""A plugin is an installed module that makes filters and actions available for the workflow feature.

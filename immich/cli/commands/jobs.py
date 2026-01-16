@@ -1,5 +1,6 @@
 """Generated CLI commands for Jobs tag (auto-generated, do not edit)."""
 
+# noqa: F405
 from __future__ import annotations
 
 import typer
@@ -10,6 +11,7 @@ from immich.cli.runtime import (
     run_command,
     set_nested,
 )
+from immich.client.models import *
 
 app = typer.Typer(
     help="""Queues and background jobs are used for processing tasks asynchronously. Queues can be paused and resumed as needed.
@@ -63,7 +65,7 @@ def get_queues_legacy(
 @app.command("run-queue-command-legacy")
 def run_queue_command_legacy(
     ctx: typer.Context,
-    name: str,
+    name: QueueName,
     command: str = typer.Option(..., "--command"),
     force: bool | None = typer.Option(None, "--force"),
 ) -> None:

@@ -1,5 +1,6 @@
 """Generated CLI commands for Memories tag (auto-generated, do not edit)."""
 
+# noqa: F405
 from __future__ import annotations
 
 from datetime import datetime
@@ -11,6 +12,7 @@ from immich.cli.runtime import (
     run_command,
     set_nested,
 )
+from immich.client.models import *
 
 app = typer.Typer(
     help="""A memory is a specialized collection of assets with dedicated viewing implementations in the web and mobile clients. A memory includes fields related to visibility and are automatically generated per user via a background job.
@@ -127,11 +129,11 @@ def memories_statistics(
     for_: datetime | None = typer.Option(None, "--for"),
     is_saved: str | None = typer.Option(None, "--is-saved"),
     is_trashed: str | None = typer.Option(None, "--is-trashed"),
-    order: str | None = typer.Option(None, "--order"),
+    order: MemorySearchOrder | None = typer.Option(None, "--order"),
     size: int | None = typer.Option(
         None, "--size", help="""Number of memories to return"""
     ),
-    type: str | None = typer.Option(None, "--type"),
+    type: MemoryType | None = typer.Option(None, "--type"),
 ) -> None:
     """Retrieve memories statistics
 
@@ -190,11 +192,11 @@ def search_memories(
     for_: datetime | None = typer.Option(None, "--for"),
     is_saved: str | None = typer.Option(None, "--is-saved"),
     is_trashed: str | None = typer.Option(None, "--is-trashed"),
-    order: str | None = typer.Option(None, "--order"),
+    order: MemorySearchOrder | None = typer.Option(None, "--order"),
     size: int | None = typer.Option(
         None, "--size", help="""Number of memories to return"""
     ),
-    type: str | None = typer.Option(None, "--type"),
+    type: MemoryType | None = typer.Option(None, "--type"),
 ) -> None:
     """Retrieve memories
 

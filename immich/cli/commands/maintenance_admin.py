@@ -1,5 +1,6 @@
 """Generated CLI commands for Maintenance (admin) tag (auto-generated, do not edit)."""
 
+# noqa: F405
 from __future__ import annotations
 
 import typer
@@ -10,6 +11,7 @@ from immich.cli.runtime import (
     run_command,
     set_nested,
 )
+from immich.client.models import *
 
 app = typer.Typer(
     help="""Maintenance mode allows you to put Immich in a read-only state to perform various operations.

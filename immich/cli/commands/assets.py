@@ -1,5 +1,6 @@
 """Generated CLI commands for Assets tag (auto-generated, do not edit)."""
 
+# noqa: F405
 from __future__ import annotations
 
 from pathlib import Path
@@ -13,6 +14,7 @@ from immich.cli.runtime import (
     run_command,
     set_nested,
 )
+from immich.client.models import *
 
 app = typer.Typer(
     help="""An asset is an image or video that has been uploaded to Immich.
@@ -393,7 +395,7 @@ def get_asset_statistics(
     ctx: typer.Context,
     is_favorite: str | None = typer.Option(None, "--is-favorite"),
     is_trashed: str | None = typer.Option(None, "--is-trashed"),
-    visibility: str | None = typer.Option(None, "--visibility"),
+    visibility: AssetVisibility | None = typer.Option(None, "--visibility"),
 ) -> None:
     """Get asset statistics
 
@@ -892,7 +894,7 @@ def view_asset(
     id: str,
     edited: str | None = typer.Option(None, "--edited"),
     key: str | None = typer.Option(None, "--key"),
-    size: str | None = typer.Option(None, "--size"),
+    size: AssetMediaSize | None = typer.Option(None, "--size"),
     slug: str | None = typer.Option(None, "--slug"),
 ) -> None:
     """View asset thumbnail

@@ -54,18 +54,17 @@ def python_type_from_schema(
     schema: dict[str, Any],
     spec: dict[str, Any] | None = None,
 ) -> str:
-    """Convert OpenAPI schema to Python type hint.
+    """Convert OpenAPI schema to Python type hint."""
+    # Extract enum name from $ref BEFORE normalization
+    enum_name: str | None = None
+    if "$ref" in schema:
+        enum_name = schema["$ref"].split("/")[-1]
 
-    Args:
-        schema: OpenAPI schema dict
-        spec: Full OpenAPI spec for resolving refs
-    """
     nschema = normalize_schema(schema, spec)
 
-    # Inline enums are not supported - all enums must come from $ref
-    # If we encounter an inline enum, fall back to string
     if "enum" in nschema:
-        return "str"
+        # Return enum name if we extracted it from $ref, otherwise fall back to str
+        return enum_name if enum_name else "str"
 
     schema_type = nschema.get("type")
     if schema_type is None:
@@ -688,6 +687,7 @@ def generate_tag_app(
         "import typer",
         "",
         "from immich.cli.runtime import load_file_bytes, deserialize_request_body, parse_complex_list, print_response, run_command, set_nested",
+        "from immich.client.models import *",
         "",
     ]
 
