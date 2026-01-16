@@ -55,7 +55,7 @@ def get_explore_data(
 def get_search_suggestions(
     ctx: typer.Context,
     country: str | None = typer.Option(None, "--country"),
-    include_null: bool | None = typer.Option(None, "--include-null"),
+    include_null: str | None = typer.Option(None, "--include-null"),
     lens_model: str | None = typer.Option(None, "--lens-model"),
     make: str | None = typer.Option(None, "--make"),
     model: str | None = typer.Option(None, "--model"),
@@ -70,7 +70,7 @@ def get_search_suggestions(
     if country is not None:
         kwargs["country"] = country
     if include_null is not None:
-        kwargs["include_null"] = include_null
+        kwargs["include_null"] = include_null.lower() == "true"
     if lens_model is not None:
         kwargs["lens_model"] = lens_model
     if make is not None:
@@ -525,11 +525,11 @@ def search_large_assets(
     created_after: str | None = typer.Option(None, "--created-after"),
     created_before: str | None = typer.Option(None, "--created-before"),
     device_id: str | None = typer.Option(None, "--device-id"),
-    is_encoded: bool | None = typer.Option(None, "--is-encoded"),
-    is_favorite: bool | None = typer.Option(None, "--is-favorite"),
-    is_motion: bool | None = typer.Option(None, "--is-motion"),
-    is_not_in_album: bool | None = typer.Option(None, "--is-not-in-album"),
-    is_offline: bool | None = typer.Option(None, "--is-offline"),
+    is_encoded: str | None = typer.Option(None, "--is-encoded"),
+    is_favorite: str | None = typer.Option(None, "--is-favorite"),
+    is_motion: str | None = typer.Option(None, "--is-motion"),
+    is_not_in_album: str | None = typer.Option(None, "--is-not-in-album"),
+    is_offline: str | None = typer.Option(None, "--is-offline"),
     lens_model: str | None = typer.Option(None, "--lens-model"),
     library_id: str | None = typer.Option(None, "--library-id"),
     make: str | None = typer.Option(None, "--make"),
@@ -549,8 +549,8 @@ def search_large_assets(
     updated_after: str | None = typer.Option(None, "--updated-after"),
     updated_before: str | None = typer.Option(None, "--updated-before"),
     visibility: str | None = typer.Option(None, "--visibility"),
-    with_deleted: bool | None = typer.Option(None, "--with-deleted"),
-    with_exif: bool | None = typer.Option(None, "--with-exif"),
+    with_deleted: str | None = typer.Option(None, "--with-deleted"),
+    with_exif: str | None = typer.Option(None, "--with-exif"),
 ) -> None:
     """Search large assets
 
@@ -570,15 +570,15 @@ def search_large_assets(
     if device_id is not None:
         kwargs["device_id"] = device_id
     if is_encoded is not None:
-        kwargs["is_encoded"] = is_encoded
+        kwargs["is_encoded"] = is_encoded.lower() == "true"
     if is_favorite is not None:
-        kwargs["is_favorite"] = is_favorite
+        kwargs["is_favorite"] = is_favorite.lower() == "true"
     if is_motion is not None:
-        kwargs["is_motion"] = is_motion
+        kwargs["is_motion"] = is_motion.lower() == "true"
     if is_not_in_album is not None:
-        kwargs["is_not_in_album"] = is_not_in_album
+        kwargs["is_not_in_album"] = is_not_in_album.lower() == "true"
     if is_offline is not None:
-        kwargs["is_offline"] = is_offline
+        kwargs["is_offline"] = is_offline.lower() == "true"
     if lens_model is not None:
         kwargs["lens_model"] = lens_model
     if library_id is not None:
@@ -618,9 +618,9 @@ def search_large_assets(
     if visibility is not None:
         kwargs["visibility"] = visibility
     if with_deleted is not None:
-        kwargs["with_deleted"] = with_deleted
+        kwargs["with_deleted"] = with_deleted.lower() == "true"
     if with_exif is not None:
-        kwargs["with_exif"] = with_exif
+        kwargs["with_exif"] = with_exif.lower() == "true"
     client = ctx.obj["client"]
     api_group = client.search
     result = run_command(client, api_group, "search_large_assets", **kwargs)
@@ -632,7 +632,7 @@ def search_large_assets(
 def search_person(
     ctx: typer.Context,
     name: str = typer.Option(..., "--name"),
-    with_hidden: bool | None = typer.Option(None, "--with-hidden"),
+    with_hidden: str | None = typer.Option(None, "--with-hidden"),
 ) -> None:
     """Search people
 
@@ -641,7 +641,7 @@ def search_person(
     kwargs = {}
     kwargs["name"] = name
     if with_hidden is not None:
-        kwargs["with_hidden"] = with_hidden
+        kwargs["with_hidden"] = with_hidden.lower() == "true"
     client = ctx.obj["client"]
     api_group = client.search
     result = run_command(client, api_group, "search_person", **kwargs)

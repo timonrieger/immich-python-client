@@ -192,8 +192,8 @@ def get_user_sessions_admin(
 def get_user_statistics_admin(
     ctx: typer.Context,
     id: str,
-    is_favorite: bool | None = typer.Option(None, "--is-favorite"),
-    is_trashed: bool | None = typer.Option(None, "--is-trashed"),
+    is_favorite: str | None = typer.Option(None, "--is-favorite"),
+    is_trashed: str | None = typer.Option(None, "--is-trashed"),
     visibility: str | None = typer.Option(None, "--visibility"),
 ) -> None:
     """Retrieve user statistics
@@ -203,9 +203,9 @@ def get_user_statistics_admin(
     kwargs = {}
     kwargs["id"] = id
     if is_favorite is not None:
-        kwargs["is_favorite"] = is_favorite
+        kwargs["is_favorite"] = is_favorite.lower() == "true"
     if is_trashed is not None:
-        kwargs["is_trashed"] = is_trashed
+        kwargs["is_trashed"] = is_trashed.lower() == "true"
     if visibility is not None:
         kwargs["visibility"] = visibility
     client = ctx.obj["client"]
@@ -237,7 +237,7 @@ def restore_user_admin(
 def search_users_admin(
     ctx: typer.Context,
     id: str | None = typer.Option(None, "--id"),
-    with_deleted: bool | None = typer.Option(None, "--with-deleted"),
+    with_deleted: str | None = typer.Option(None, "--with-deleted"),
 ) -> None:
     """Search users
 
@@ -247,7 +247,7 @@ def search_users_admin(
     if id is not None:
         kwargs["id"] = id
     if with_deleted is not None:
-        kwargs["with_deleted"] = with_deleted
+        kwargs["with_deleted"] = with_deleted.lower() == "true"
     client = ctx.obj["client"]
     api_group = client.users_admin
     result = run_command(client, api_group, "search_users_admin", **kwargs)

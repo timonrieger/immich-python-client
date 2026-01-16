@@ -139,7 +139,7 @@ def get_all_people(
     size: float | None = typer.Option(
         None, "--size", help="""Number of items per page"""
     ),
-    with_hidden: bool | None = typer.Option(None, "--with-hidden"),
+    with_hidden: str | None = typer.Option(None, "--with-hidden"),
 ) -> None:
     """Get all people
 
@@ -155,7 +155,7 @@ def get_all_people(
     if size is not None:
         kwargs["size"] = size
     if with_hidden is not None:
-        kwargs["with_hidden"] = with_hidden
+        kwargs["with_hidden"] = with_hidden.lower() == "true"
     client = ctx.obj["client"]
     api_group = client.people
     result = run_command(client, api_group, "get_all_people", **kwargs)

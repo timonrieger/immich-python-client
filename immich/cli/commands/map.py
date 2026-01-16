@@ -19,10 +19,10 @@ def get_map_markers(
     ctx: typer.Context,
     file_created_after: str | None = typer.Option(None, "--file-created-after"),
     file_created_before: str | None = typer.Option(None, "--file-created-before"),
-    is_archived: bool | None = typer.Option(None, "--is-archived"),
-    is_favorite: bool | None = typer.Option(None, "--is-favorite"),
-    with_partners: bool | None = typer.Option(None, "--with-partners"),
-    with_shared_albums: bool | None = typer.Option(None, "--with-shared-albums"),
+    is_archived: str | None = typer.Option(None, "--is-archived"),
+    is_favorite: str | None = typer.Option(None, "--is-favorite"),
+    with_partners: str | None = typer.Option(None, "--with-partners"),
+    with_shared_albums: str | None = typer.Option(None, "--with-shared-albums"),
 ) -> None:
     """Retrieve map markers
 
@@ -34,13 +34,13 @@ def get_map_markers(
     if file_created_before is not None:
         kwargs["file_created_before"] = file_created_before
     if is_archived is not None:
-        kwargs["is_archived"] = is_archived
+        kwargs["is_archived"] = is_archived.lower() == "true"
     if is_favorite is not None:
-        kwargs["is_favorite"] = is_favorite
+        kwargs["is_favorite"] = is_favorite.lower() == "true"
     if with_partners is not None:
-        kwargs["with_partners"] = with_partners
+        kwargs["with_partners"] = with_partners.lower() == "true"
     if with_shared_albums is not None:
-        kwargs["with_shared_albums"] = with_shared_albums
+        kwargs["with_shared_albums"] = with_shared_albums.lower() == "true"
     client = ctx.obj["client"]
     api_group = client.map
     result = run_command(client, api_group, "get_map_markers", **kwargs)

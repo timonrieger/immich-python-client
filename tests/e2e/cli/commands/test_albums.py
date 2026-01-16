@@ -115,7 +115,8 @@ async def test_get_all_albums_non_shared_filter(
             "json",
             "albums",
             "get-all-albums",
-            "--not-shared",
+            "--shared",
+            "false",
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr

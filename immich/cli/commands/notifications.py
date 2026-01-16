@@ -99,7 +99,7 @@ def get_notifications(
     id: str | None = typer.Option(None, "--id"),
     level: str | None = typer.Option(None, "--level"),
     type: str | None = typer.Option(None, "--type"),
-    unread: bool | None = typer.Option(None, "--unread"),
+    unread: str | None = typer.Option(None, "--unread"),
 ) -> None:
     """Retrieve notifications
 
@@ -113,7 +113,7 @@ def get_notifications(
     if type is not None:
         kwargs["type"] = type
     if unread is not None:
-        kwargs["unread"] = unread
+        kwargs["unread"] = unread.lower() == "true"
     client = ctx.obj["client"]
     api_group = client.notifications
     result = run_command(client, api_group, "get_notifications", **kwargs)

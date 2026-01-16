@@ -266,7 +266,7 @@ def delete_bulk_asset_metadata(
 def download_asset(
     ctx: typer.Context,
     id: str,
-    edited: bool | None = typer.Option(None, "--edited"),
+    edited: str | None = typer.Option(None, "--edited"),
     key: str | None = typer.Option(None, "--key"),
     slug: str | None = typer.Option(None, "--slug"),
 ) -> None:
@@ -277,7 +277,7 @@ def download_asset(
     kwargs = {}
     kwargs["id"] = id
     if edited is not None:
-        kwargs["edited"] = edited
+        kwargs["edited"] = edited.lower() == "true"
     if key is not None:
         kwargs["key"] = key
     if slug is not None:
@@ -451,8 +451,8 @@ def get_asset_ocr(
 @app.command("get-asset-statistics")
 def get_asset_statistics(
     ctx: typer.Context,
-    is_favorite: bool | None = typer.Option(None, "--is-favorite"),
-    is_trashed: bool | None = typer.Option(None, "--is-trashed"),
+    is_favorite: str | None = typer.Option(None, "--is-favorite"),
+    is_trashed: str | None = typer.Option(None, "--is-trashed"),
     visibility: str | None = typer.Option(None, "--visibility"),
 ) -> None:
     """Get asset statistics
@@ -461,9 +461,9 @@ def get_asset_statistics(
     """
     kwargs = {}
     if is_favorite is not None:
-        kwargs["is_favorite"] = is_favorite
+        kwargs["is_favorite"] = is_favorite.lower() == "true"
     if is_trashed is not None:
-        kwargs["is_trashed"] = is_trashed
+        kwargs["is_trashed"] = is_trashed.lower() == "true"
     if visibility is not None:
         kwargs["visibility"] = visibility
     client = ctx.obj["client"]
@@ -981,7 +981,7 @@ def upload_asset(
 def view_asset(
     ctx: typer.Context,
     id: str,
-    edited: bool | None = typer.Option(None, "--edited"),
+    edited: str | None = typer.Option(None, "--edited"),
     key: str | None = typer.Option(None, "--key"),
     size: str | None = typer.Option(None, "--size"),
     slug: str | None = typer.Option(None, "--slug"),
@@ -993,7 +993,7 @@ def view_asset(
     kwargs = {}
     kwargs["id"] = id
     if edited is not None:
-        kwargs["edited"] = edited
+        kwargs["edited"] = edited.lower() == "true"
     if key is not None:
         kwargs["key"] = key
     if size is not None:

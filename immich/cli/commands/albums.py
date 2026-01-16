@@ -219,7 +219,7 @@ def get_album_info(
     id: str,
     key: str | None = typer.Option(None, "--key"),
     slug: str | None = typer.Option(None, "--slug"),
-    without_assets: bool | None = typer.Option(None, "--without-assets"),
+    without_assets: str | None = typer.Option(None, "--without-assets"),
 ) -> None:
     """Retrieve an album
 
@@ -232,7 +232,7 @@ def get_album_info(
     if slug is not None:
         kwargs["slug"] = slug
     if without_assets is not None:
-        kwargs["without_assets"] = without_assets
+        kwargs["without_assets"] = without_assets.lower() == "true"
     client = ctx.obj["client"]
     api_group = client.albums
     result = run_command(client, api_group, "get_album_info", **kwargs)
@@ -266,12 +266,7 @@ def get_all_albums(
 Ignores the shared parameter
 undefined: get all albums""",
     ),
-    shared: bool | None = typer.Option(
-        None, "--shared", help="Only return shared albums"
-    ),
-    not_shared: bool | None = typer.Option(
-        None, "--not-shared", help="Only return non-shared albums"
-    ),
+    shared: str | None = typer.Option(None, "--shared"),
 ) -> None:
     """List all albums
 
@@ -281,9 +276,7 @@ undefined: get all albums""",
     if asset_id is not None:
         kwargs["asset_id"] = asset_id
     if shared is not None:
-        kwargs["shared"] = True
-    elif not_shared is not None:
-        kwargs["shared"] = False
+        kwargs["shared"] = shared.lower() == "true"
     client = ctx.obj["client"]
     api_group = client.albums
     result = run_command(client, api_group, "get_all_albums", **kwargs)

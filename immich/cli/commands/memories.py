@@ -151,8 +151,8 @@ def get_memory(
 def memories_statistics(
     ctx: typer.Context,
     for_: str | None = typer.Option(None, "--for"),
-    is_saved: bool | None = typer.Option(None, "--is-saved"),
-    is_trashed: bool | None = typer.Option(None, "--is-trashed"),
+    is_saved: str | None = typer.Option(None, "--is-saved"),
+    is_trashed: str | None = typer.Option(None, "--is-trashed"),
     order: str | None = typer.Option(None, "--order"),
     size: int | None = typer.Option(
         None, "--size", help="""Number of memories to return"""
@@ -167,9 +167,9 @@ def memories_statistics(
     if for_ is not None:
         kwargs["for_"] = for_
     if is_saved is not None:
-        kwargs["is_saved"] = is_saved
+        kwargs["is_saved"] = is_saved.lower() == "true"
     if is_trashed is not None:
-        kwargs["is_trashed"] = is_trashed
+        kwargs["is_trashed"] = is_trashed.lower() == "true"
     if order is not None:
         kwargs["order"] = order
     if size is not None:
@@ -223,8 +223,8 @@ def remove_memory_assets(
 def search_memories(
     ctx: typer.Context,
     for_: str | None = typer.Option(None, "--for"),
-    is_saved: bool | None = typer.Option(None, "--is-saved"),
-    is_trashed: bool | None = typer.Option(None, "--is-trashed"),
+    is_saved: str | None = typer.Option(None, "--is-saved"),
+    is_trashed: str | None = typer.Option(None, "--is-trashed"),
     order: str | None = typer.Option(None, "--order"),
     size: int | None = typer.Option(
         None, "--size", help="""Number of memories to return"""
@@ -239,9 +239,9 @@ def search_memories(
     if for_ is not None:
         kwargs["for_"] = for_
     if is_saved is not None:
-        kwargs["is_saved"] = is_saved
+        kwargs["is_saved"] = is_saved.lower() == "true"
     if is_trashed is not None:
-        kwargs["is_trashed"] = is_trashed
+        kwargs["is_trashed"] = is_trashed.lower() == "true"
     if order is not None:
         kwargs["order"] = order
     if size is not None:

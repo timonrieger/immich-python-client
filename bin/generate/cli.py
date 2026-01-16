@@ -381,6 +381,8 @@ def generate_command_function(
 
     # Track all option names for collision detection
     used_option_names: set[str] = set()
+    # Track boolean query params for conversion
+    boolean_query_params: set[str] = set()
 
     # Query parameters (optional flags)
     for param in sorted(query_params, key=lambda p: p["name"]):
@@ -388,7 +390,14 @@ def generate_command_function(
         param_name = to_python_ident(openapi_name)
         used_param_names.add(param_name)
         schema = param.get("schema", {"type": "string"})
-        param_type = python_type_from_schema(schema, spec)
+        # Convert boolean query params to str to allow explicit true/false values
+        # This matches server behavior where shared=true, shared=false, and undefined are distinct
+        schema_type = schema.get("type")
+        if schema_type == "boolean":
+            param_type = "str"
+            boolean_query_params.add(param_name)
+        else:
+            param_type = python_type_from_schema(schema, spec)
         flag_name = to_kebab_case(openapi_name)
         full_opt_name = f"--{flag_name}"
         description = param.get("description", "")
@@ -625,11 +634,23 @@ def generate_command_function(
         openapi_name = param["name"]
         param_name = to_python_ident(openapi_name)
         required = param.get("required", False)
-        if required:
-            lines.append(f"    kwargs['{param_name}'] = {param_name}")
+        # Convert boolean query params from string "true"/"false" to actual booleans
+        if param_name in boolean_query_params:
+            if required:
+                lines.append(
+                    f"    kwargs['{param_name}'] = {param_name}.lower() == 'true'"
+                )
+            else:
+                lines.append(f"    if {param_name} is not None:")
+                lines.append(
+                    f"        kwargs['{param_name}'] = {param_name}.lower() == 'true'"
+                )
         else:
-            lines.append(f"    if {param_name} is not None:")
-            lines.append(f"        kwargs['{param_name}'] = {param_name}")
+            if required:
+                lines.append(f"    kwargs['{param_name}'] = {param_name}")
+            else:
+                lines.append(f"    if {param_name} is not None:")
+                lines.append(f"        kwargs['{param_name}'] = {param_name}")
 
     # Add header params
     for param in header_params:

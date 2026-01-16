@@ -20,12 +20,12 @@ def get_time_bucket(
     album_id: str | None = typer.Option(
         None, "--album-id", help="""Filter assets belonging to a specific album"""
     ),
-    is_favorite: bool | None = typer.Option(
+    is_favorite: str | None = typer.Option(
         None,
         "--is-favorite",
         help="""Filter by favorite status (true for favorites only, false for non-favorites only)""",
     ),
-    is_trashed: bool | None = typer.Option(
+    is_trashed: str | None = typer.Option(
         None,
         "--is-trashed",
         help="""Filter by trash status (true for trashed assets only, false for non-trashed only)""",
@@ -58,13 +58,13 @@ def get_time_bucket(
         "--visibility",
         help="""Filter by asset visibility status (ARCHIVE, TIMELINE, HIDDEN, LOCKED)""",
     ),
-    with_coordinates: bool | None = typer.Option(
+    with_coordinates: str | None = typer.Option(
         None, "--with-coordinates", help="""Include location data in the response"""
     ),
-    with_partners: bool | None = typer.Option(
+    with_partners: str | None = typer.Option(
         None, "--with-partners", help="""Include assets shared by partners"""
     ),
-    with_stacked: bool | None = typer.Option(
+    with_stacked: str | None = typer.Option(
         None,
         "--with-stacked",
         help="""Include stacked assets in the response. When true, only primary assets from stacks are returned.""",
@@ -78,9 +78,9 @@ def get_time_bucket(
     if album_id is not None:
         kwargs["album_id"] = album_id
     if is_favorite is not None:
-        kwargs["is_favorite"] = is_favorite
+        kwargs["is_favorite"] = is_favorite.lower() == "true"
     if is_trashed is not None:
-        kwargs["is_trashed"] = is_trashed
+        kwargs["is_trashed"] = is_trashed.lower() == "true"
     if key is not None:
         kwargs["key"] = key
     if order is not None:
@@ -97,11 +97,11 @@ def get_time_bucket(
     if visibility is not None:
         kwargs["visibility"] = visibility
     if with_coordinates is not None:
-        kwargs["with_coordinates"] = with_coordinates
+        kwargs["with_coordinates"] = with_coordinates.lower() == "true"
     if with_partners is not None:
-        kwargs["with_partners"] = with_partners
+        kwargs["with_partners"] = with_partners.lower() == "true"
     if with_stacked is not None:
-        kwargs["with_stacked"] = with_stacked
+        kwargs["with_stacked"] = with_stacked.lower() == "true"
     client = ctx.obj["client"]
     api_group = client.timeline
     result = run_command(client, api_group, "get_time_bucket", **kwargs)
@@ -115,12 +115,12 @@ def get_time_buckets(
     album_id: str | None = typer.Option(
         None, "--album-id", help="""Filter assets belonging to a specific album"""
     ),
-    is_favorite: bool | None = typer.Option(
+    is_favorite: str | None = typer.Option(
         None,
         "--is-favorite",
         help="""Filter by favorite status (true for favorites only, false for non-favorites only)""",
     ),
-    is_trashed: bool | None = typer.Option(
+    is_trashed: str | None = typer.Option(
         None,
         "--is-trashed",
         help="""Filter by trash status (true for trashed assets only, false for non-trashed only)""",
@@ -148,13 +148,13 @@ def get_time_buckets(
         "--visibility",
         help="""Filter by asset visibility status (ARCHIVE, TIMELINE, HIDDEN, LOCKED)""",
     ),
-    with_coordinates: bool | None = typer.Option(
+    with_coordinates: str | None = typer.Option(
         None, "--with-coordinates", help="""Include location data in the response"""
     ),
-    with_partners: bool | None = typer.Option(
+    with_partners: str | None = typer.Option(
         None, "--with-partners", help="""Include assets shared by partners"""
     ),
-    with_stacked: bool | None = typer.Option(
+    with_stacked: str | None = typer.Option(
         None,
         "--with-stacked",
         help="""Include stacked assets in the response. When true, only primary assets from stacks are returned.""",
@@ -168,9 +168,9 @@ def get_time_buckets(
     if album_id is not None:
         kwargs["album_id"] = album_id
     if is_favorite is not None:
-        kwargs["is_favorite"] = is_favorite
+        kwargs["is_favorite"] = is_favorite.lower() == "true"
     if is_trashed is not None:
-        kwargs["is_trashed"] = is_trashed
+        kwargs["is_trashed"] = is_trashed.lower() == "true"
     if key is not None:
         kwargs["key"] = key
     if order is not None:
@@ -186,11 +186,11 @@ def get_time_buckets(
     if visibility is not None:
         kwargs["visibility"] = visibility
     if with_coordinates is not None:
-        kwargs["with_coordinates"] = with_coordinates
+        kwargs["with_coordinates"] = with_coordinates.lower() == "true"
     if with_partners is not None:
-        kwargs["with_partners"] = with_partners
+        kwargs["with_partners"] = with_partners.lower() == "true"
     if with_stacked is not None:
-        kwargs["with_stacked"] = with_stacked
+        kwargs["with_stacked"] = with_stacked.lower() == "true"
     client = ctx.obj["client"]
     api_group = client.timeline
     result = run_command(client, api_group, "get_time_buckets", **kwargs)
