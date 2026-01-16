@@ -35,7 +35,8 @@ def test_create_album(runner: CliRunner, user: UserResponseDto) -> None:
             album_name,
             "--description",
             description,
-            # TODO: find a way in the generator to pass multiple album users at once without stringifying the list
+            "--albumUsers",
+            f"role=editor,userId={user.id}",
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
@@ -43,7 +44,9 @@ def test_create_album(runner: CliRunner, user: UserResponseDto) -> None:
     album = AlbumResponseDto.model_validate(response_data)
     assert album.album_name == album_name
     assert album.description == description
-    assert len(album.album_users) == 0
+    assert len(album.album_users) == 1
+    assert album.album_users[0].role == AlbumUserRole.EDITOR
+    assert album.album_users[0].user.id == user.id
 
 
 @pytest.mark.e2e
@@ -66,7 +69,6 @@ def test_get_all_albums(runner: CliRunner, album: AlbumResponseDto) -> None:
 
 @pytest.mark.asyncio
 @pytest.mark.e2e
-@pytest.mark.skip(reason="Waiting for CLI support on list objects")
 async def test_get_all_albums_with_shared_filter(
     runner: CliRunner,
     user: UserResponseDto,
@@ -85,6 +87,7 @@ async def test_get_all_albums_with_shared_filter(
             "albums",
             "get-all-albums",
             "--shared",
+            "true",
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
@@ -288,7 +291,6 @@ def test_remove_asset_from_album(
 
 
 @pytest.mark.e2e
-@pytest.mark.skip(reason="Waiting for CLI support on list objects")
 def test_add_users_to_album(
     runner: CliRunner, album: AlbumResponseDto, user: UserResponseDto
 ) -> None:
@@ -304,18 +306,20 @@ def test_add_users_to_album(
             "add-users-to-album",
             album_id,
             "--albumUsers",
-            f'{{"role": "viewer", "userId": "{user.id}"}}',  # TODO: find a way in the generator to pass multiple album users at once without stringifying the list
+            f"role=viewer,userId={user.id}",
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    # Add users returns 204, so response should be None or empty
-    if result.output.strip():
-        response_data = json.loads(result.output)
-        assert response_data is None
+    response_data = json.loads(result.output)
+    updated_album = AlbumResponseDto.model_validate(response_data)
+    assert updated_album.id == album_id
+    assert any(
+        album_user.user.id == user.id and album_user.role == AlbumUserRole.VIEWER
+        for album_user in updated_album.album_users
+    )
 
 
 @pytest.mark.e2e
-@pytest.mark.skip(reason="Waiting for CLI support on list objects")
 def test_remove_user_from_album(
     runner: CliRunner, album: AlbumResponseDto, user: UserResponseDto
 ) -> None:
@@ -330,7 +334,7 @@ def test_remove_user_from_album(
             "add-users-to-album",
             album.id,
             "--albumUsers",
-            f'{{"role": "viewer", "userId": "{user.id}"}}',  # TODO: find a way in the generator to pass multiple album users at once without stringifying the list
+            f"role=viewer,userId={user.id}",
         ],
     )
     if add_result.exit_code != 0:
@@ -351,17 +355,13 @@ def test_remove_user_from_album(
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
-    assert isinstance(response_data, list)
-    for item in response_data:
-        response = BulkIdResponseDto.model_validate(item)
-        assert response.id in [user.id]
-        assert response.success
-        assert response.error is None
+    # Remove user returns 204, so response should be None or empty
+    if result.output.strip():
+        response_data = json.loads(result.output)
+        assert response_data is None
 
 
 @pytest.mark.e2e
-@pytest.mark.skip(reason="Waiting for CLI support on list objects")
 def test_update_album_user(
     runner: CliRunner, album: AlbumResponseDto, user: UserResponseDto
 ) -> None:
@@ -376,7 +376,7 @@ def test_update_album_user(
             "add-users-to-album",
             album.id,
             "--albumUsers",
-            f'{{"role": "viewer", "userId": "{user.id}"}}',  # TODO: find a way in the generator to pass multiple album users at once without stringifying the list
+            f"role=viewer,userId={user.id}",
         ],
     )
     if add_result.exit_code != 0:

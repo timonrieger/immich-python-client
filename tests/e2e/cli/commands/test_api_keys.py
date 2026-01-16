@@ -12,11 +12,9 @@ from immich.client.models.permission import Permission
 
 
 @pytest.mark.e2e
-@pytest.mark.skip(reason="Waiting for CLI support on list objects")
 def test_create_api_key(runner: CliRunner) -> None:
     """Test create-api-key command and validate response structure."""
     api_key_name = "Test API Key"
-    permissions = json.dumps([Permission.ALL.value])
     result = runner.invoke(
         cli_app,
         [
@@ -27,7 +25,7 @@ def test_create_api_key(runner: CliRunner) -> None:
             "--name",
             api_key_name,
             "--permissions",
-            permissions,
+            "all",
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
@@ -89,12 +87,10 @@ def test_get_my_api_key(runner: CliRunner) -> None:
 
 
 @pytest.mark.e2e
-@pytest.mark.skip(reason="Waiting for CLI support on list objects")
 def test_update_api_key(runner: CliRunner, api_key: APIKeyResponseDto) -> None:
     """Test update-api-key command and validate response structure."""
     api_key_id = api_key.id
     updated_name = "Updated API Key Name"
-    updated_permissions = json.dumps([Permission.ASSET_DOT_READ.value])
     result = runner.invoke(
         cli_app,
         [
@@ -106,7 +102,7 @@ def test_update_api_key(runner: CliRunner, api_key: APIKeyResponseDto) -> None:
             "--name",
             updated_name,
             "--permissions",
-            updated_permissions,
+            "asset.read",
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
