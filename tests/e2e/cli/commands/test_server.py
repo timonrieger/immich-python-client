@@ -6,7 +6,7 @@ from typer.testing import CliRunner
 from immich.cli.app import app as cli_app
 from immich.client.models.license_response_dto import LicenseResponseDto
 
-from tests.e2e.conftest import ACTIVATION_KEY, LICENSE_KEY
+from tests.e2e.cli.conftest import ACTIVATION_KEY, LICENSE_KEY
 from immich.client.models.server_about_response_dto import ServerAboutResponseDto
 from immich.client.models.server_apk_links_dto import ServerApkLinksDto
 from immich.client.models.server_config_dto import ServerConfigDto
