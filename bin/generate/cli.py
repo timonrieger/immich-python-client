@@ -60,19 +60,19 @@ def python_type_from_schema(
         schema: OpenAPI schema dict
         spec: Full OpenAPI spec for resolving refs
     """
-    schema = normalize_schema(schema, spec)
+    nschema = normalize_schema(schema, spec)
 
     # Inline enums are not supported - all enums must come from $ref
     # If we encounter an inline enum, fall back to string
-    if "enum" in schema and "$ref" not in schema:
+    if "enum" in nschema:
         return "str"
 
-    schema_type = schema.get("type")
+    schema_type = nschema.get("type")
     if schema_type is None:
         return "str"
     if schema_type == "string":
-        if "format" in schema:
-            fmt = schema["format"]
+        if "format" in nschema:
+            fmt = nschema["format"]
             if fmt == "uuid":
                 return "str"  # UUID as string for CLI
             if fmt == "date-time":
@@ -85,7 +85,7 @@ def python_type_from_schema(
     elif schema_type == "boolean":
         return "bool"
     elif schema_type == "array":
-        items = schema.get("items", {})
+        items = nschema.get("items", {})
         item_type = python_type_from_schema(items, spec)
         return f"list[{item_type}]"
     elif schema_type == "object":
@@ -166,6 +166,7 @@ def flatten_schema(
     """
     if path is None:
         path = []
+
     schema = normalize_schema(schema, spec)
 
     schema_type = schema.get("type")
@@ -321,7 +322,6 @@ def generate_command_function(
         full_opt_name = f"--{flag_name}"
         description = param.get("description", "")
 
-        # Check for collisions
         used_option_names.add(full_opt_name)
 
         required = param.get("required", False)
