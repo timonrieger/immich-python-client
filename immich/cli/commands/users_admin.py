@@ -1,5 +1,6 @@
 """Generated CLI commands for Users (admin) tag (auto-generated, do not edit)."""
 
+# noqa: F405
 from __future__ import annotations
 
 import typer
@@ -10,6 +11,7 @@ from immich.cli.runtime import (
     run_command,
     set_nested,
 )
+from immich.client.models import *
 
 app = typer.Typer(
     help="""Administrative endpoints for managing users, including creating, updating, deleting, and restoring users. Also includes endpoints for resetting passwords and PIN codes.
@@ -181,7 +183,7 @@ def get_user_statistics_admin(
     id: str,
     is_favorite: str | None = typer.Option(None, "--is-favorite"),
     is_trashed: str | None = typer.Option(None, "--is-trashed"),
-    visibility: str | None = typer.Option(None, "--visibility"),
+    visibility: AssetVisibility | None = typer.Option(None, "--visibility"),
 ) -> None:
     """Retrieve user statistics
 

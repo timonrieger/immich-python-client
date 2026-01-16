@@ -1,5 +1,6 @@
 """Generated CLI commands for Albums tag (auto-generated, do not edit)."""
 
+# noqa: F405
 from __future__ import annotations
 
 import typer
@@ -11,6 +12,7 @@ from immich.cli.runtime import (
     run_command,
     set_nested,
 )
+from immich.client.models import *
 
 app = typer.Typer(
     help="""An album is a collection of assets that can be shared with other users or via shared links.

@@ -1,5 +1,6 @@
 """Generated CLI commands for Notifications tag (auto-generated, do not edit)."""
 
+# noqa: F405
 from __future__ import annotations
 
 from datetime import datetime
@@ -11,6 +12,7 @@ from immich.cli.runtime import (
     run_command,
     set_nested,
 )
+from immich.client.models import *
 
 app = typer.Typer(
     help="""A notification is a specialized message sent to users to inform them of important events. Currently, these notifications are only shown in the Immich web application.
@@ -88,8 +90,8 @@ def get_notification(
 def get_notifications(
     ctx: typer.Context,
     id: str | None = typer.Option(None, "--id"),
-    level: str | None = typer.Option(None, "--level"),
-    type: str | None = typer.Option(None, "--type"),
+    level: NotificationLevel | None = typer.Option(None, "--level"),
+    type: NotificationType | None = typer.Option(None, "--type"),
     unread: str | None = typer.Option(None, "--unread"),
 ) -> None:
     """Retrieve notifications

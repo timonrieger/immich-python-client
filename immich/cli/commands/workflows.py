@@ -1,5 +1,6 @@
 """Generated CLI commands for Workflows tag (auto-generated, do not edit)."""
 
+# noqa: F405
 from __future__ import annotations
 
 import typer
@@ -11,6 +12,7 @@ from immich.cli.runtime import (
     run_command,
     set_nested,
 )
+from immich.client.models import *
 
 app = typer.Typer(
     help="""A workflow is a set of actions that run whenever a triggering event occurs. Workflows also can include filters to further limit execution.

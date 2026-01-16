@@ -1,5 +1,6 @@
 """Generated CLI commands for Search tag (auto-generated, do not edit)."""
 
+# noqa: F405
 from __future__ import annotations
 
 from datetime import datetime
@@ -11,6 +12,7 @@ from immich.cli.runtime import (
     run_command,
     set_nested,
 )
+from immich.client.models import *
 
 app = typer.Typer(
     help="""Endpoints related to searching assets via text, smart search, optical character recognition (OCR), and other filters like person, album, and other metadata. Search endpoints usually support pagination and sorting.
@@ -59,7 +61,7 @@ def get_search_suggestions(
     make: str | None = typer.Option(None, "--make"),
     model: str | None = typer.Option(None, "--model"),
     state: str | None = typer.Option(None, "--state"),
-    type: str = typer.Option(..., "--type"),
+    type: SearchSuggestionType = typer.Option(..., "--type"),
 ) -> None:
     """Retrieve search suggestions
 
@@ -539,10 +541,10 @@ def search_large_assets(
     taken_before: datetime | None = typer.Option(None, "--taken-before"),
     trashed_after: datetime | None = typer.Option(None, "--trashed-after"),
     trashed_before: datetime | None = typer.Option(None, "--trashed-before"),
-    type: str | None = typer.Option(None, "--type"),
+    type: AssetTypeEnum | None = typer.Option(None, "--type"),
     updated_after: datetime | None = typer.Option(None, "--updated-after"),
     updated_before: datetime | None = typer.Option(None, "--updated-before"),
-    visibility: str | None = typer.Option(None, "--visibility"),
+    visibility: AssetVisibility | None = typer.Option(None, "--visibility"),
     with_deleted: str | None = typer.Option(None, "--with-deleted"),
     with_exif: str | None = typer.Option(None, "--with-exif"),
 ) -> None:

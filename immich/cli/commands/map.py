@@ -1,11 +1,13 @@
 """Generated CLI commands for Map tag (auto-generated, do not edit)."""
 
+# noqa: F405
 from __future__ import annotations
 
 from datetime import datetime
 import typer
 
 from immich.cli.runtime import print_response, run_command
+from immich.client.models import *
 
 app = typer.Typer(
     help="""Map endpoints include supplemental functionality related to geolocation, such as reverse geocoding and retrieving map markers for assets with geolocation data.

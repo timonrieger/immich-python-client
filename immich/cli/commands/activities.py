@@ -1,5 +1,6 @@
 """Generated CLI commands for Activities tag (auto-generated, do not edit)."""
 
+# noqa: F405
 from __future__ import annotations
 
 import typer
@@ -10,6 +11,7 @@ from immich.cli.runtime import (
     run_command,
     set_nested,
 )
+from immich.client.models import *
 
 app = typer.Typer(
     help="""An activity is a like or a comment made by a user on an asset or album.
@@ -75,8 +77,8 @@ def get_activities(
     ctx: typer.Context,
     album_id: str = typer.Option(..., "--album-id"),
     asset_id: str | None = typer.Option(None, "--asset-id"),
-    level: str | None = typer.Option(None, "--level"),
-    type: str | None = typer.Option(None, "--type"),
+    level: ReactionLevel | None = typer.Option(None, "--level"),
+    type: ReactionType | None = typer.Option(None, "--type"),
     user_id: str | None = typer.Option(None, "--user-id"),
 ) -> None:
     """List all activities

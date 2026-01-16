@@ -1,5 +1,6 @@
 """Generated CLI commands for Queues tag (auto-generated, do not edit)."""
 
+# noqa: F405
 from __future__ import annotations
 
 import typer
@@ -10,6 +11,7 @@ from immich.cli.runtime import (
     run_command,
     set_nested,
 )
+from immich.client.models import *
 
 app = typer.Typer(
     help="""Queues and background jobs are used for processing tasks asynchronously. Queues can be paused and resumed as needed.
@@ -22,7 +24,7 @@ Docs: https://api.immich.app/endpoints/queues""",
 @app.command("empty-queue")
 def empty_queue(
     ctx: typer.Context,
-    name: str,
+    name: QueueName,
     failed: bool | None = typer.Option(
         None,
         "--failed",
@@ -55,7 +57,7 @@ def empty_queue(
 @app.command("get-queue")
 def get_queue(
     ctx: typer.Context,
-    name: str,
+    name: QueueName,
 ) -> None:
     """Retrieve a queue
 
@@ -72,8 +74,8 @@ def get_queue(
 @app.command("get-queue-jobs")
 def get_queue_jobs(
     ctx: typer.Context,
-    name: str,
-    status: list[str] | None = typer.Option(None, "--status"),
+    name: QueueName,
+    status: list[QueueJobStatus] | None = typer.Option(None, "--status"),
 ) -> None:
     """Retrieve queue jobs
 
@@ -107,7 +109,7 @@ def get_queues(
 @app.command("update-queue")
 def update_queue(
     ctx: typer.Context,
-    name: str,
+    name: QueueName,
     is_paused: bool | None = typer.Option(None, "--isPaused"),
 ) -> None:
     """Update a queue
