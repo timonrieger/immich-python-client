@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 import typer
 
 from immich.cli.runtime import (
@@ -67,7 +68,7 @@ def create_shared_link(
     allow_upload: bool | None = typer.Option(None, "--allowUpload"),
     asset_ids: list[str] | None = typer.Option(None, "--assetIds"),
     description: str | None = typer.Option(None, "--description"),
-    expires_at: str | None = typer.Option(None, "--expiresAt"),
+    expires_at: datetime | None = typer.Option(None, "--expiresAt"),
     password: str | None = typer.Option(None, "--password"),
     show_metadata: bool | None = typer.Option(None, "--showMetadata"),
     slug: str | None = typer.Option(None, "--slug"),
@@ -276,7 +277,7 @@ Setting this flag and not sending expiryAt is considered as null instead.
 Clients that can send null values can ignore this.""",
     ),
     description: str | None = typer.Option(None, "--description"),
-    expires_at: str | None = typer.Option(None, "--expiresAt"),
+    expires_at: datetime | None = typer.Option(None, "--expiresAt"),
     password: str | None = typer.Option(None, "--password"),
     show_metadata: bool | None = typer.Option(None, "--showMetadata"),
     slug: str | None = typer.Option(None, "--slug"),

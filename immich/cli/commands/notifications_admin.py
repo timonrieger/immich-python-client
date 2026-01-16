@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 import typer
 
 from immich.cli.runtime import (
@@ -30,7 +31,7 @@ def create_notification(
     ),
     description: str | None = typer.Option(None, "--description"),
     level: str | None = typer.Option(None, "--level"),
-    read_at: str | None = typer.Option(None, "--readAt"),
+    read_at: datetime | None = typer.Option(None, "--readAt"),
     title: str = typer.Option(..., "--title"),
     type: str | None = typer.Option(None, "--type"),
     user_id: str = typer.Option(..., "--userId"),

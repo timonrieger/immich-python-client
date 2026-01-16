@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 import typer
 
 from immich.cli.runtime import (
@@ -118,7 +119,7 @@ def get_notifications(
 def update_notification(
     ctx: typer.Context,
     id: str,
-    read_at: str | None = typer.Option(None, "--readAt"),
+    read_at: datetime | None = typer.Option(None, "--readAt"),
 ) -> None:
     """Update a notification
 
@@ -153,7 +154,7 @@ def update_notification(
 def update_notifications(
     ctx: typer.Context,
     ids: list[str] = typer.Option(..., "--ids"),
-    read_at: str | None = typer.Option(None, "--readAt"),
+    read_at: datetime | None = typer.Option(None, "--readAt"),
 ) -> None:
     """Update notifications
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 import typer
 
 from immich.cli.runtime import (
@@ -53,7 +54,7 @@ def delete_sync_ack(
 @app.command("get-delta-sync")
 def get_delta_sync(
     ctx: typer.Context,
-    updated_after: str = typer.Option(..., "--updatedAfter"),
+    updated_after: datetime = typer.Option(..., "--updatedAfter"),
     user_ids: list[str] = typer.Option(..., "--userIds"),
 ) -> None:
     """Get delta sync for user
@@ -88,7 +89,7 @@ def get_full_sync_for_user(
     ctx: typer.Context,
     last_id: str | None = typer.Option(None, "--lastId"),
     limit: int = typer.Option(..., "--limit"),
-    updated_until: str = typer.Option(..., "--updatedUntil"),
+    updated_until: datetime = typer.Option(..., "--updatedUntil"),
     user_id: str | None = typer.Option(None, "--userId"),
 ) -> None:
     """Get full sync for user
