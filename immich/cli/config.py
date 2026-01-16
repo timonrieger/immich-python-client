@@ -10,10 +10,10 @@ from immich import AsyncClient
 
 def get_base_url() -> str:
     """Get base URL from environment or config."""
-    base_url = os.environ.get("IMMICH_BASE_URL")
+    base_url = os.environ.get("IMMICH_API_URL")
     if not base_url:
         raise ValueError(
-            "IMMICH_BASE_URL environment variable is required. "
+            "IMMICH_API_URL environment variable is required. "
             "Set it to your Immich server URL (e.g., http://localhost:2283/api)"
         )
     return base_url
