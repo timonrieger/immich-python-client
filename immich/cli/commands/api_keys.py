@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import typer
 
 from immich.cli.runtime import (
@@ -24,9 +23,7 @@ Docs: https://api.immich.app/endpoints/api-keys""",
 def create_api_key(
     ctx: typer.Context,
     name: str | None = typer.Option(None, "--name"),
-    permissions: list[str] = typer.Option(
-        ..., "--permissions", help="JSON string for permissions"
-    ),
+    permissions: list[str] = typer.Option(..., "--permissions"),
 ) -> None:
     """Create an API key
 
@@ -48,8 +45,7 @@ def create_api_key(
             set_nested(json_data, ["name"], name)
         if permissions is None:
             raise SystemExit("Error: --permissions is required")
-        value_permissions = json.loads(permissions)
-        set_nested(json_data, ["permissions"], value_permissions)
+        set_nested(json_data, ["permissions"], permissions)
         from immich.client.models.api_key_create_dto import APIKeyCreateDto
 
         api_key_create_dto = deserialize_request_body(json_data, APIKeyCreateDto)
@@ -134,9 +130,7 @@ def update_api_key(
     ctx: typer.Context,
     id: str,
     name: str | None = typer.Option(None, "--name"),
-    permissions: list[str] | None = typer.Option(
-        None, "--permissions", help="JSON string for permissions"
-    ),
+    permissions: list[str] | None = typer.Option(None, "--permissions"),
 ) -> None:
     """Update an API key
 
@@ -158,8 +152,7 @@ def update_api_key(
         if name is not None:
             set_nested(json_data, ["name"], name)
         if permissions is not None:
-            value_permissions = json.loads(permissions)
-            set_nested(json_data, ["permissions"], value_permissions)
+            set_nested(json_data, ["permissions"], permissions)
         from immich.client.models.api_key_update_dto import APIKeyUpdateDto
 
         api_key_update_dto = deserialize_request_body(json_data, APIKeyUpdateDto)

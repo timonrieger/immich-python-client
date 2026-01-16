@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import json
 import typer
 
 from immich.cli.runtime import (
     deserialize_request_body,
+    parse_complex_list,
     print_response,
     run_command,
     set_nested,
@@ -257,7 +257,9 @@ def merge_person(
 def reassign_faces(
     ctx: typer.Context,
     id: str,
-    data: list[str] = typer.Option(..., "--data", help="JSON string for data"),
+    data: list[str] = typer.Option(
+        ..., "--data", help="key=value pairs (repeatable); e.g. key1=value1,key2=value2"
+    ),
 ) -> None:
     """Reassign faces
 
@@ -277,7 +279,7 @@ def reassign_faces(
         json_data = {}
         if data is None:
             raise SystemExit("Error: --data is required")
-        value_data = json.loads(data)
+        value_data = parse_complex_list(data)
         set_nested(json_data, ["data"], value_data)
         from immich.client.models.asset_face_update_dto import AssetFaceUpdateDto
 
@@ -293,7 +295,11 @@ def reassign_faces(
 @app.command("update-people")
 def update_people(
     ctx: typer.Context,
-    people: list[str] = typer.Option(..., "--people", help="JSON string for people"),
+    people: list[str] = typer.Option(
+        ...,
+        "--people",
+        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
+    ),
 ) -> None:
     """Update people
 
@@ -312,7 +318,7 @@ def update_people(
         json_data = {}
         if people is None:
             raise SystemExit("Error: --people is required")
-        value_people = json.loads(people)
+        value_people = parse_complex_list(people)
         set_nested(json_data, ["people"], value_people)
         from immich.client.models.people_update_dto import PeopleUpdateDto
 

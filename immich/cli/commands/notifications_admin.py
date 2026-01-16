@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import json
 import typer
 
 from immich.cli.runtime import (
     deserialize_request_body,
+    parse_complex_list,
     print_response,
     run_command,
     set_nested,
@@ -23,7 +23,11 @@ Docs: https://api.immich.app/endpoints/notifications-admin""",
 @app.command("create-notification")
 def create_notification(
     ctx: typer.Context,
-    data: str | None = typer.Option(None, "--data", help="JSON string for data"),
+    data: str | None = typer.Option(
+        None,
+        "--data",
+        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
+    ),
     description: str | None = typer.Option(None, "--description"),
     level: str | None = typer.Option(None, "--level"),
     read_at: str | None = typer.Option(None, "--readAt"),
@@ -53,7 +57,7 @@ def create_notification(
         # Build body from dotted flags
         json_data = {}
         if data is not None:
-            value_data = json.loads(data)
+            value_data = parse_complex_list(data)
             set_nested(json_data, ["data"], value_data)
         if description is not None:
             set_nested(json_data, ["description"], description)

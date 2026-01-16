@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import typer
 
 from immich.cli.runtime import (
@@ -81,19 +80,13 @@ def update_config(
     ffmpeg_accel: str = typer.Option(..., "--ffmpeg.accel"),
     ffmpeg_accel_decode: bool = typer.Option(..., "--ffmpeg.accelDecode"),
     ffmpeg_accepted_audio_codecs: list[str] = typer.Option(
-        ...,
-        "--ffmpeg.acceptedAudioCodecs",
-        help="JSON string for ffmpeg.acceptedAudioCodecs",
+        ..., "--ffmpeg.acceptedAudioCodecs"
     ),
     ffmpeg_accepted_containers: list[str] = typer.Option(
-        ...,
-        "--ffmpeg.acceptedContainers",
-        help="JSON string for ffmpeg.acceptedContainers",
+        ..., "--ffmpeg.acceptedContainers"
     ),
     ffmpeg_accepted_video_codecs: list[str] = typer.Option(
-        ...,
-        "--ffmpeg.acceptedVideoCodecs",
-        help="JSON string for ffmpeg.acceptedVideoCodecs",
+        ..., "--ffmpeg.acceptedVideoCodecs"
     ),
     ffmpeg_bframes: int = typer.Option(..., "--ffmpeg.bframes"),
     ffmpeg_cq_mode: str = typer.Option(..., "--ffmpeg.cqMode"),
@@ -600,27 +593,18 @@ def update_config(
         set_nested(json_data, ["ffmpeg", "accelDecode"], ffmpeg_accel_decode)
         if ffmpeg_accepted_audio_codecs is None:
             raise SystemExit("Error: --ffmpeg.acceptedAudioCodecs is required")
-        value_ffmpeg_accepted_audio_codecs = json.loads(ffmpeg_accepted_audio_codecs)
         set_nested(
-            json_data,
-            ["ffmpeg", "acceptedAudioCodecs"],
-            value_ffmpeg_accepted_audio_codecs,
+            json_data, ["ffmpeg", "acceptedAudioCodecs"], ffmpeg_accepted_audio_codecs
         )
         if ffmpeg_accepted_containers is None:
             raise SystemExit("Error: --ffmpeg.acceptedContainers is required")
-        value_ffmpeg_accepted_containers = json.loads(ffmpeg_accepted_containers)
         set_nested(
-            json_data,
-            ["ffmpeg", "acceptedContainers"],
-            value_ffmpeg_accepted_containers,
+            json_data, ["ffmpeg", "acceptedContainers"], ffmpeg_accepted_containers
         )
         if ffmpeg_accepted_video_codecs is None:
             raise SystemExit("Error: --ffmpeg.acceptedVideoCodecs is required")
-        value_ffmpeg_accepted_video_codecs = json.loads(ffmpeg_accepted_video_codecs)
         set_nested(
-            json_data,
-            ["ffmpeg", "acceptedVideoCodecs"],
-            value_ffmpeg_accepted_video_codecs,
+            json_data, ["ffmpeg", "acceptedVideoCodecs"], ffmpeg_accepted_video_codecs
         )
         if ffmpeg_bframes is None:
             raise SystemExit("Error: --ffmpeg.bframes is required")
