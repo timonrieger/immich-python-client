@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import json
 import typer
 
 from immich.cli.runtime import (
     deserialize_request_body,
+    parse_complex_list,
     print_response,
     run_command,
     set_nested,
@@ -112,7 +112,9 @@ def add_users_to_album(
     ctx: typer.Context,
     id: str,
     album_users: list[str] = typer.Option(
-        ..., "--albumUsers", help="JSON string for albumUsers"
+        ...,
+        "--albumUsers",
+        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
     ),
 ) -> None:
     """Share album with users
@@ -133,7 +135,7 @@ def add_users_to_album(
         json_data = {}
         if album_users is None:
             raise SystemExit("Error: --albumUsers is required")
-        value_album_users = json.loads(album_users)
+        value_album_users = parse_complex_list(album_users)
         set_nested(json_data, ["albumUsers"], value_album_users)
         from immich.client.models.add_users_dto import AddUsersDto
 
@@ -151,7 +153,9 @@ def create_album(
     ctx: typer.Context,
     album_name: str = typer.Option(..., "--albumName"),
     album_users: list[str] | None = typer.Option(
-        None, "--albumUsers", help="JSON string for albumUsers"
+        None,
+        "--albumUsers",
+        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
     ),
     asset_ids: list[str] | None = typer.Option(None, "--assetIds"),
     description: str | None = typer.Option(None, "--description"),
@@ -178,7 +182,7 @@ def create_album(
             raise SystemExit("Error: --albumName is required")
         set_nested(json_data, ["albumName"], album_name)
         if album_users is not None:
-            value_album_users = json.loads(album_users)
+            value_album_users = parse_complex_list(album_users)
             set_nested(json_data, ["albumUsers"], value_album_users)
         if asset_ids is not None:
             set_nested(json_data, ["assetIds"], asset_ids)

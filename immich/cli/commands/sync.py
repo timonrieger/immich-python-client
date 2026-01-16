@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import typer
 
 from immich.cli.runtime import (
@@ -23,9 +22,7 @@ Docs: https://api.immich.app/endpoints/sync""",
 @app.command("delete-sync-ack")
 def delete_sync_ack(
     ctx: typer.Context,
-    types: list[str] | None = typer.Option(
-        None, "--types", help="JSON string for types"
-    ),
+    types: list[str] | None = typer.Option(None, "--types"),
 ) -> None:
     """Delete acknowledgements
 
@@ -43,8 +40,7 @@ def delete_sync_ack(
         # Build body from dotted flags
         json_data = {}
         if types is not None:
-            value_types = json.loads(types)
-            set_nested(json_data, ["types"], value_types)
+            set_nested(json_data, ["types"], types)
         from immich.client.models.sync_ack_delete_dto import SyncAckDeleteDto
 
         sync_ack_delete_dto = deserialize_request_body(json_data, SyncAckDeleteDto)
@@ -162,7 +158,7 @@ def get_sync_ack(
 def get_sync_stream(
     ctx: typer.Context,
     reset: bool | None = typer.Option(None, "--reset"),
-    types: list[str] = typer.Option(..., "--types", help="JSON string for types"),
+    types: list[str] = typer.Option(..., "--types"),
 ) -> None:
     """Stream sync changes
 
@@ -184,8 +180,7 @@ def get_sync_stream(
             set_nested(json_data, ["reset"], reset)
         if types is None:
             raise SystemExit("Error: --types is required")
-        value_types = json.loads(types)
-        set_nested(json_data, ["types"], value_types)
+        set_nested(json_data, ["types"], types)
         from immich.client.models.sync_stream_dto import SyncStreamDto
 
         sync_stream_dto = deserialize_request_body(json_data, SyncStreamDto)

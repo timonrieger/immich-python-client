@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 import typer
 
 from immich.cli.runtime import (
     load_file_bytes,
     deserialize_request_body,
+    parse_complex_list,
     print_response,
     run_command,
     set_nested,
@@ -25,7 +25,11 @@ Docs: https://api.immich.app/endpoints/assets""",
 @app.command("check-bulk-upload")
 def check_bulk_upload(
     ctx: typer.Context,
-    assets: list[str] = typer.Option(..., "--assets", help="JSON string for assets"),
+    assets: list[str] = typer.Option(
+        ...,
+        "--assets",
+        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
+    ),
 ) -> None:
     """Check bulk upload
 
@@ -44,7 +48,7 @@ def check_bulk_upload(
         json_data = {}
         if assets is None:
             raise SystemExit("Error: --assets is required")
-        value_assets = json.loads(assets)
+        value_assets = parse_complex_list(assets)
         set_nested(json_data, ["assets"], value_assets)
         from immich.client.models.asset_bulk_upload_check_dto import (
             AssetBulkUploadCheckDto,
@@ -226,7 +230,11 @@ def delete_assets(
 @app.command("delete-bulk-asset-metadata")
 def delete_bulk_asset_metadata(
     ctx: typer.Context,
-    items: list[str] = typer.Option(..., "--items", help="JSON string for items"),
+    items: list[str] = typer.Option(
+        ...,
+        "--items",
+        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
+    ),
 ) -> None:
     """Delete asset metadata
 
@@ -245,7 +253,7 @@ def delete_bulk_asset_metadata(
         json_data = {}
         if items is None:
             raise SystemExit("Error: --items is required")
-        value_items = json.loads(items)
+        value_items = parse_complex_list(items)
         set_nested(json_data, ["items"], value_items)
         from immich.client.models.asset_metadata_bulk_delete_dto import (
             AssetMetadataBulkDeleteDto,
@@ -313,7 +321,7 @@ def edit_asset(
         json_data = {}
         if edits is None:
             raise SystemExit("Error: --edits is required")
-        value_edits = json.loads(edits)
+        value_edits = parse_complex_list(edits)
         set_nested(json_data, ["edits"], value_edits)
         from immich.client.models.asset_edit_action_list_dto import (
             AssetEditActionListDto,
@@ -719,7 +727,11 @@ def update_asset(
 def update_asset_metadata(
     ctx: typer.Context,
     id: str,
-    items: list[str] = typer.Option(..., "--items", help="JSON string for items"),
+    items: list[str] = typer.Option(
+        ...,
+        "--items",
+        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
+    ),
 ) -> None:
     """Update asset metadata
 
@@ -739,7 +751,7 @@ def update_asset_metadata(
         json_data = {}
         if items is None:
             raise SystemExit("Error: --items is required")
-        value_items = json.loads(items)
+        value_items = parse_complex_list(items)
         set_nested(json_data, ["items"], value_items)
         from immich.client.models.asset_metadata_upsert_dto import (
             AssetMetadataUpsertDto,
@@ -847,7 +859,11 @@ def update_assets(
 @app.command("update-bulk-asset-metadata")
 def update_bulk_asset_metadata(
     ctx: typer.Context,
-    items: list[str] = typer.Option(..., "--items", help="JSON string for items"),
+    items: list[str] = typer.Option(
+        ...,
+        "--items",
+        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
+    ),
 ) -> None:
     """Upsert asset metadata
 
@@ -866,7 +882,7 @@ def update_bulk_asset_metadata(
         json_data = {}
         if items is None:
             raise SystemExit("Error: --items is required")
-        value_items = json.loads(items)
+        value_items = parse_complex_list(items)
         set_nested(json_data, ["items"], value_items)
         from immich.client.models.asset_metadata_bulk_upsert_dto import (
             AssetMetadataBulkUpsertDto,

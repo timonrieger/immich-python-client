@@ -195,6 +195,17 @@ def is_complex_type(schema: dict[str, Any], spec: dict[str, Any] | None = None) 
     if schema_type == "array":
         items = schema.get("items", {})
         if "$ref" in items:
+            # Resolve the ref to check if it's an enum/primitive or an object
+            if spec is not None:
+                resolved = resolve_schema_ref(spec, items["$ref"])
+                # Enums and primitives are not complex - only objects are
+                if "enum" in resolved:
+                    return False  # Array of enums is simple
+                if resolved.get("type") in ("string", "integer", "number", "boolean"):
+                    return False  # Array of primitives is simple
+                # If it's an object or unknown, treat as complex
+                return True
+            # Unknown ref, treat as complex to be safe
             return True
         if items.get("type") == "object":
             return True
@@ -551,7 +562,7 @@ def generate_command_function(
                     if is_required:
                         if is_complex:
                             lines.append(
-                                f'    {param_name}: {param_type} = typer.Option(..., "{opt_name}", help="JSON string for {".".join(path_parts)}"),'
+                                f'    {param_name}: {param_type} = typer.Option(..., "{opt_name}", help="key=value pairs (repeatable); e.g. key1=value1,key2=value2"),'
                             )
                         else:
                             lines.append(
@@ -560,7 +571,7 @@ def generate_command_function(
                     else:
                         if is_complex:
                             lines.append(
-                                f'    {param_name}: {param_type} | None = typer.Option(None, "{opt_name}", help="JSON string for {".".join(path_parts)}"),'
+                                f'    {param_name}: {param_type} | None = typer.Option(None, "{opt_name}", help="key=value pairs (repeatable); e.g. key1=value1,key2=value2"),'
                             )
                         else:
                             lines.append(
@@ -706,7 +717,7 @@ def generate_command_function(
                                 f'            raise SystemExit("Error: --{opt_name.lstrip("--")} is required")'
                             )
                             lines.append(
-                                f"        value_{param_name} = json.loads({param_name})"
+                                f"        value_{param_name} = parse_complex_list({param_name})"
                             )
                             lines.append(
                                 f"        set_nested(json_data, {path_parts!r}, value_{param_name})"
@@ -723,7 +734,7 @@ def generate_command_function(
                         lines.append(f"        if {param_name} is not None:")
                         if is_complex:
                             lines.append(
-                                f"            value_{param_name} = json.loads({param_name})"
+                                f"            value_{param_name} = parse_complex_list({param_name})"
                             )
                             lines.append(
                                 f"            set_nested(json_data, {path_parts!r}, value_{param_name})"
@@ -825,11 +836,10 @@ def generate_tag_app(
         "",
         "from __future__ import annotations",
         "",
-        "import json",
         "from pathlib import Path",
         "import typer",
         "",
-        "from immich.cli.runtime import load_file_bytes, deserialize_request_body, print_response, run_command, set_nested",
+        "from immich.cli.runtime import load_file_bytes, deserialize_request_body, parse_complex_list, print_response, run_command, set_nested",
         "",
         f"app = typer.Typer(help={python_triple_quoted_str(tag_help)}, context_settings={{'help_option_names': ['-h', '--help']}})",
         "",

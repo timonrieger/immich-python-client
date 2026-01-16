@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import json
 import typer
 
 from immich.cli.runtime import (
     deserialize_request_body,
+    parse_complex_list,
     print_response,
     run_command,
     set_nested,
@@ -23,10 +23,18 @@ Docs: https://api.immich.app/endpoints/workflows""",
 @app.command("create-workflow")
 def create_workflow(
     ctx: typer.Context,
-    actions: list[str] = typer.Option(..., "--actions", help="JSON string for actions"),
+    actions: list[str] = typer.Option(
+        ...,
+        "--actions",
+        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
+    ),
     description: str | None = typer.Option(None, "--description"),
     enabled: bool | None = typer.Option(None, "--enabled"),
-    filters: list[str] = typer.Option(..., "--filters", help="JSON string for filters"),
+    filters: list[str] = typer.Option(
+        ...,
+        "--filters",
+        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
+    ),
     name: str = typer.Option(..., "--name"),
     trigger_type: str = typer.Option(..., "--triggerType"),
 ) -> None:
@@ -52,7 +60,7 @@ def create_workflow(
         json_data = {}
         if actions is None:
             raise SystemExit("Error: --actions is required")
-        value_actions = json.loads(actions)
+        value_actions = parse_complex_list(actions)
         set_nested(json_data, ["actions"], value_actions)
         if description is not None:
             set_nested(json_data, ["description"], description)
@@ -60,7 +68,7 @@ def create_workflow(
             set_nested(json_data, ["enabled"], enabled)
         if filters is None:
             raise SystemExit("Error: --filters is required")
-        value_filters = json.loads(filters)
+        value_filters = parse_complex_list(filters)
         set_nested(json_data, ["filters"], value_filters)
         if name is None:
             raise SystemExit("Error: --name is required")
@@ -136,12 +144,16 @@ def update_workflow(
     ctx: typer.Context,
     id: str,
     actions: list[str] | None = typer.Option(
-        None, "--actions", help="JSON string for actions"
+        None,
+        "--actions",
+        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
     ),
     description: str | None = typer.Option(None, "--description"),
     enabled: bool | None = typer.Option(None, "--enabled"),
     filters: list[str] | None = typer.Option(
-        None, "--filters", help="JSON string for filters"
+        None,
+        "--filters",
+        help="key=value pairs (repeatable); e.g. key1=value1,key2=value2",
     ),
     name: str | None = typer.Option(None, "--name"),
     trigger_type: str | None = typer.Option(None, "--triggerType"),
@@ -168,14 +180,14 @@ def update_workflow(
         # Build body from dotted flags
         json_data = {}
         if actions is not None:
-            value_actions = json.loads(actions)
+            value_actions = parse_complex_list(actions)
             set_nested(json_data, ["actions"], value_actions)
         if description is not None:
             set_nested(json_data, ["description"], description)
         if enabled is not None:
             set_nested(json_data, ["enabled"], enabled)
         if filters is not None:
-            value_filters = json.loads(filters)
+            value_filters = parse_complex_list(filters)
             set_nested(json_data, ["filters"], value_filters)
         if name is not None:
             set_nested(json_data, ["name"], name)
