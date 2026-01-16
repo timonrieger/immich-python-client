@@ -11,6 +11,7 @@ from immich.client import (
     ActivityCreateDto,
     ActivityResponseDto,
     AlbumResponseDto,
+    APIKeyResponseDto,
     AssetBulkDeleteDto,
     AssetResponseDto,
     CreateAlbumDto,
@@ -277,3 +278,25 @@ async def user(
             UUID(str(user.id)),
             UserAdminDeleteDto(force=True),
         )
+
+
+@pytest.fixture
+async def api_key(
+    client_with_api_key: AsyncClient, teardown: bool
+) -> AsyncGenerator[APIKeyResponseDto, None]:
+    """Fixture to set up API key for testing.
+
+    Creates an API key, returns parsed API key object.
+    Skips dependent tests if API key creation fails.
+    """
+    uuid = uuid4()
+    api_key_response = await client_with_api_key.api_keys.create_api_key(
+        APIKeyCreateDto(
+            name=f"test-api-key-{uuid}",
+            permissions=[Permission.ALL],
+        )
+    )
+    api_key = api_key_response.api_key
+    yield api_key
+    if teardown:
+        await client_with_api_key.api_keys.delete_api_key(UUID(str(api_key.id)))
