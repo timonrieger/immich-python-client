@@ -40,7 +40,7 @@ def test_create_album(runner: CliRunner, user: UserResponseDto) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     album = AlbumResponseDto.model_validate(response_data)
     assert album.album_name == album_name
     assert album.description == description
@@ -58,7 +58,7 @@ def test_get_all_albums(runner: CliRunner, album: AlbumResponseDto) -> None:
         ["--format", "json", "albums", "get-all-albums"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     assert isinstance(response_data, list)
     albums: list[AlbumResponseDto] = []
     for item in response_data:
@@ -91,7 +91,7 @@ async def test_get_all_albums_with_shared_filter(
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     assert isinstance(response_data, list)
     albums: list[AlbumResponseDto] = []
     for item in response_data:
@@ -123,7 +123,7 @@ async def test_get_all_albums_non_shared_filter(
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     assert isinstance(response_data, list)
     albums: list[AlbumResponseDto] = []
     for item in response_data:
@@ -146,7 +146,7 @@ def test_get_album_info(runner: CliRunner, album: AlbumResponseDto) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     album_info = AlbumResponseDto.model_validate(response_data)
     assert album_info.id == album_id
 
@@ -159,7 +159,7 @@ def test_get_album_statistics(runner: CliRunner) -> None:
         ["--format", "json", "albums", "get-album-statistics"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     AlbumStatisticsResponseDto.model_validate(response_data)
 
 
@@ -182,7 +182,7 @@ def test_update_album_info(runner: CliRunner, album: AlbumResponseDto) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     updated_album = AlbumResponseDto.model_validate(response_data)
     assert updated_album.id == album_id
     assert updated_album.album_name == "Updated Album Name"
@@ -207,7 +207,7 @@ def test_add_assets_to_album(
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     assert isinstance(response_data, list)
     for item in response_data:
         response = BulkIdResponseDto.model_validate(item)
@@ -235,7 +235,7 @@ def test_add_assets_to_albums(
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     response = AlbumsAddAssetsResponseDto.model_validate(response_data)
     assert response.success
     assert response.error is None
@@ -281,7 +281,7 @@ def test_remove_asset_from_album(
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     assert isinstance(response_data, list)
     for item in response_data:
         response = BulkIdResponseDto.model_validate(item)
@@ -310,7 +310,7 @@ def test_add_users_to_album(
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     updated_album = AlbumResponseDto.model_validate(response_data)
     assert updated_album.id == album_id
     assert any(
@@ -355,10 +355,8 @@ def test_remove_user_from_album(
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    # Remove user returns 204, so response should be None or empty
-    if result.output.strip():
-        response_data = json.loads(result.output)
-        assert response_data is None
+    response_data = json.loads(result.stdout)
+    assert response_data is None
 
 
 @pytest.mark.e2e
@@ -399,10 +397,8 @@ def test_update_album_user(
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    # Update album user returns 204, so response should be None or empty
-    if result.output.strip():
-        response_data = json.loads(result.output)
-        assert response_data is None
+    response_data = json.loads(result.stdout)
+    assert response_data is None
 
 
 @pytest.mark.e2e
@@ -415,7 +411,5 @@ def test_delete_album(runner: CliRunner, album: AlbumResponseDto) -> None:
         ["--format", "json", "albums", "delete-album", album_id],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    # Delete returns 204, so response should be None or empty
-    if result.output.strip():
-        response_data = json.loads(result.output)
-        assert response_data is None
+    response_data = json.loads(result.stdout)
+    assert response_data is None

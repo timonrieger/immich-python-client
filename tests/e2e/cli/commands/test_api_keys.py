@@ -29,7 +29,7 @@ def test_create_api_key(runner: CliRunner) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     api_key_response = APIKeyCreateResponseDto.model_validate(response_data)
     assert api_key_response.api_key.name == api_key_name
     assert Permission.ALL in api_key_response.api_key.permissions
@@ -45,7 +45,7 @@ def test_get_api_keys(runner: CliRunner, api_key: APIKeyResponseDto) -> None:
         ["--format", "json", "api-keys", "get-api-keys"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     assert isinstance(response_data, list)
     api_keys: list[APIKeyResponseDto] = []
     for item in response_data:
@@ -69,7 +69,7 @@ def test_get_api_key(runner: CliRunner, api_key: APIKeyResponseDto) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     api_key_info = APIKeyResponseDto.model_validate(response_data)
     assert api_key_info.id == api_key_id
 
@@ -82,7 +82,7 @@ def test_get_my_api_key(runner: CliRunner) -> None:
         ["--format", "json", "api-keys", "get-my-api-key"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     APIKeyResponseDto.model_validate(response_data)
 
 
@@ -106,7 +106,7 @@ def test_update_api_key(runner: CliRunner, api_key: APIKeyResponseDto) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     updated_api_key = APIKeyResponseDto.model_validate(response_data)
     assert updated_api_key.id == api_key_id
     assert updated_api_key.name == updated_name
@@ -123,7 +123,5 @@ def test_delete_api_key(runner: CliRunner, api_key: APIKeyResponseDto) -> None:
         ["--format", "json", "api-keys", "delete-api-key", api_key_id],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    # Delete returns 204, so response should be None or empty
-    if result.output.strip():
-        response_data = json.loads(result.output)
-        assert response_data is None
+    response_data = json.loads(result.stdout)
+    assert response_data is None

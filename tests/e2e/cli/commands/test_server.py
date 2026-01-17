@@ -35,7 +35,7 @@ def test_get_about_info(runner: CliRunner) -> None:
         ["--format", "json", "server", "get-about-info"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     ServerAboutResponseDto.model_validate(response_data)
 
 
@@ -47,7 +47,7 @@ def test_get_apk_links(runner: CliRunner) -> None:
         ["--format", "json", "server", "get-apk-links"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     ServerApkLinksDto.model_validate(response_data)
 
 
@@ -59,7 +59,7 @@ def test_get_server_config(runner: CliRunner) -> None:
         ["--format", "json", "server", "get-server-config"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     ServerConfigDto.model_validate(response_data)
 
 
@@ -71,7 +71,7 @@ def test_get_server_features(runner: CliRunner) -> None:
         ["--format", "json", "server", "get-server-features"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     ServerFeaturesDto.model_validate(response_data)
 
 
@@ -83,7 +83,7 @@ def test_get_server_statistics(runner: CliRunner) -> None:
         ["--format", "json", "server", "get-server-statistics"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     ServerStatsResponseDto.model_validate(response_data)
 
 
@@ -95,7 +95,7 @@ def test_get_server_version(runner: CliRunner) -> None:
         ["--format", "json", "server", "get-server-version"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     ServerVersionResponseDto.model_validate(response_data)
 
 
@@ -107,7 +107,7 @@ def test_get_storage(runner: CliRunner) -> None:
         ["--format", "json", "server", "get-storage"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     ServerStorageResponseDto.model_validate(response_data)
 
 
@@ -119,7 +119,7 @@ def test_get_supported_media_types(runner: CliRunner) -> None:
         ["--format", "json", "server", "get-supported-media-types"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     ServerMediaTypesResponseDto.model_validate(response_data)
 
 
@@ -131,7 +131,7 @@ def test_get_theme(runner: CliRunner) -> None:
         ["--format", "json", "server", "get-theme"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     ServerThemeDto.model_validate(response_data)
 
 
@@ -143,7 +143,7 @@ def test_get_version_check(runner: CliRunner) -> None:
         ["--format", "json", "server", "get-version-check"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     VersionCheckStateResponseDto.model_validate(response_data)
 
 
@@ -155,7 +155,7 @@ def test_get_version_history(runner: CliRunner) -> None:
         ["--format", "json", "server", "get-version-history"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     assert isinstance(response_data, list)
     for item in response_data:
         ServerVersionHistoryResponseDto.model_validate(item)
@@ -169,7 +169,7 @@ def test_ping_server(runner: CliRunner) -> None:
         ["--format", "json", "server", "ping-server"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     ServerPingResponse.model_validate(response_data)
 
 
@@ -190,7 +190,7 @@ def test_set_server_license(runner: CliRunner) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     license = LicenseResponseDto.model_validate(response_data)
     assert license.license_key == LICENSE_KEY
     assert license.activation_key == ACTIVATION_KEY
@@ -206,7 +206,7 @@ def test_get_server_license_after_set(
         ["--format", "json", "server", "get-server-license"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     license_obj = LicenseResponseDto.model_validate(response_data)
     assert license_obj.license_key == LICENSE_KEY
     assert license_obj.activation_key == ACTIVATION_KEY
@@ -232,5 +232,5 @@ def test_delete_server_license(runner: CliRunner, license: LicenseResponseDto) -
         ["--format", "json", "server", "delete-server-license"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     assert response_data is None

@@ -24,7 +24,7 @@ def test_get_auth_status(runner: CliRunner) -> None:
         ["--format", "json", "authentication", "get-auth-status"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     AuthStatusResponseDto.model_validate(response_data)
 
 
@@ -36,7 +36,7 @@ def test_validate_access_token(runner: CliRunner) -> None:
         ["--format", "json", "authentication", "validate-access-token"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     ValidateAccessTokenResponseDto.model_validate(response_data)
 
 
@@ -57,7 +57,7 @@ def test_login(runner: CliRunner) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     LoginResponseDto.model_validate(response_data)
 
 
@@ -69,7 +69,7 @@ def test_logout(runner: CliRunner) -> None:
         ["--format", "json", "authentication", "logout"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     LogoutResponseDto.model_validate(response_data)
 
 
@@ -92,7 +92,7 @@ def test_change_password(runner: CliRunner) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     UserAdminResponseDto.model_validate(response_data)
 
     # Change password back for other tests
@@ -129,10 +129,8 @@ def test_setup_pin_code(runner: CliRunner) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    # Setup pin code returns 204, so response should be None or empty
-    if result.output.strip():
-        response_data = json.loads(result.output)
-        assert response_data is None
+    response_data = json.loads(result.stdout)
+    assert response_data is None
 
 
 @pytest.mark.e2e
@@ -152,10 +150,8 @@ def test_change_pin_code(runner: CliRunner, pin_code_setup: str) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    # Change pin code returns 204, so response should be None or empty
-    if result.output.strip():
-        response_data = json.loads(result.output)
-        assert response_data is None
+    response_data = json.loads(result.stdout)
+    assert response_data is None
 
 
 @pytest.mark.e2e
@@ -174,10 +170,8 @@ def test_reset_pin_code(runner: CliRunner, pin_code_setup: str) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    # Reset pin code returns 204, so response should be None or empty
-    if result.output.strip():
-        response_data = json.loads(result.output)
-        assert response_data is None
+    response_data = json.loads(result.stdout)
+    assert response_data is None
 
 
 @pytest.mark.e2e
@@ -230,10 +224,8 @@ async def test_auth_session_lock_unlock(
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    # Unlock auth session returns 204, so response should be None or empty
-    if result.output.strip():
-        response_data = json.loads(result.output)
-        assert response_data is None
+    response_data = json.loads(result.stdout)
+    assert response_data is None
 
     auth_status = await get_auth_status_factory()
     assert auth_status.is_elevated is True
@@ -245,10 +237,8 @@ async def test_auth_session_lock_unlock(
         ["--format", "json", "authentication", "lock-auth-session"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    # Lock auth session returns 204, so response should be None or empty
-    if result.output.strip():
-        response_data = json.loads(result.output)
-        assert response_data is None
+    response_data = json.loads(result.stdout)
+    assert response_data is None
 
     auth_status = await get_auth_status_factory()
     assert auth_status.is_elevated is False
@@ -262,7 +252,7 @@ def test_unlink_o_auth_account(runner: CliRunner) -> None:
         ["--format", "json", "authentication", "unlink-o-auth-account"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     user_response = UserAdminResponseDto.model_validate(response_data)
     assert user_response.id is not None
 
@@ -285,23 +275,23 @@ def test_start_o_auth(runner: CliRunner) -> None:
     )
     # This may fail if OAuth is not configured, which is acceptable
     if result.exit_code == 0:
-        response_data = json.loads(result.output)
+        response_data = json.loads(result.stdout)
         oauth_response = OAuthAuthorizeResponseDto.model_validate(response_data)
         assert oauth_response.url is not None
 
 
 @pytest.mark.e2e
+@pytest.mark.skip(
+    reason="OAuth is not configured in the test environment, thus the test would fail"
+)
 def test_redirect_o_auth_to_mobile(runner: CliRunner) -> None:
     """Test redirect-o-auth-to-mobile command and validate response structure."""
     result = runner.invoke(
         cli_app,
         ["--format", "json", "authentication", "redirect-o-auth-to-mobile"],
     )
-    # This may fail if OAuth is not configured, which is acceptable
-    # Redirect OAuth to mobile returns 200 with no body, so response should be None or empty
-    if result.exit_code == 0 and result.output.strip():
-        response_data = json.loads(result.output)
-        assert response_data is None
+    response_data = json.loads(result.stdout)
+    assert response_data is None
 
 
 @pytest.mark.e2e
@@ -374,7 +364,7 @@ def test_sign_up_admin(runner: CliRunner) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     user_response = UserAdminResponseDto.model_validate(response_data)
     assert user_response.id is not None
     assert user_response.email == "test-admin@immich.cloud"

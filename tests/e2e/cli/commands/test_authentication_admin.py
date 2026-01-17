@@ -18,7 +18,5 @@ def test_unlink_all_o_auth_accounts_admin(runner: CliRunner) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    # Update assets returns 204, so response should be None or empty
-    if result.output.strip():
-        response_data = json.loads(result.output)
-        assert response_data is None
+    response_data = json.loads(result.stdout)
+    assert response_data is None

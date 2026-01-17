@@ -31,11 +31,9 @@ def test_create_activity(
     if activity_type == ReactionType.COMMENT:
         activity_args.extend(["--comment", "Test comment"])
 
-    activity_result = runner.invoke(cli_app, activity_args)
-    assert activity_result.exit_code == 0, (
-        activity_result.stdout + activity_result.stderr
-    )
-    response_data = json.loads(activity_result.output)
+    result = runner.invoke(cli_app, activity_args)
+    assert result.exit_code == 0, result.stdout + result.stderr
+    response_data = json.loads(result.output)
     activity = ActivityResponseDto.model_validate(response_data)
     assert activity.type == activity_type
     if activity_type == ReactionType.COMMENT:
@@ -54,10 +52,8 @@ def test_delete_activity(runner: CliRunner, activity: ActivityResponseDto) -> No
         ["--format", "json", "activities", "delete-activity", str(activity.id)],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    # Delete returns 204, so response should be None or empty
-    if result.output.strip():
-        response_data = json.loads(result.output)
-        assert response_data is None
+    response_data = json.loads(result.stdout)
+    assert response_data is None
 
 
 @pytest.mark.e2e
@@ -76,7 +72,7 @@ def test_get_activities(runner: CliRunner, album: AlbumResponseDto) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     assert isinstance(response_data, list)
     for item in response_data:
         ActivityResponseDto.model_validate(item)
@@ -102,7 +98,7 @@ def test_get_activities_with_filters(
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     assert isinstance(response_data, list)
     for item in response_data:
         activity = ActivityResponseDto.model_validate(item)
@@ -125,5 +121,5 @@ def test_get_activity_statistics(runner: CliRunner, album: AlbumResponseDto) -> 
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     ActivityStatisticsResponseDto.model_validate(response_data)

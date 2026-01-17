@@ -34,7 +34,7 @@ def test_get_asset_info(runner: CliRunner, asset: AssetResponseDto) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     asset_info = AssetResponseDto.model_validate(response_data)
     assert asset_info.id == asset_id
 
@@ -47,7 +47,7 @@ def test_get_asset_statistics(runner: CliRunner) -> None:
         ["--format", "json", "assets", "get-asset-statistics"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     AssetStatsResponseDto.model_validate(response_data)
 
 
@@ -68,7 +68,7 @@ def test_get_asset_statistics_with_filters(runner: CliRunner) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     AssetStatsResponseDto.model_validate(response_data)
 
 
@@ -87,7 +87,7 @@ def test_get_asset_metadata(runner: CliRunner, asset: AssetResponseDto) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     assert isinstance(response_data, list)
     for item in response_data:
         AssetMetadataResponseDto.model_validate(item)
@@ -111,7 +111,7 @@ def test_get_asset_metadata_by_key(runner: CliRunner, asset: AssetResponseDto) -
     )
     # This might fail if metadata doesn't exist, which is acceptable
     if result.exit_code == 0:
-        response_data = json.loads(result.output)
+        response_data = json.loads(result.stdout)
         AssetMetadataResponseDto.model_validate(response_data)
 
 
@@ -123,7 +123,7 @@ def test_get_random(runner: CliRunner) -> None:
         ["--format", "json", "assets", "get-random", "--count", "5"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     assert isinstance(response_data, list)
     for item in response_data:
         AssetResponseDto.model_validate(item)
@@ -149,7 +149,7 @@ def test_update_asset(runner: CliRunner, asset: AssetResponseDto) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     updated_asset = AssetResponseDto.model_validate(response_data)
     assert updated_asset.id == asset_id
     assert updated_asset.is_favorite is True
@@ -192,10 +192,8 @@ async def test_update_assets(
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    # Update assets returns 204, so response should be None or empty
-    if result.output.strip():
-        response_data = json.loads(result.output)
-        assert response_data is None
+    response_data = json.loads(result.stdout)
+    assert response_data is None
 
     # verify assets are updated
     for asset_id in asset_ids:
@@ -246,7 +244,7 @@ async def test_check_existing_assets(
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     results = CheckExistingAssetsResponseDto.model_validate(response_data).existing_ids
     assert len(results) == 1
     assert results[0] == device_asset_id
@@ -277,7 +275,7 @@ async def test_check_bulk_upload(
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     results = AssetBulkUploadCheckResponseDto.model_validate(response_data).results
     assert len(results) == 2
     assert results[0].action == "accept"
@@ -319,10 +317,8 @@ async def test_delete_assets(
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    # Delete returns 204, so response should be None or empty
-    if result.output.strip():
-        response_data = json.loads(result.output)
-        assert response_data is None
+    response_data = json.loads(result.stdout)
+    assert response_data is None
 
     # verify asset is deleted
     try:
@@ -348,7 +344,7 @@ def test_update_asset_metadata(runner: CliRunner, asset: AssetResponseDto) -> No
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     assert isinstance(response_data, list)
     for item in response_data:
         AssetMetadataResponseDto.model_validate(item)
@@ -387,10 +383,8 @@ def test_delete_asset_metadata(runner: CliRunner, asset: AssetResponseDto) -> No
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    # Delete returns 204, so response should be None or empty
-    if result.output.strip():
-        response_data = json.loads(result.output)
-        assert response_data is None
+    response_data = json.loads(result.stdout)
+    assert response_data is None
 
 
 @pytest.mark.e2e
@@ -409,7 +403,7 @@ def test_get_asset_ocr(runner: CliRunner, asset: AssetResponseDto) -> None:
     )
     # OCR might not be available for all assets, so we accept both success and failure
     if result.exit_code == 0:
-        response_data = json.loads(result.output)
+        response_data = json.loads(result.stdout)
         assert isinstance(response_data, list)
 
 
@@ -450,7 +444,7 @@ async def test_copy_asset(
         pytest.skip(
             f"Failed to mark source as favorite: {result.stdout + result.stderr}"
         )
-    response_data = json.loads(result.output)
+    response_data = json.loads(result.stdout)
     updated_asset = AssetResponseDto.model_validate(response_data)
     assert updated_asset.id == source_asset.id
     assert updated_asset.is_favorite is True
@@ -500,7 +494,5 @@ def test_run_asset_jobs(runner: CliRunner, asset: AssetResponseDto) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
-    # Run asset jobs returns 204, so response should be None or empty
-    if result.output.strip():
-        response_data = json.loads(result.output)
-        assert response_data is None
+    response_data = json.loads(result.stdout)
+    assert response_data is None
