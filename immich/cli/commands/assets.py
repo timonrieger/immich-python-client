@@ -9,7 +9,7 @@ from typing import Literal
 from immich.cli.runtime import (
     load_file_bytes,
     deserialize_request_body,
-    parse_complex_list,
+    load_json_data,
     print_response,
     run_command,
     set_nested,
@@ -45,7 +45,7 @@ Example: --assets key1=value1,key2=value2""",
         raise SystemExit("Error: Request body is required. Use dotted body flags.")
     if any([assets]):
         json_data = {}
-        value_assets = parse_complex_list(assets)
+        value_assets = [load_json_data(i) for i in assets]
         set_nested(json_data, ["assets"], value_assets)
         from immich.client.models.asset_bulk_upload_check_dto import (
             AssetBulkUploadCheckDto,
@@ -221,7 +221,7 @@ Example: --items key1=value1,key2=value2""",
         raise SystemExit("Error: Request body is required. Use dotted body flags.")
     if any([items]):
         json_data = {}
-        value_items = parse_complex_list(items)
+        value_items = [load_json_data(i) for i in items]
         set_nested(json_data, ["items"], value_items)
         from immich.client.models.asset_metadata_bulk_delete_dto import (
             AssetMetadataBulkDeleteDto,
@@ -292,7 +292,7 @@ Example: --edits key1=value1,key2=value2""",
         raise SystemExit("Error: Request body is required. Use dotted body flags.")
     if any([edits]):
         json_data = {}
-        value_edits = parse_complex_list(edits)
+        value_edits = [load_json_data(i) for i in edits]
         set_nested(json_data, ["edits"], value_edits)
         from immich.client.models.asset_edit_action_list_dto import (
             AssetEditActionListDto,
@@ -728,7 +728,7 @@ Example: --items key1=value1,key2=value2""",
         raise SystemExit("Error: Request body is required. Use dotted body flags.")
     if any([items]):
         json_data = {}
-        value_items = parse_complex_list(items)
+        value_items = [load_json_data(i) for i in items]
         set_nested(json_data, ["items"], value_items)
         from immich.client.models.asset_metadata_upsert_dto import (
             AssetMetadataUpsertDto,
@@ -869,7 +869,7 @@ Example: --items key1=value1,key2=value2""",
         raise SystemExit("Error: Request body is required. Use dotted body flags.")
     if any([items]):
         json_data = {}
-        value_items = parse_complex_list(items)
+        value_items = [load_json_data(i) for i in items]
         set_nested(json_data, ["items"], value_items)
         from immich.client.models.asset_metadata_bulk_upsert_dto import (
             AssetMetadataBulkUpsertDto,

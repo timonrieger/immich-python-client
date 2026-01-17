@@ -24,6 +24,7 @@ def test_create_album(runner: CliRunner, user: UserResponseDto) -> None:
     """Test create-album command with description and validate response structure."""
     album_name = "Test Album with Description"
     description = "Test description"
+    album_users = [AlbumUserCreateDto(role=AlbumUserRole.EDITOR, userId=user.id)]
     result = runner.invoke(
         cli_app,
         [
@@ -35,8 +36,11 @@ def test_create_album(runner: CliRunner, user: UserResponseDto) -> None:
             album_name,
             "--description",
             description,
-            "--albumUsers",
-            f"role=editor,userId={user.id}",
+        ]
+        + [
+            arg
+            for user in album_users
+            for arg in ["--albumUsers", user.model_dump_json()]
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
@@ -296,7 +300,7 @@ def test_add_users_to_album(
 ) -> None:
     """Test add-users-to-album command and validate response structure."""
     album_id = album.id
-
+    album_users = [AlbumUserCreateDto(role=AlbumUserRole.VIEWER, userId=user.id)]
     result = runner.invoke(
         cli_app,
         [
@@ -305,8 +309,11 @@ def test_add_users_to_album(
             "albums",
             "add-users-to-album",
             album_id,
-            "--albumUsers",
-            f"role=viewer,userId={user.id}",
+        ]
+        + [
+            arg
+            for album_user in album_users
+            for arg in ["--albumUsers", album_user.model_dump_json()]
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
@@ -325,6 +332,7 @@ def test_remove_user_from_album(
 ) -> None:
     """Test remove-user-from-album command and validate response structure."""
     # First add the user to the album
+    album_users = [AlbumUserCreateDto(role=AlbumUserRole.VIEWER, userId=user.id)]
     add_result = runner.invoke(
         cli_app,
         [
@@ -333,8 +341,11 @@ def test_remove_user_from_album(
             "albums",
             "add-users-to-album",
             album.id,
-            "--albumUsers",
-            f"role=viewer,userId={user.id}",
+        ]
+        + [
+            arg
+            for album_user in album_users
+            for arg in ["--albumUsers", album_user.model_dump_json()]
         ],
     )
     if add_result.exit_code != 0:
@@ -365,6 +376,7 @@ def test_update_album_user(
 ) -> None:
     """Test update-album-user command and validate response structure."""
     # First add the user to the album
+    album_users = [AlbumUserCreateDto(role=AlbumUserRole.VIEWER, userId=user.id)]
     add_result = runner.invoke(
         cli_app,
         [
@@ -373,8 +385,11 @@ def test_update_album_user(
             "albums",
             "add-users-to-album",
             album.id,
-            "--albumUsers",
-            f"role=viewer,userId={user.id}",
+        ]
+        + [
+            arg
+            for album_user in album_users
+            for arg in ["--albumUsers", album_user.model_dump_json()]
         ],
     )
     if add_result.exit_code != 0:

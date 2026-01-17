@@ -10,8 +10,10 @@ from typer.testing import CliRunner
 from immich._internal.upload import UploadResult
 from immich.cli.app import app as cli_app
 from immich.client import (
+    AssetBulkUploadCheckItem,
     AssetBulkUploadCheckResponseDto,
     AssetMetadataResponseDto,
+    AssetMetadataUpsertItemDto,
     AssetResponseDto,
     AssetStatsResponseDto,
     CheckExistingAssetsResponseDto,
@@ -207,7 +209,6 @@ async def test_check_existing_assets(
     runner: CliRunner,
     test_image: Path,
     monkeypatch: pytest.MonkeyPatch,
-    get_asset_info_factory: Callable[[str], Awaitable[AssetResponseDto]],
     upload_assets: Callable[..., Awaitable[UploadResult]],
 ) -> None:
     """Test check-existing-assets command and validate response structure."""
@@ -256,10 +257,8 @@ async def test_check_bulk_upload(
     runner: CliRunner,
 ) -> None:
     """Test check-bulk-upload command and validate response structure."""
-    file1_id = str(uuid4())
-    file1_checksum = str(uuid4())
-    file2_id = str(uuid4())
-    file2_checksum = str(uuid4())
+    asset1 = AssetBulkUploadCheckItem(checksum=str(uuid4()), id=str(uuid4()))
+    asset2 = AssetBulkUploadCheckItem(checksum=str(uuid4()), id=str(uuid4()))
     result = await asyncio.to_thread(
         runner.invoke,
         cli_app,
@@ -268,10 +267,11 @@ async def test_check_bulk_upload(
             "json",
             "assets",
             "check-bulk-upload",
-            "--assets",
-            f"checksum={file1_checksum},id={file1_id}",
-            "--assets",
-            f"checksum={file2_checksum},id={file2_id}",
+        ]
+        + [
+            arg
+            for asset in [asset1, asset2]
+            for arg in ["--assets", asset.model_dump_json()]
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
@@ -279,9 +279,9 @@ async def test_check_bulk_upload(
     results = AssetBulkUploadCheckResponseDto.model_validate(response_data).results
     assert len(results) == 2
     assert results[0].action == "accept"
-    assert results[0].id == file1_id
+    assert results[0].id == asset1.id
     assert results[1].action == "accept"
-    assert results[1].id == file2_id
+    assert results[1].id == asset2.id
 
 
 @pytest.mark.asyncio
@@ -331,6 +331,11 @@ async def test_delete_assets(
 def test_update_asset_metadata(runner: CliRunner, asset: AssetResponseDto) -> None:
     """Test update-asset-metadata command and validate response structure."""
     asset_id = asset.id
+    metadata_items = [
+        AssetMetadataUpsertItemDto(
+            key=AssetMetadataKey.MOBILE_MINUS_APP.value, value={"test": "data"}
+        )
+    ]
     result = runner.invoke(
         cli_app,
         [
@@ -339,8 +344,11 @@ def test_update_asset_metadata(runner: CliRunner, asset: AssetResponseDto) -> No
             "assets",
             "update-asset-metadata",
             asset_id,
-            "--items",
-            f"key={AssetMetadataKey.MOBILE_MINUS_APP.value},value={json.dumps({'test': 'data'})}",
+        ]
+        + [
+            arg
+            for item in metadata_items
+            for arg in ["--items", item.model_dump_json()]
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
@@ -354,6 +362,11 @@ def test_update_asset_metadata(runner: CliRunner, asset: AssetResponseDto) -> No
 def test_delete_asset_metadata(runner: CliRunner, asset: AssetResponseDto) -> None:
     """Test delete-asset-metadata command and validate response structure."""
     asset_id = asset.id
+    metadata_items = [
+        AssetMetadataUpsertItemDto(
+            key=AssetMetadataKey.MOBILE_MINUS_APP.value, value={"test": "data"}
+        )
+    ]
     # First add metadata
     add_result = runner.invoke(
         cli_app,
@@ -363,8 +376,11 @@ def test_delete_asset_metadata(runner: CliRunner, asset: AssetResponseDto) -> No
             "assets",
             "update-asset-metadata",
             asset_id,
-            "--items",
-            f"key={AssetMetadataKey.MOBILE_MINUS_APP.value},value={json.dumps({'test': 'data'})}",
+        ]
+        + [
+            arg
+            for item in metadata_items
+            for arg in ["--items", item.model_dump_json()]
         ],
     )
     if add_result.exit_code != 0:

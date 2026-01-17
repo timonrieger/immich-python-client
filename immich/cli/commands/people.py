@@ -7,7 +7,7 @@ from typing import Literal
 
 from immich.cli.runtime import (
     deserialize_request_body,
-    parse_complex_list,
+    load_json_data,
     print_response,
     run_command,
     set_nested,
@@ -252,7 +252,7 @@ Example: --data key1=value1,key2=value2""",
         raise SystemExit("Error: Request body is required. Use dotted body flags.")
     if any([data]):
         json_data = {}
-        value_data = parse_complex_list(data)
+        value_data = [load_json_data(i) for i in data]
         set_nested(json_data, ["data"], value_data)
         from immich.client.models.asset_face_update_dto import AssetFaceUpdateDto
 
@@ -285,7 +285,7 @@ Example: --people key1=value1,key2=value2""",
         raise SystemExit("Error: Request body is required. Use dotted body flags.")
     if any([people]):
         json_data = {}
-        value_people = parse_complex_list(people)
+        value_people = [load_json_data(i) for i in people]
         set_nested(json_data, ["people"], value_people)
         from immich.client.models.people_update_dto import PeopleUpdateDto
 

@@ -541,7 +541,7 @@ def generate_command_function(
                     if is_required:
                         if is_complex:
                             lines.append(
-                                f"        value_{param_name} = parse_complex_list({param_name})"
+                                f"        value_{param_name} = [load_json_data(i) for i in {param_name}]"
                             )
                             lines.append(
                                 f"        set_nested(json_data, {path_parts!r}, value_{param_name})"
@@ -559,7 +559,7 @@ def generate_command_function(
                         lines.append(f"        if {param_name} is not None:")
                         if is_complex:
                             lines.append(
-                                f"            value_{param_name} = parse_complex_list({param_name})"
+                                f"            value_{param_name} = [load_json_data(i) for i in {param_name}]"
                             )
                             lines.append(
                                 f"            set_nested(json_data, {path_parts!r}, value_{param_name})"
@@ -664,7 +664,7 @@ def generate_tag_app(
         "from pathlib import Path",
         "from typing import Literal",
         "",
-        "from immich.cli.runtime import load_file_bytes, deserialize_request_body, parse_complex_list, print_response, run_command, set_nested",
+        "from immich.cli.runtime import load_file_bytes, deserialize_request_body, load_json_data, print_response, run_command, set_nested",
         "from immich.client.models import *",
         "",
     ]

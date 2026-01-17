@@ -7,7 +7,7 @@ from typing import Literal
 
 from immich.cli.runtime import (
     deserialize_request_body,
-    parse_complex_list,
+    load_json_data,
     print_response,
     run_command,
     set_nested,
@@ -58,13 +58,13 @@ Example: --filters key1=value1,key2=value2""",
         raise SystemExit("Error: Request body is required. Use dotted body flags.")
     if any([actions, description, enabled, filters, name, trigger_type]):
         json_data = {}
-        value_actions = parse_complex_list(actions)
+        value_actions = [load_json_data(i) for i in actions]
         set_nested(json_data, ["actions"], value_actions)
         if description is not None:
             set_nested(json_data, ["description"], description)
         if enabled is not None:
             set_nested(json_data, ["enabled"], enabled.lower() == "true")
-        value_filters = parse_complex_list(filters)
+        value_filters = [load_json_data(i) for i in filters]
         set_nested(json_data, ["filters"], value_filters)
         set_nested(json_data, ["name"], name)
         set_nested(json_data, ["triggerType"], trigger_type)
@@ -168,14 +168,14 @@ Example: --filters key1=value1,key2=value2""",
     if any([actions, description, enabled, filters, name, trigger_type]):
         json_data = {}
         if actions is not None:
-            value_actions = parse_complex_list(actions)
+            value_actions = [load_json_data(i) for i in actions]
             set_nested(json_data, ["actions"], value_actions)
         if description is not None:
             set_nested(json_data, ["description"], description)
         if enabled is not None:
             set_nested(json_data, ["enabled"], enabled.lower() == "true")
         if filters is not None:
-            value_filters = parse_complex_list(filters)
+            value_filters = [load_json_data(i) for i in filters]
             set_nested(json_data, ["filters"], value_filters)
         if name is not None:
             set_nested(json_data, ["name"], name)

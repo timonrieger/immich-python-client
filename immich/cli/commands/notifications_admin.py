@@ -8,7 +8,7 @@ from typing import Literal
 
 from immich.cli.runtime import (
     deserialize_request_body,
-    parse_complex_list,
+    load_json_data,
     print_response,
     run_command,
     set_nested,
@@ -57,7 +57,7 @@ Example: --data key1=value1,key2=value2""",
     if any([data, description, level, read_at, title, type, user_id]):
         json_data = {}
         if data is not None:
-            value_data = parse_complex_list(data)
+            value_data = [load_json_data(i) for i in data]
             set_nested(json_data, ["data"], value_data)
         if description is not None:
             set_nested(json_data, ["description"], description)

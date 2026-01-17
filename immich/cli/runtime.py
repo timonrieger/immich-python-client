@@ -38,55 +38,13 @@ def set_nested(d: dict[str, Any], path: list[str], value: Any) -> None:
     current[path[-1]] = value
 
 
-def parse_complex_list(value: list[str] | None) -> list[dict[str, str]] | None:
-    """Parse complex list values from CLI key=value format.
-
-    Converts: ['role=viewer,userId=123', 'role=editor,userId=456']
-    Into: [{'role': 'viewer', 'userId': '123'}, {'role': 'editor', 'userId': '456'}]
-
-    Args:
-        value: List of strings in key=value,key2=value2 format, or None
-
-    Returns:
-        List of dictionaries, or None if input is None
-
-    Raises:
-        SystemExit: If any string has invalid format (missing = or malformed)
-    """
-    if value is None:
-        return None
-
-    error_message = "Error: Invalid key=value pair: {part!r}. Expected format: key=value,key2=value2"
-
-    result: list[dict[str, str]] = []
-    for item in value:
-        item = item.strip()
-        if not item:
-            continue
-
-        obj: dict[str, str] = {}
-        parts = item.split(",")
-        for part in parts:
-            part = part.strip()
-            if not part:
-                continue
-            if "=" not in part:
-                print(
-                    error_message.format(part=part),
-                    file=sys.stderr,
-                )
-                sys.exit(1)
-            key, sep, val = part.partition("=")
-            if key.strip() == "" or val.strip() == "":
-                print(
-                    error_message.format(part=part),
-                    file=sys.stderr,
-                )
-                sys.exit(1)
-            obj[key.strip()] = val.strip()
-        result.append(obj)
-
-    return result
+def load_json_data(json_data: str) -> dict[str, Any]:
+    """Load JSON data from a string."""
+    try:
+        return json.loads(json_data)
+    except json.JSONDecodeError as e:
+        print(f"Error: Invalid JSON: {e}", file=sys.stderr)
+        sys.exit(1)
 
 
 def deserialize_request_body(json_data: dict[str, Any], model_class: type[Any]) -> Any:

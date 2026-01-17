@@ -7,7 +7,7 @@ from typing import Literal
 
 from immich.cli.runtime import (
     deserialize_request_body,
-    parse_complex_list,
+    load_json_data,
     print_response,
     run_command,
     set_nested,
@@ -121,7 +121,7 @@ Example: --album_users key1=value1,key2=value2""",
         raise SystemExit("Error: Request body is required. Use dotted body flags.")
     if any([album_users]):
         json_data = {}
-        value_album_users = parse_complex_list(album_users)
+        value_album_users = [load_json_data(i) for i in album_users]
         set_nested(json_data, ["albumUsers"], value_album_users)
         from immich.client.models.add_users_dto import AddUsersDto
 
@@ -163,7 +163,7 @@ Example: --album_users key1=value1,key2=value2""",
         json_data = {}
         set_nested(json_data, ["albumName"], album_name)
         if album_users is not None:
-            value_album_users = parse_complex_list(album_users)
+            value_album_users = [load_json_data(i) for i in album_users]
             set_nested(json_data, ["albumUsers"], value_album_users)
         if asset_ids is not None:
             set_nested(json_data, ["assetIds"], asset_ids)
