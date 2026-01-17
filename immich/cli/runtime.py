@@ -56,6 +56,8 @@ def parse_complex_list(value: list[str] | None) -> list[dict[str, str]] | None:
     if value is None:
         return None
 
+    error_message = "Error: Invalid key=value pair: {part!r}. Expected format: key=value,key2=value2"
+
     result: list[dict[str, str]] = []
     for item in value:
         item = item.strip()
@@ -70,11 +72,17 @@ def parse_complex_list(value: list[str] | None) -> list[dict[str, str]] | None:
                 continue
             if "=" not in part:
                 print(
-                    f"Error: Invalid key=value pair: {part!r}. Expected format: key=value,key2=value2",
+                    error_message.format(part=part),
                     file=sys.stderr,
                 )
                 sys.exit(1)
             key, sep, val = part.partition("=")
+            if key.strip() == "" or val.strip() == "":
+                print(
+                    error_message.format(part=part),
+                    file=sys.stderr,
+                )
+                sys.exit(1)
             obj[key.strip()] = val.strip()
         result.append(obj)
 

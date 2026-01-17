@@ -103,6 +103,7 @@ class TestParseComplexList:
         stderr_capture.seek(0)
         error_output = stderr_capture.read()
         assert "Invalid key=value pair" in error_output
+        assert "roleviewer" in error_output
 
     def test_malformed_pair_no_equals(self) -> None:
         """Test that malformed pair without equals raises SystemExit."""
@@ -118,16 +119,39 @@ class TestParseComplexList:
         stderr_capture.seek(0)
         error_output = stderr_capture.read()
         assert "Invalid key=value pair" in error_output
+        assert "invalidpair" in error_output
 
     def test_empty_key(self) -> None:
         """Test that empty key is handled (edge case)."""
-        result = parse_complex_list(["=value"])
-        assert result == [{"": "value"}]
+        stderr_capture = StringIO()
+        original_stderr = sys.stderr
+        sys.stderr = stderr_capture
+        try:
+            with pytest.raises(SystemExit):
+                parse_complex_list(["role=viewer", "=value"])
+        finally:
+            sys.stderr = original_stderr
+        # Check stderr after the exception is raised
+        stderr_capture.seek(0)
+        error_output = stderr_capture.read()
+        assert "Invalid key=value pair" in error_output
+        assert "=value" in error_output
 
     def test_empty_value(self) -> None:
         """Test that empty value is handled."""
-        result = parse_complex_list(["key="])
-        assert result == [{"key": ""}]
+        stderr_capture = StringIO()
+        original_stderr = sys.stderr
+        sys.stderr = stderr_capture
+        try:
+            with pytest.raises(SystemExit):
+                parse_complex_list(["role=viewer", "key="])
+        finally:
+            sys.stderr = original_stderr
+        # Check stderr after the exception is raised
+        stderr_capture.seek(0)
+        error_output = stderr_capture.read()
+        assert "Invalid key=value pair" in error_output
+        assert "key=" in error_output
 
     def test_multiple_equals_in_value(self) -> None:
         """Test that values can contain equals signs."""
