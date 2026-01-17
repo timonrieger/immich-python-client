@@ -16,6 +16,7 @@ import uuid
 
 from pydantic import BaseModel, Field
 import tqdm
+from immich._internal.consts import DEVICE_ID
 from immich.client.api.albums_api import AlbumsApi
 from immich.client.api.assets_api import AssetsApi
 from immich.client.api.server_api import ServerApi
@@ -31,7 +32,6 @@ from immich.client.exceptions import ApiException
 logger = logging.getLogger(__name__)
 
 BATCH_SIZE = 5000
-DEVICE_ID = "immich-python-client"
 
 
 def get_device_asset_id(filepath: Path, stats: os.stat_result) -> str:

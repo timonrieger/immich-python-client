@@ -84,7 +84,7 @@ Some API groups include custom convenience methods that are **preferred** over t
 
 ## Authentication
 
-Immich supports API keys. Create one in your server and pass it via `api_key=...`. Cookie and Bearer tokens are also supported.
+Immich supports API keys. Create one in your server and pass it via `api_key=...`. Bearer tokens are also supported.
 
 ## Usage
 

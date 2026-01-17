@@ -3,6 +3,10 @@
 from __future__ import annotations
 
 import sys
+from typing import Optional
+from importlib.metadata import version
+
+from immich._internal.consts import API_KEY_URL, DEMO_BASE_URL
 
 try:
     import typer
@@ -14,7 +18,8 @@ except ImportError:
     )
     sys.exit(1)
 
-from immich.cli.config import create_client
+from immich import AsyncClient
+from immich._internal.types import _FormatMode
 
 # Import command modules
 from immich.cli.commands import api_keys as api_keys_commands
@@ -55,13 +60,6 @@ from immich.cli.commands import workflows as workflows_commands
 
 # Global state
 app = typer.Typer(
-    help=(
-        "Immich CLI (unofficial).\n\n"
-        "Install: pip install immich[cli]\n"
-        "Auth/config via env: IMMICH_API_URL + one of IMMICH_API_KEY / "
-        "IMMICH_ACCESS_TOKEN / IMMICH_COOKIE.\n"
-        "Responses are always JSON."
-    ),
     context_settings={"help_option_names": ["-h", "--help"]},
 )
 console = Console()
@@ -105,40 +103,54 @@ app.add_typer(views_commands.app, name="views")
 app.add_typer(workflows_commands.app, name="workflows")
 
 
-@app.callback(invoke_without_command=True)
-def _callback(
-    ctx: typer.Context,
-    debug: bool = typer.Option(False, "--debug", help="Enable debug output"),
-    format_mode: str = typer.Option(
-        "pretty", "--format", help="Output format: json or pretty"
-    ),
-) -> None:
-    """Immich API CLI."""
-    # Store config in context
-    ctx.ensure_object(dict)
-    ctx.obj["debug"] = debug
-    ctx.obj["format"] = format_mode
-
-    # If help/completion parsing (root or subcommand), don't require config.
-    if any(
-        a in sys.argv
-        for a in ("-h", "--help", "--install-completion", "--show-completion")
-    ):
-        return
-
-    # If no command provided, show help without requiring config.
-    if getattr(ctx, "resilient_parsing", False) or ctx.invoked_subcommand is None:
-        console.print(ctx.get_help())
+def version_callback(value: bool) -> None:
+    if value:
+        print(f"immich CLI (unofficial) {version('immich')}")
         raise typer.Exit(0)
 
-    # Create client only when a command is actually invoked.
-    try:
-        ctx.obj["client"] = create_client()
-    except ValueError as e:
-        stderr_console.print(f"[red]Error:[/red] {e}")
-        raise typer.Exit(1) from None
+
+@app.callback(invoke_without_command=False)
+def _callback(
+    ctx: typer.Context,
+    format_mode: _FormatMode = typer.Option(
+        "pretty", "--format", help="Output format of the CLI.", envvar="IMMICH_FORMAT"
+    ),
+    api_key: Optional[str] = typer.Option(
+        None,
+        "--api-key",
+        help=f"Authorize via API key (see {API_KEY_URL}).",
+        envvar="IMMICH_API_KEY",
+    ),
+    access_token: Optional[str] = typer.Option(
+        None,
+        "--access-token",
+        help="Authorize via access token.",
+        envvar="IMMICH_ACCESS_TOKEN",
+    ),
+    base_url: str = typer.Option(
+        DEMO_BASE_URL,
+        "--base-url",
+        help="The server to connect to.",
+        envvar="IMMICH_API_URL",
+        show_default=DEMO_BASE_URL.replace("https://", ""),
+    ),
+    _version: bool = typer.Option(
+        False,
+        "--version",
+        callback=version_callback,
+        is_eager=True,
+        help="Show version and exit.",
+    ),
+) -> None:
+    """An unofficial CLI for the Immich API written in Python."""
+    ctx.ensure_object(dict)
+    ctx.obj["format"] = format_mode
+    ctx.obj["client"] = AsyncClient(
+        api_key=api_key,
+        bearer_token=access_token,
+        base_url=DEMO_BASE_URL if base_url == "demo" else base_url,
+    )
 
 
-def main() -> None:
-    """Entry point for console script."""
+if __name__ == "__main__":
     app()

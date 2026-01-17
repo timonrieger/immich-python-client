@@ -53,16 +53,12 @@ def _build_configuration(
     *,
     api_key: Optional[str],
     bearer_token: Optional[str],
-    cookie: Optional[str],
     base_url: str,
 ) -> Configuration:
     config = Configuration(host=_normalize_base_url(base_url))
     if api_key:
         # Security scheme name is `api_key` (header: x-api-key)
         config.api_key["api_key"] = api_key
-    if cookie:
-        # Security scheme name is `cookie` (cookie: immich_access_token)
-        config.api_key["cookie"] = cookie
     if bearer_token:
         # JWT access token (Authorization: Bearer <token>)
         config.access_token = bearer_token
@@ -295,7 +291,6 @@ class AsyncClient:
         *,
         api_key: Optional[str] = None,
         bearer_token: Optional[str] = None,
-        cookie: Optional[str] = None,
         base_url: str,
         http_client: Optional[ClientSession] = None,
     ) -> None:
@@ -304,7 +299,6 @@ class AsyncClient:
         self.config = _build_configuration(
             api_key=api_key,
             bearer_token=bearer_token,
-            cookie=cookie,
             base_url=base_url,
         )
         self.base_client = ApiClient(configuration=self.config)
