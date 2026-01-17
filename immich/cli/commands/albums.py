@@ -19,86 +19,78 @@ Docs: https://api.immich.app/endpoints/albums"""
 @app.command("add-assets-to-album", deprecated=False)
 def add_assets_to_album(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Album ID"""),
+    ids: list[str] = typer.Option(..., "--ids", help="""IDs to process"""),
     key: str | None = typer.Option(
         None, "--key", help="""Access key for shared links"""
     ),
     slug: str | None = typer.Option(
         None, "--slug", help="""Access slug for shared links"""
     ),
-    ids: list[str] = typer.Option(..., "--ids", help="""IDs to process"""),
 ) -> None:
     """Add assets to an album
 
     Docs: https://api.immich.app/endpoints/albums/addAssetsToAlbum
     """
     kwargs = {}
+    json_data = {}
     kwargs["id"] = id
     if key is not None:
         kwargs["key"] = key
     if slug is not None:
         kwargs["slug"] = slug
-    has_flags = any([ids])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([ids]):
-        json_data = {}
-        set_nested(json_data, ["ids"], ids)
-        from immich.client.models.bulk_ids_dto import BulkIdsDto
+    set_nested(json_data, ["ids"], ids)
+    from immich.client.models.bulk_ids_dto import BulkIdsDto
 
-        bulk_ids_dto = BulkIdsDto.model_validate(json_data)
-        kwargs["bulk_ids_dto"] = bulk_ids_dto
+    bulk_ids_dto = BulkIdsDto.model_validate(json_data)
+    kwargs["bulk_ids_dto"] = bulk_ids_dto
     client = ctx.obj["client"]
     result = run_command(client, client.albums, "add_assets_to_album", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("add-assets-to-albums", deprecated=False)
 def add_assets_to_albums(
     ctx: typer.Context,
+    album_ids: list[str] = typer.Option(..., "--album-ids", help="""Album IDs"""),
+    asset_ids: list[str] = typer.Option(..., "--asset-ids", help="""Asset IDs"""),
     key: str | None = typer.Option(
         None, "--key", help="""Access key for shared links"""
     ),
     slug: str | None = typer.Option(
         None, "--slug", help="""Access slug for shared links"""
     ),
-    album_ids: list[str] = typer.Option(..., "--albumIds", help="""Album IDs"""),
-    asset_ids: list[str] = typer.Option(..., "--assetIds", help="""Asset IDs"""),
 ) -> None:
     """Add assets to albums
 
     Docs: https://api.immich.app/endpoints/albums/addAssetsToAlbums
     """
     kwargs = {}
+    json_data = {}
     if key is not None:
         kwargs["key"] = key
     if slug is not None:
         kwargs["slug"] = slug
-    has_flags = any([album_ids, asset_ids])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([album_ids, asset_ids]):
-        json_data = {}
-        set_nested(json_data, ["albumIds"], album_ids)
-        set_nested(json_data, ["assetIds"], asset_ids)
-        from immich.client.models.albums_add_assets_dto import AlbumsAddAssetsDto
+    set_nested(json_data, ["album_ids"], album_ids)
+    set_nested(json_data, ["asset_ids"], asset_ids)
+    from immich.client.models.albums_add_assets_dto import AlbumsAddAssetsDto
 
-        albums_add_assets_dto = AlbumsAddAssetsDto.model_validate(json_data)
-        kwargs["albums_add_assets_dto"] = albums_add_assets_dto
+    albums_add_assets_dto = AlbumsAddAssetsDto.model_validate(json_data)
+    kwargs["albums_add_assets_dto"] = albums_add_assets_dto
     client = ctx.obj["client"]
     result = run_command(client, client.albums, "add_assets_to_albums", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("add-users-to-album", deprecated=False)
 def add_users_to_album(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Album ID"""),
     album_users: list[str] = typer.Option(
         ...,
-        "--albumUsers",
+        "--album-users",
         help="""Album users to add
 
 As a JSON string""",
@@ -109,37 +101,33 @@ As a JSON string""",
     Docs: https://api.immich.app/endpoints/albums/addUsersToAlbum
     """
     kwargs = {}
+    json_data = {}
     kwargs["id"] = id
-    has_flags = any([album_users])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([album_users]):
-        json_data = {}
-        value_album_users = [json.loads(i) for i in album_users]
-        set_nested(json_data, ["albumUsers"], value_album_users)
-        from immich.client.models.add_users_dto import AddUsersDto
+    value_album_users = [json.loads(i) for i in album_users]
+    set_nested(json_data, ["album_users"], value_album_users)
+    from immich.client.models.add_users_dto import AddUsersDto
 
-        add_users_dto = AddUsersDto.model_validate(json_data)
-        kwargs["add_users_dto"] = add_users_dto
+    add_users_dto = AddUsersDto.model_validate(json_data)
+    kwargs["add_users_dto"] = add_users_dto
     client = ctx.obj["client"]
     result = run_command(client, client.albums, "add_users_to_album", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("create-album", deprecated=False)
 def create_album(
     ctx: typer.Context,
-    album_name: str = typer.Option(..., "--albumName", help="""Album name"""),
+    album_name: str = typer.Option(..., "--album-name", help="""Album name"""),
     album_users: list[str] | None = typer.Option(
         None,
-        "--albumUsers",
+        "--album-users",
         help="""Album users
 
 As a JSON string""",
     ),
     asset_ids: list[str] | None = typer.Option(
-        None, "--assetIds", help="""Initial asset IDs"""
+        None, "--asset-ids", help="""Initial asset IDs"""
     ),
     description: str | None = typer.Option(
         None, "--description", help="""Album description"""
@@ -150,33 +138,29 @@ As a JSON string""",
     Docs: https://api.immich.app/endpoints/albums/createAlbum
     """
     kwargs = {}
-    has_flags = any([album_name, album_users, asset_ids, description])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([album_name, album_users, asset_ids, description]):
-        json_data = {}
-        set_nested(json_data, ["albumName"], album_name)
-        if album_users is not None:
-            value_album_users = [json.loads(i) for i in album_users]
-            set_nested(json_data, ["albumUsers"], value_album_users)
-        if asset_ids is not None:
-            set_nested(json_data, ["assetIds"], asset_ids)
-        if description is not None:
-            set_nested(json_data, ["description"], description)
-        from immich.client.models.create_album_dto import CreateAlbumDto
+    json_data = {}
+    set_nested(json_data, ["album_name"], album_name)
+    if album_users is not None:
+        value_album_users = [json.loads(i) for i in album_users]
+        set_nested(json_data, ["album_users"], value_album_users)
+    if asset_ids is not None:
+        set_nested(json_data, ["asset_ids"], asset_ids)
+    if description is not None:
+        set_nested(json_data, ["description"], description)
+    from immich.client.models.create_album_dto import CreateAlbumDto
 
-        create_album_dto = CreateAlbumDto.model_validate(json_data)
-        kwargs["create_album_dto"] = create_album_dto
+    create_album_dto = CreateAlbumDto.model_validate(json_data)
+    kwargs["create_album_dto"] = create_album_dto
     client = ctx.obj["client"]
     result = run_command(client, client.albums, "create_album", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("delete-album", deprecated=False)
 def delete_album(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Album ID"""),
 ) -> None:
     """Delete an album
 
@@ -186,14 +170,14 @@ def delete_album(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.albums, "delete_album", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("get-album-info", deprecated=False)
 def get_album_info(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Album ID"""),
     key: str | None = typer.Option(
         None, "--key", help="""Access key for shared links"""
     ),
@@ -218,7 +202,7 @@ def get_album_info(
         kwargs["without_assets"] = without_assets.lower() == "true"
     client = ctx.obj["client"]
     result = run_command(client, client.albums, "get_album_info", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -233,7 +217,7 @@ def get_album_statistics(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.albums, "get_album_statistics", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -262,14 +246,14 @@ def get_all_albums(
         kwargs["shared"] = shared.lower() == "true"
     client = ctx.obj["client"]
     result = run_command(client, client.albums, "get_all_albums", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("remove-asset-from-album", deprecated=False)
 def remove_asset_from_album(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Album ID"""),
     ids: list[str] = typer.Option(..., "--ids", help="""IDs to process"""),
 ) -> None:
     """Remove assets from an album
@@ -277,28 +261,26 @@ def remove_asset_from_album(
     Docs: https://api.immich.app/endpoints/albums/removeAssetFromAlbum
     """
     kwargs = {}
+    json_data = {}
     kwargs["id"] = id
-    has_flags = any([ids])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([ids]):
-        json_data = {}
-        set_nested(json_data, ["ids"], ids)
-        from immich.client.models.bulk_ids_dto import BulkIdsDto
+    set_nested(json_data, ["ids"], ids)
+    from immich.client.models.bulk_ids_dto import BulkIdsDto
 
-        bulk_ids_dto = BulkIdsDto.model_validate(json_data)
-        kwargs["bulk_ids_dto"] = bulk_ids_dto
+    bulk_ids_dto = BulkIdsDto.model_validate(json_data)
+    kwargs["bulk_ids_dto"] = bulk_ids_dto
     client = ctx.obj["client"]
     result = run_command(client, client.albums, "remove_asset_from_album", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("remove-user-from-album", deprecated=False)
 def remove_user_from_album(
     ctx: typer.Context,
-    id: str,
-    user_id: str,
+    id: str = typer.Argument(..., help="""Album ID"""),
+    user_id: str = typer.Argument(
+        ..., help="""User ID (use "me" to leave shared album)"""
+    ),
 ) -> None:
     """Remove user from album
 
@@ -309,23 +291,23 @@ def remove_user_from_album(
     kwargs["user_id"] = user_id
     client = ctx.obj["client"]
     result = run_command(client, client.albums, "remove_user_from_album", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("update-album-info", deprecated=False)
 def update_album_info(
     ctx: typer.Context,
-    id: str,
-    album_name: str | None = typer.Option(None, "--albumName", help="""Album name"""),
+    id: str = typer.Argument(..., help="""Album ID"""),
+    album_name: str | None = typer.Option(None, "--album-name", help="""Album name"""),
     album_thumbnail_asset_id: str | None = typer.Option(
-        None, "--albumThumbnailAssetId", help="""Album thumbnail asset ID"""
+        None, "--album-thumbnail-asset-id", help="""Album thumbnail asset ID"""
     ),
     description: str | None = typer.Option(
         None, "--description", help="""Album description"""
     ),
     is_activity_enabled: Literal["true", "false"] | None = typer.Option(
-        None, "--isActivityEnabled", help="""Enable activity feed"""
+        None, "--is-activity-enabled", help="""Enable activity feed"""
     ),
     order: str | None = typer.Option(None, "--order", help="""Asset sort order"""),
 ) -> None:
@@ -334,43 +316,35 @@ def update_album_info(
     Docs: https://api.immich.app/endpoints/albums/updateAlbumInfo
     """
     kwargs = {}
+    json_data = {}
     kwargs["id"] = id
-    has_flags = any(
-        [album_name, album_thumbnail_asset_id, description, is_activity_enabled, order]
-    )
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any(
-        [album_name, album_thumbnail_asset_id, description, is_activity_enabled, order]
-    ):
-        json_data = {}
-        if album_name is not None:
-            set_nested(json_data, ["albumName"], album_name)
-        if album_thumbnail_asset_id is not None:
-            set_nested(json_data, ["albumThumbnailAssetId"], album_thumbnail_asset_id)
-        if description is not None:
-            set_nested(json_data, ["description"], description)
-        if is_activity_enabled is not None:
-            set_nested(
-                json_data, ["isActivityEnabled"], is_activity_enabled.lower() == "true"
-            )
-        if order is not None:
-            set_nested(json_data, ["order"], order)
-        from immich.client.models.update_album_dto import UpdateAlbumDto
+    if album_name is not None:
+        set_nested(json_data, ["album_name"], album_name)
+    if album_thumbnail_asset_id is not None:
+        set_nested(json_data, ["album_thumbnail_asset_id"], album_thumbnail_asset_id)
+    if description is not None:
+        set_nested(json_data, ["description"], description)
+    if is_activity_enabled is not None:
+        set_nested(
+            json_data, ["is_activity_enabled"], is_activity_enabled.lower() == "true"
+        )
+    if order is not None:
+        set_nested(json_data, ["order"], order)
+    from immich.client.models.update_album_dto import UpdateAlbumDto
 
-        update_album_dto = UpdateAlbumDto.model_validate(json_data)
-        kwargs["update_album_dto"] = update_album_dto
+    update_album_dto = UpdateAlbumDto.model_validate(json_data)
+    kwargs["update_album_dto"] = update_album_dto
     client = ctx.obj["client"]
     result = run_command(client, client.albums, "update_album_info", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("update-album-user", deprecated=False)
 def update_album_user(
     ctx: typer.Context,
-    id: str,
-    user_id: str,
+    id: str = typer.Argument(..., help="""Album ID"""),
+    user_id: str = typer.Argument(..., help="""User ID (use "me" for current user)"""),
     role: str = typer.Option(..., "--role", help="""Album user role"""),
 ) -> None:
     """Update user role
@@ -378,19 +352,15 @@ def update_album_user(
     Docs: https://api.immich.app/endpoints/albums/updateAlbumUser
     """
     kwargs = {}
+    json_data = {}
     kwargs["id"] = id
     kwargs["user_id"] = user_id
-    has_flags = any([role])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([role]):
-        json_data = {}
-        set_nested(json_data, ["role"], role)
-        from immich.client.models.update_album_user_dto import UpdateAlbumUserDto
+    set_nested(json_data, ["role"], role)
+    from immich.client.models.update_album_user_dto import UpdateAlbumUserDto
 
-        update_album_user_dto = UpdateAlbumUserDto.model_validate(json_data)
-        kwargs["update_album_user_dto"] = update_album_user_dto
+    update_album_user_dto = UpdateAlbumUserDto.model_validate(json_data)
+    kwargs["update_album_user_dto"] = update_album_user_dto
     client = ctx.obj["client"]
     result = run_command(client, client.albums, "update_album_user", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)

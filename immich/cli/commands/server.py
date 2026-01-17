@@ -25,7 +25,7 @@ def delete_server_license(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.server, "delete_server_license", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -40,7 +40,7 @@ def get_about_info(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.server, "get_about_info", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -55,7 +55,7 @@ def get_apk_links(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.server, "get_apk_links", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -70,7 +70,7 @@ def get_server_config(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.server, "get_server_config", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -85,7 +85,7 @@ def get_server_features(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.server, "get_server_features", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -100,7 +100,7 @@ def get_server_license(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.server, "get_server_license", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -115,7 +115,7 @@ def get_server_statistics(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.server, "get_server_statistics", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -130,7 +130,7 @@ def get_server_version(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.server, "get_server_version", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -145,7 +145,7 @@ def get_storage(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.server, "get_storage", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -160,7 +160,7 @@ def get_supported_media_types(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.server, "get_supported_media_types", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -175,7 +175,7 @@ def get_theme(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.server, "get_theme", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -190,7 +190,7 @@ def get_version_check(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.server, "get_version_check", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -205,7 +205,7 @@ def get_version_history(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.server, "get_version_history", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -220,7 +220,7 @@ def ping_server(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.server, "ping_server", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -228,10 +228,10 @@ def ping_server(
 def set_server_license(
     ctx: typer.Context,
     activation_key: str = typer.Option(
-        ..., "--activationKey", help="""Activation key"""
+        ..., "--activation-key", help="""Activation key"""
     ),
     license_key: str = typer.Option(
-        ..., "--licenseKey", help="""License key (format: IM(SV|CL)(-XXXX){8})"""
+        ..., "--license-key", help="""License key (format: IM(SV|CL)(-XXXX){8})"""
     ),
 ) -> None:
     """Set server product key
@@ -239,18 +239,14 @@ def set_server_license(
     Docs: https://api.immich.app/endpoints/server/setServerLicense
     """
     kwargs = {}
-    has_flags = any([activation_key, license_key])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([activation_key, license_key]):
-        json_data = {}
-        set_nested(json_data, ["activationKey"], activation_key)
-        set_nested(json_data, ["licenseKey"], license_key)
-        from immich.client.models.license_key_dto import LicenseKeyDto
+    json_data = {}
+    set_nested(json_data, ["activation_key"], activation_key)
+    set_nested(json_data, ["license_key"], license_key)
+    from immich.client.models.license_key_dto import LicenseKeyDto
 
-        license_key_dto = LicenseKeyDto.model_validate(json_data)
-        kwargs["license_key_dto"] = license_key_dto
+    license_key_dto = LicenseKeyDto.model_validate(json_data)
+    kwargs["license_key_dto"] = license_key_dto
     client = ctx.obj["client"]
     result = run_command(client, client.server, "set_server_license", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)

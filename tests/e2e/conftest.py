@@ -44,6 +44,7 @@ def env() -> dict[str, str]:
     return {
         "IMMICH_API_URL": os.environ.get("IMMICH_API_URL", "http://127.0.0.1:2283/api"),
         "IMMICH_API_KEY": os.environ.get("IMMICH_API_KEY", ""),
+        "IMMICH_FORMAT": "json",
     }
 
 

@@ -28,11 +28,9 @@ def test_create_album(runner: CliRunner, user: UserResponseDto) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "albums",
             "create-album",
-            "--albumName",
+            "--album-name",
             album_name,
             "--description",
             description,
@@ -40,7 +38,7 @@ def test_create_album(runner: CliRunner, user: UserResponseDto) -> None:
         + [
             arg
             for user in album_users
-            for arg in ["--albumUsers", user.model_dump_json()]
+            for arg in ["--album-users", user.model_dump_json()]
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
@@ -59,7 +57,7 @@ def test_get_all_albums(runner: CliRunner, album: AlbumResponseDto) -> None:
     album_id = album.id
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "albums", "get-all-albums"],
+        ["albums", "get-all-albums"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -86,8 +84,6 @@ async def test_get_all_albums_with_shared_filter(
         runner.invoke,
         cli_app,
         [
-            "--format",
-            "json",
             "albums",
             "get-all-albums",
             "--shared",
@@ -118,8 +114,6 @@ async def test_get_all_albums_non_shared_filter(
         runner.invoke,
         cli_app,
         [
-            "--format",
-            "json",
             "albums",
             "get-all-albums",
             "--shared",
@@ -142,8 +136,6 @@ def test_get_album_info(runner: CliRunner, album: AlbumResponseDto) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "albums",
             "get-album-info",
             album_id,
@@ -160,7 +152,7 @@ def test_get_album_statistics(runner: CliRunner) -> None:
     """Test get-album-statistics command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "albums", "get-album-statistics"],
+        ["albums", "get-album-statistics"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -174,12 +166,10 @@ def test_update_album_info(runner: CliRunner, album: AlbumResponseDto) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "albums",
             "update-album-info",
             album_id,
-            "--albumName",
+            "--album-name",
             "Updated Album Name",
             "--description",
             "Updated description",
@@ -201,8 +191,6 @@ def test_add_assets_to_album(
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "albums",
             "add-assets-to-album",
             album.id,
@@ -228,13 +216,11 @@ def test_add_assets_to_albums(
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "albums",
             "add-assets-to-albums",
-            "--albumIds",
+            "--album-ids",
             album.id,
-            "--assetIds",
+            "--asset-ids",
             asset.id,
         ],
     )
@@ -257,8 +243,6 @@ def test_remove_asset_from_album(
     add_result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "albums",
             "add-assets-to-album",
             album_id,
@@ -275,8 +259,6 @@ def test_remove_asset_from_album(
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "albums",
             "remove-asset-from-album",
             album_id,
@@ -304,8 +286,6 @@ def test_add_users_to_album(
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "albums",
             "add-users-to-album",
             album_id,
@@ -313,7 +293,7 @@ def test_add_users_to_album(
         + [
             arg
             for album_user in album_users
-            for arg in ["--albumUsers", album_user.model_dump_json()]
+            for arg in ["--album-users", album_user.model_dump_json()]
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
@@ -336,8 +316,6 @@ def test_remove_user_from_album(
     add_result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "albums",
             "add-users-to-album",
             album.id,
@@ -345,7 +323,7 @@ def test_remove_user_from_album(
         + [
             arg
             for album_user in album_users
-            for arg in ["--albumUsers", album_user.model_dump_json()]
+            for arg in ["--album-users", album_user.model_dump_json()]
         ],
     )
     if add_result.exit_code != 0:
@@ -357,8 +335,6 @@ def test_remove_user_from_album(
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "albums",
             "remove-user-from-album",
             album.id,
@@ -380,8 +356,6 @@ def test_update_album_user(
     add_result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "albums",
             "add-users-to-album",
             album.id,
@@ -389,7 +363,7 @@ def test_update_album_user(
         + [
             arg
             for album_user in album_users
-            for arg in ["--albumUsers", album_user.model_dump_json()]
+            for arg in ["--album-users", album_user.model_dump_json()]
         ],
     )
     if add_result.exit_code != 0:
@@ -401,8 +375,6 @@ def test_update_album_user(
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "albums",
             "update-album-user",
             album.id,
@@ -423,7 +395,7 @@ def test_delete_album(runner: CliRunner, album: AlbumResponseDto) -> None:
     album_id = album.id
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "albums", "delete-album", album_id],
+        ["albums", "delete-album", album_id],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)

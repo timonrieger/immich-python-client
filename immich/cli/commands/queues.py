@@ -18,7 +18,7 @@ Docs: https://api.immich.app/endpoints/queues"""
 @app.command("empty-queue", deprecated=False)
 def empty_queue(
     ctx: typer.Context,
-    name: QueueName,
+    name: QueueName = typer.Argument(..., help="""Queue name"""),
     failed: Literal["true", "false"] | None = typer.Option(
         None,
         "--failed",
@@ -30,28 +30,24 @@ def empty_queue(
     Docs: https://api.immich.app/endpoints/queues/emptyQueue
     """
     kwargs = {}
+    json_data = {}
     kwargs["name"] = name
-    has_flags = any([failed])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([failed]):
-        json_data = {}
-        if failed is not None:
-            set_nested(json_data, ["failed"], failed.lower() == "true")
-        from immich.client.models.queue_delete_dto import QueueDeleteDto
+    if failed is not None:
+        set_nested(json_data, ["failed"], failed.lower() == "true")
+    from immich.client.models.queue_delete_dto import QueueDeleteDto
 
-        queue_delete_dto = QueueDeleteDto.model_validate(json_data)
-        kwargs["queue_delete_dto"] = queue_delete_dto
+    queue_delete_dto = QueueDeleteDto.model_validate(json_data)
+    kwargs["queue_delete_dto"] = queue_delete_dto
     client = ctx.obj["client"]
     result = run_command(client, client.queues, "empty_queue", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("get-queue", deprecated=False)
 def get_queue(
     ctx: typer.Context,
-    name: QueueName,
+    name: QueueName = typer.Argument(..., help="""Queue name"""),
 ) -> None:
     """Retrieve a queue
 
@@ -61,14 +57,14 @@ def get_queue(
     kwargs["name"] = name
     client = ctx.obj["client"]
     result = run_command(client, client.queues, "get_queue", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("get-queue-jobs", deprecated=False)
 def get_queue_jobs(
     ctx: typer.Context,
-    name: QueueName,
+    name: QueueName = typer.Argument(..., help="""Queue name"""),
     status: list[QueueJobStatus] | None = typer.Option(
         None, "--status", help="""Filter by job status"""
     ),
@@ -83,7 +79,7 @@ def get_queue_jobs(
         kwargs["status"] = status
     client = ctx.obj["client"]
     result = run_command(client, client.queues, "get_queue_jobs", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -98,16 +94,16 @@ def get_queues(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.queues, "get_queues", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("update-queue", deprecated=False)
 def update_queue(
     ctx: typer.Context,
-    name: QueueName,
+    name: QueueName = typer.Argument(..., help="""Queue name"""),
     is_paused: Literal["true", "false"] | None = typer.Option(
-        None, "--isPaused", help="""Whether to pause the queue"""
+        None, "--is-paused", help="""Whether to pause the queue"""
     ),
 ) -> None:
     """Update a queue
@@ -115,19 +111,15 @@ def update_queue(
     Docs: https://api.immich.app/endpoints/queues/updateQueue
     """
     kwargs = {}
+    json_data = {}
     kwargs["name"] = name
-    has_flags = any([is_paused])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([is_paused]):
-        json_data = {}
-        if is_paused is not None:
-            set_nested(json_data, ["isPaused"], is_paused.lower() == "true")
-        from immich.client.models.queue_update_dto import QueueUpdateDto
+    if is_paused is not None:
+        set_nested(json_data, ["is_paused"], is_paused.lower() == "true")
+    from immich.client.models.queue_update_dto import QueueUpdateDto
 
-        queue_update_dto = QueueUpdateDto.model_validate(json_data)
-        kwargs["queue_update_dto"] = queue_update_dto
+    queue_update_dto = QueueUpdateDto.model_validate(json_data)
+    kwargs["queue_update_dto"] = queue_update_dto
     client = ctx.obj["client"]
     result = run_command(client, client.queues, "update_queue", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)

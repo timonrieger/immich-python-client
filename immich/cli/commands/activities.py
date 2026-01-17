@@ -17,9 +17,9 @@ Docs: https://api.immich.app/endpoints/activities"""
 @app.command("create-activity", deprecated=False)
 def create_activity(
     ctx: typer.Context,
-    album_id: str = typer.Option(..., "--albumId", help="""Album ID"""),
+    album_id: str = typer.Option(..., "--album-id", help="""Album ID"""),
     asset_id: str | None = typer.Option(
-        None, "--assetId", help="""Asset ID (if activity is for an asset)"""
+        None, "--asset-id", help="""Asset ID (if activity is for an asset)"""
     ),
     comment: str | None = typer.Option(
         None, "--comment", help="""Comment text (required if type is comment)"""
@@ -31,31 +31,27 @@ def create_activity(
     Docs: https://api.immich.app/endpoints/activities/createActivity
     """
     kwargs = {}
-    has_flags = any([album_id, asset_id, comment, type])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([album_id, asset_id, comment, type]):
-        json_data = {}
-        set_nested(json_data, ["albumId"], album_id)
-        if asset_id is not None:
-            set_nested(json_data, ["assetId"], asset_id)
-        if comment is not None:
-            set_nested(json_data, ["comment"], comment)
-        set_nested(json_data, ["type"], type)
-        from immich.client.models.activity_create_dto import ActivityCreateDto
+    json_data = {}
+    set_nested(json_data, ["album_id"], album_id)
+    if asset_id is not None:
+        set_nested(json_data, ["asset_id"], asset_id)
+    if comment is not None:
+        set_nested(json_data, ["comment"], comment)
+    set_nested(json_data, ["type"], type)
+    from immich.client.models.activity_create_dto import ActivityCreateDto
 
-        activity_create_dto = ActivityCreateDto.model_validate(json_data)
-        kwargs["activity_create_dto"] = activity_create_dto
+    activity_create_dto = ActivityCreateDto.model_validate(json_data)
+    kwargs["activity_create_dto"] = activity_create_dto
     client = ctx.obj["client"]
     result = run_command(client, client.activities, "create_activity", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("delete-activity", deprecated=False)
 def delete_activity(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Activity ID to delete"""),
 ) -> None:
     """Delete an activity
 
@@ -65,7 +61,7 @@ def delete_activity(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.activities, "delete_activity", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -100,7 +96,7 @@ def get_activities(
         kwargs["user_id"] = user_id
     client = ctx.obj["client"]
     result = run_command(client, client.activities, "get_activities", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -122,5 +118,5 @@ def get_activity_statistics(
         kwargs["asset_id"] = asset_id
     client = ctx.obj["client"]
     result = run_command(client, client.activities, "get_activity_statistics", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)

@@ -18,9 +18,9 @@ Docs: https://api.immich.app/endpoints/sessions"""
 @app.command("create-session", deprecated=False)
 def create_session(
     ctx: typer.Context,
-    device_os: str | None = typer.Option(None, "--deviceOS", help="""Device OS"""),
+    device_os: str | None = typer.Option(None, "--device-os", help="""Device OS"""),
     device_type: str | None = typer.Option(
-        None, "--deviceType", help="""Device type"""
+        None, "--device-type", help="""Device type"""
     ),
     duration: float | None = typer.Option(
         None, "--duration", help="""Session duration in seconds""", min=1
@@ -31,24 +31,20 @@ def create_session(
     Docs: https://api.immich.app/endpoints/sessions/createSession
     """
     kwargs = {}
-    has_flags = any([device_os, device_type, duration])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([device_os, device_type, duration]):
-        json_data = {}
-        if device_os is not None:
-            set_nested(json_data, ["deviceOS"], device_os)
-        if device_type is not None:
-            set_nested(json_data, ["deviceType"], device_type)
-        if duration is not None:
-            set_nested(json_data, ["duration"], duration)
-        from immich.client.models.session_create_dto import SessionCreateDto
+    json_data = {}
+    if device_os is not None:
+        set_nested(json_data, ["device_os"], device_os)
+    if device_type is not None:
+        set_nested(json_data, ["device_type"], device_type)
+    if duration is not None:
+        set_nested(json_data, ["duration"], duration)
+    from immich.client.models.session_create_dto import SessionCreateDto
 
-        session_create_dto = SessionCreateDto.model_validate(json_data)
-        kwargs["session_create_dto"] = session_create_dto
+    session_create_dto = SessionCreateDto.model_validate(json_data)
+    kwargs["session_create_dto"] = session_create_dto
     client = ctx.obj["client"]
     result = run_command(client, client.sessions, "create_session", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -63,14 +59,14 @@ def delete_all_sessions(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.sessions, "delete_all_sessions", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("delete-session", deprecated=False)
 def delete_session(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Session ID"""),
 ) -> None:
     """Delete a session
 
@@ -80,7 +76,7 @@ def delete_session(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.sessions, "delete_session", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -95,14 +91,14 @@ def get_sessions(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.sessions, "get_sessions", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("lock-session", deprecated=False)
 def lock_session(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Session ID"""),
 ) -> None:
     """Lock a session
 
@@ -112,16 +108,16 @@ def lock_session(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.sessions, "lock_session", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("update-session", deprecated=False)
 def update_session(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Session ID"""),
     is_pending_sync_reset: Literal["true", "false"] | None = typer.Option(
-        None, "--isPendingSyncReset", help="""Reset pending sync state"""
+        None, "--is-pending-sync-reset", help="""Reset pending sync state"""
     ),
 ) -> None:
     """Update a session
@@ -129,23 +125,19 @@ def update_session(
     Docs: https://api.immich.app/endpoints/sessions/updateSession
     """
     kwargs = {}
+    json_data = {}
     kwargs["id"] = id
-    has_flags = any([is_pending_sync_reset])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([is_pending_sync_reset]):
-        json_data = {}
-        if is_pending_sync_reset is not None:
-            set_nested(
-                json_data,
-                ["isPendingSyncReset"],
-                is_pending_sync_reset.lower() == "true",
-            )
-        from immich.client.models.session_update_dto import SessionUpdateDto
+    if is_pending_sync_reset is not None:
+        set_nested(
+            json_data,
+            ["is_pending_sync_reset"],
+            is_pending_sync_reset.lower() == "true",
+        )
+    from immich.client.models.session_update_dto import SessionUpdateDto
 
-        session_update_dto = SessionUpdateDto.model_validate(json_data)
-        kwargs["session_update_dto"] = session_update_dto
+    session_update_dto = SessionUpdateDto.model_validate(json_data)
+    kwargs["session_update_dto"] = session_update_dto
     client = ctx.obj["client"]
     result = run_command(client, client.sessions, "update_session", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)

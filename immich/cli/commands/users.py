@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import typer
-from pathlib import Path
 from typing import Literal
 
 from immich.cli.runtime import print_response, run_command, set_nested
@@ -19,25 +18,22 @@ Docs: https://api.immich.app/endpoints/users"""
 @app.command("create-profile-image", deprecated=False)
 def create_profile_image(
     ctx: typer.Context,
-    file: Path = typer.Option(..., "--file", help="File to upload for file"),
+    file: str = typer.Option(..., "--file", help="""Profile image file"""),
 ) -> None:
     """Create user profile image
 
     Docs: https://api.immich.app/endpoints/users/createProfileImage
     """
     kwargs = {}
-    json_data = {}  # noqa: F841
-    missing: list[str] = []
-    kwargs["file"] = (file.name, file.read_bytes())
-    if missing:
-        raise SystemExit(
-            "Error: missing required multipart fields: "
-            + ", ".join(missing)
-            + ". Provide them via file options."
-        )
+    json_data = {}
+    set_nested(json_data, ["file"], file)
+    from immich.client.models.create_profile_image_dto import CreateProfileImageDto
+
+    create_profile_image_dto = CreateProfileImageDto.model_validate(json_data)
+    kwargs["create_profile_image_dto"] = create_profile_image_dto
     client = ctx.obj["client"]
     result = run_command(client, client.users, "create_profile_image", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -52,7 +48,7 @@ def delete_profile_image(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.users, "delete_profile_image", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -67,7 +63,7 @@ def delete_user_license(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.users, "delete_user_license", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -82,7 +78,7 @@ def delete_user_onboarding(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.users, "delete_user_onboarding", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -97,7 +93,7 @@ def get_my_preferences(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.users, "get_my_preferences", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -112,14 +108,14 @@ def get_my_user(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.users, "get_my_user", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("get-profile-image", deprecated=False)
 def get_profile_image(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""User ID"""),
 ) -> None:
     """Retrieve user profile image
 
@@ -129,14 +125,14 @@ def get_profile_image(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.users, "get_profile_image", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("get-user", deprecated=False)
 def get_user(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""User ID"""),
 ) -> None:
     """Retrieve a user
 
@@ -146,7 +142,7 @@ def get_user(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.users, "get_user", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -161,7 +157,7 @@ def get_user_license(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.users, "get_user_license", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -176,7 +172,7 @@ def get_user_onboarding(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.users, "get_user_onboarding", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -191,7 +187,7 @@ def search_users(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.users, "search_users", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -199,10 +195,10 @@ def search_users(
 def set_user_license(
     ctx: typer.Context,
     activation_key: str = typer.Option(
-        ..., "--activationKey", help="""Activation key"""
+        ..., "--activation-key", help="""Activation key"""
     ),
     license_key: str = typer.Option(
-        ..., "--licenseKey", help="""License key (format: IM(SV|CL)(-XXXX){8})"""
+        ..., "--license-key", help="""License key (format: IM(SV|CL)(-XXXX){8})"""
     ),
 ) -> None:
     """Set user product key
@@ -210,20 +206,16 @@ def set_user_license(
     Docs: https://api.immich.app/endpoints/users/setUserLicense
     """
     kwargs = {}
-    has_flags = any([activation_key, license_key])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([activation_key, license_key]):
-        json_data = {}
-        set_nested(json_data, ["activationKey"], activation_key)
-        set_nested(json_data, ["licenseKey"], license_key)
-        from immich.client.models.license_key_dto import LicenseKeyDto
+    json_data = {}
+    set_nested(json_data, ["activation_key"], activation_key)
+    set_nested(json_data, ["license_key"], license_key)
+    from immich.client.models.license_key_dto import LicenseKeyDto
 
-        license_key_dto = LicenseKeyDto.model_validate(json_data)
-        kwargs["license_key_dto"] = license_key_dto
+    license_key_dto = LicenseKeyDto.model_validate(json_data)
+    kwargs["license_key_dto"] = license_key_dto
     client = ctx.obj["client"]
     result = run_command(client, client.users, "set_user_license", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -231,7 +223,7 @@ def set_user_license(
 def set_user_onboarding(
     ctx: typer.Context,
     is_onboarded: Literal["true", "false"] = typer.Option(
-        ..., "--isOnboarded", help="""Is user onboarded"""
+        ..., "--is-onboarded", help="""Is user onboarded"""
     ),
 ) -> None:
     """Update user onboarding
@@ -239,19 +231,16 @@ def set_user_onboarding(
     Docs: https://api.immich.app/endpoints/users/setUserOnboarding
     """
     kwargs = {}
-    has_flags = any([is_onboarded])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([is_onboarded]):
-        json_data = {}
-        set_nested(json_data, ["isOnboarded"], is_onboarded.lower() == "true")
-        from immich.client.models.onboarding_dto import OnboardingDto
+    json_data = {}
+    set_nested(json_data, ["is_onboarded"], is_onboarded.lower() == "true")
+    set_nested(json_data, ["is_onboarded"], is_onboarded)
+    from immich.client.models.onboarding_dto import OnboardingDto
 
-        onboarding_dto = OnboardingDto.model_validate(json_data)
-        kwargs["onboarding_dto"] = onboarding_dto
+    onboarding_dto = OnboardingDto.model_validate(json_data)
+    kwargs["onboarding_dto"] = onboarding_dto
     client = ctx.obj["client"]
     result = run_command(client, client.users, "set_user_onboarding", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -259,79 +248,79 @@ def set_user_onboarding(
 def update_my_preferences(
     ctx: typer.Context,
     albums_default_asset_order: str | None = typer.Option(
-        None, "--albums.defaultAssetOrder", help="""Asset sort order"""
+        None, "--albums-default-asset-order", help="""Asset sort order"""
     ),
     avatar_color: str | None = typer.Option(
-        None, "--avatar.color", help="""Avatar color"""
+        None, "--avatar-color", help="""Avatar color"""
     ),
     cast_g_cast_enabled: Literal["true", "false"] | None = typer.Option(
-        None, "--cast.gCastEnabled", help="""Whether Google Cast is enabled"""
+        None, "--cast-g-cast-enabled", help="""Whether Google Cast is enabled"""
     ),
     download_archive_size: int | None = typer.Option(
-        None, "--download.archiveSize", help="""Maximum archive size in bytes""", min=1
+        None, "--download-archive-size", help="""Maximum archive size in bytes""", min=1
     ),
     download_include_embedded_videos: Literal["true", "false"] | None = typer.Option(
         None,
-        "--download.includeEmbeddedVideos",
+        "--download-include-embedded-videos",
         help="""Whether to include embedded videos in downloads""",
     ),
     email_notifications_album_invite: Literal["true", "false"] | None = typer.Option(
         None,
-        "--emailNotifications.albumInvite",
+        "--email-notifications-album-invite",
         help="""Whether to receive email notifications for album invites""",
     ),
     email_notifications_album_update: Literal["true", "false"] | None = typer.Option(
         None,
-        "--emailNotifications.albumUpdate",
+        "--email-notifications-album-update",
         help="""Whether to receive email notifications for album updates""",
     ),
     email_notifications_enabled: Literal["true", "false"] | None = typer.Option(
         None,
-        "--emailNotifications.enabled",
+        "--email-notifications-enabled",
         help="""Whether email notifications are enabled""",
     ),
     folders_enabled: Literal["true", "false"] | None = typer.Option(
-        None, "--folders.enabled", help="""Whether folders are enabled"""
+        None, "--folders-enabled", help="""Whether folders are enabled"""
     ),
     folders_sidebar_web: Literal["true", "false"] | None = typer.Option(
-        None, "--folders.sidebarWeb", help="""Whether folders appear in web sidebar"""
+        None, "--folders-sidebar-web", help="""Whether folders appear in web sidebar"""
     ),
     memories_duration: int | None = typer.Option(
-        None, "--memories.duration", help="""Memory duration in seconds""", min=1
+        None, "--memories-duration", help="""Memory duration in seconds""", min=1
     ),
     memories_enabled: Literal["true", "false"] | None = typer.Option(
-        None, "--memories.enabled", help="""Whether memories are enabled"""
+        None, "--memories-enabled", help="""Whether memories are enabled"""
     ),
     people_enabled: Literal["true", "false"] | None = typer.Option(
-        None, "--people.enabled", help="""Whether people are enabled"""
+        None, "--people-enabled", help="""Whether people are enabled"""
     ),
     people_sidebar_web: Literal["true", "false"] | None = typer.Option(
-        None, "--people.sidebarWeb", help="""Whether people appear in web sidebar"""
+        None, "--people-sidebar-web", help="""Whether people appear in web sidebar"""
     ),
     purchase_hide_buy_button_until: str | None = typer.Option(
         None,
-        "--purchase.hideBuyButtonUntil",
+        "--purchase-hide-buy-button-until",
         help="""Date until which to hide buy button""",
     ),
     purchase_show_support_badge: Literal["true", "false"] | None = typer.Option(
-        None, "--purchase.showSupportBadge", help="""Whether to show support badge"""
+        None, "--purchase-show-support-badge", help="""Whether to show support badge"""
     ),
     ratings_enabled: Literal["true", "false"] | None = typer.Option(
-        None, "--ratings.enabled", help="""Whether ratings are enabled"""
+        None, "--ratings-enabled", help="""Whether ratings are enabled"""
     ),
     shared_links_enabled: Literal["true", "false"] | None = typer.Option(
-        None, "--sharedLinks.enabled", help="""Whether shared links are enabled"""
+        None, "--shared-links-enabled", help="""Whether shared links are enabled"""
     ),
     shared_links_sidebar_web: Literal["true", "false"] | None = typer.Option(
         None,
-        "--sharedLinks.sidebarWeb",
+        "--shared-links-sidebar-web",
         help="""Whether shared links appear in web sidebar""",
     ),
     tags_enabled: Literal["true", "false"] | None = typer.Option(
-        None, "--tags.enabled", help="""Whether tags are enabled"""
+        None, "--tags-enabled", help="""Whether tags are enabled"""
     ),
     tags_sidebar_web: Literal["true", "false"] | None = typer.Option(
-        None, "--tags.sidebarWeb", help="""Whether tags appear in web sidebar"""
+        None, "--tags-sidebar-web", help="""Whether tags appear in web sidebar"""
     ),
 ) -> None:
     """Update my preferences
@@ -339,166 +328,96 @@ def update_my_preferences(
     Docs: https://api.immich.app/endpoints/users/updateMyPreferences
     """
     kwargs = {}
-    has_flags = any(
-        [
-            albums_default_asset_order,
-            avatar_color,
-            cast_g_cast_enabled,
-            download_archive_size,
-            download_include_embedded_videos,
-            email_notifications_album_invite,
-            email_notifications_album_update,
-            email_notifications_enabled,
-            folders_enabled,
-            folders_sidebar_web,
-            memories_duration,
-            memories_enabled,
-            people_enabled,
-            people_sidebar_web,
-            purchase_hide_buy_button_until,
-            purchase_show_support_badge,
-            ratings_enabled,
-            shared_links_enabled,
-            shared_links_sidebar_web,
-            tags_enabled,
-            tags_sidebar_web,
-        ]
-    )
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any(
-        [
-            albums_default_asset_order,
-            avatar_color,
-            cast_g_cast_enabled,
-            download_archive_size,
-            download_include_embedded_videos,
-            email_notifications_album_invite,
-            email_notifications_album_update,
-            email_notifications_enabled,
-            folders_enabled,
-            folders_sidebar_web,
-            memories_duration,
-            memories_enabled,
-            people_enabled,
-            people_sidebar_web,
-            purchase_hide_buy_button_until,
-            purchase_show_support_badge,
-            ratings_enabled,
-            shared_links_enabled,
-            shared_links_sidebar_web,
-            tags_enabled,
-            tags_sidebar_web,
-        ]
-    ):
-        json_data = {}
-        if albums_default_asset_order is not None:
-            set_nested(
-                json_data, ["albums", "defaultAssetOrder"], albums_default_asset_order
-            )
-        if avatar_color is not None:
-            set_nested(json_data, ["avatar", "color"], avatar_color)
-        if cast_g_cast_enabled is not None:
-            set_nested(
-                json_data,
-                ["cast", "gCastEnabled"],
-                cast_g_cast_enabled.lower() == "true",
-            )
-        if download_archive_size is not None:
-            set_nested(json_data, ["download", "archiveSize"], download_archive_size)
-        if download_include_embedded_videos is not None:
-            set_nested(
-                json_data,
-                ["download", "includeEmbeddedVideos"],
-                download_include_embedded_videos.lower() == "true",
-            )
-        if email_notifications_album_invite is not None:
-            set_nested(
-                json_data,
-                ["emailNotifications", "albumInvite"],
-                email_notifications_album_invite.lower() == "true",
-            )
-        if email_notifications_album_update is not None:
-            set_nested(
-                json_data,
-                ["emailNotifications", "albumUpdate"],
-                email_notifications_album_update.lower() == "true",
-            )
-        if email_notifications_enabled is not None:
-            set_nested(
-                json_data,
-                ["emailNotifications", "enabled"],
-                email_notifications_enabled.lower() == "true",
-            )
-        if folders_enabled is not None:
-            set_nested(
-                json_data, ["folders", "enabled"], folders_enabled.lower() == "true"
-            )
-        if folders_sidebar_web is not None:
-            set_nested(
-                json_data,
-                ["folders", "sidebarWeb"],
-                folders_sidebar_web.lower() == "true",
-            )
-        if memories_duration is not None:
-            set_nested(json_data, ["memories", "duration"], memories_duration)
-        if memories_enabled is not None:
-            set_nested(
-                json_data, ["memories", "enabled"], memories_enabled.lower() == "true"
-            )
-        if people_enabled is not None:
-            set_nested(
-                json_data, ["people", "enabled"], people_enabled.lower() == "true"
-            )
-        if people_sidebar_web is not None:
-            set_nested(
-                json_data,
-                ["people", "sidebarWeb"],
-                people_sidebar_web.lower() == "true",
-            )
-        if purchase_hide_buy_button_until is not None:
-            set_nested(
-                json_data,
-                ["purchase", "hideBuyButtonUntil"],
-                purchase_hide_buy_button_until,
-            )
-        if purchase_show_support_badge is not None:
-            set_nested(
-                json_data,
-                ["purchase", "showSupportBadge"],
-                purchase_show_support_badge.lower() == "true",
-            )
-        if ratings_enabled is not None:
-            set_nested(
-                json_data, ["ratings", "enabled"], ratings_enabled.lower() == "true"
-            )
-        if shared_links_enabled is not None:
-            set_nested(
-                json_data,
-                ["sharedLinks", "enabled"],
-                shared_links_enabled.lower() == "true",
-            )
-        if shared_links_sidebar_web is not None:
-            set_nested(
-                json_data,
-                ["sharedLinks", "sidebarWeb"],
-                shared_links_sidebar_web.lower() == "true",
-            )
-        if tags_enabled is not None:
-            set_nested(json_data, ["tags", "enabled"], tags_enabled.lower() == "true")
-        if tags_sidebar_web is not None:
-            set_nested(
-                json_data, ["tags", "sidebarWeb"], tags_sidebar_web.lower() == "true"
-            )
-        from immich.client.models.user_preferences_update_dto import (
-            UserPreferencesUpdateDto,
+    json_data = {}
+    if albums_default_asset_order is not None:
+        set_nested(
+            json_data, ["albums_default_asset_order"], albums_default_asset_order
         )
+    if avatar_color is not None:
+        set_nested(json_data, ["avatar_color"], avatar_color)
+    if cast_g_cast_enabled is not None:
+        set_nested(
+            json_data, ["cast_g_cast_enabled"], cast_g_cast_enabled.lower() == "true"
+        )
+    if download_archive_size is not None:
+        set_nested(json_data, ["download_archive_size"], download_archive_size)
+    if download_include_embedded_videos is not None:
+        set_nested(
+            json_data,
+            ["download_include_embedded_videos"],
+            download_include_embedded_videos.lower() == "true",
+        )
+    if email_notifications_album_invite is not None:
+        set_nested(
+            json_data,
+            ["email_notifications_album_invite"],
+            email_notifications_album_invite.lower() == "true",
+        )
+    if email_notifications_album_update is not None:
+        set_nested(
+            json_data,
+            ["email_notifications_album_update"],
+            email_notifications_album_update.lower() == "true",
+        )
+    if email_notifications_enabled is not None:
+        set_nested(
+            json_data,
+            ["email_notifications_enabled"],
+            email_notifications_enabled.lower() == "true",
+        )
+    if folders_enabled is not None:
+        set_nested(json_data, ["folders_enabled"], folders_enabled.lower() == "true")
+    if folders_sidebar_web is not None:
+        set_nested(
+            json_data, ["folders_sidebar_web"], folders_sidebar_web.lower() == "true"
+        )
+    if memories_duration is not None:
+        set_nested(json_data, ["memories_duration"], memories_duration)
+    if memories_enabled is not None:
+        set_nested(json_data, ["memories_enabled"], memories_enabled.lower() == "true")
+    if people_enabled is not None:
+        set_nested(json_data, ["people_enabled"], people_enabled.lower() == "true")
+    if people_sidebar_web is not None:
+        set_nested(
+            json_data, ["people_sidebar_web"], people_sidebar_web.lower() == "true"
+        )
+    if purchase_hide_buy_button_until is not None:
+        set_nested(
+            json_data,
+            ["purchase_hide_buy_button_until"],
+            purchase_hide_buy_button_until,
+        )
+    if purchase_show_support_badge is not None:
+        set_nested(
+            json_data,
+            ["purchase_show_support_badge"],
+            purchase_show_support_badge.lower() == "true",
+        )
+    if ratings_enabled is not None:
+        set_nested(json_data, ["ratings_enabled"], ratings_enabled.lower() == "true")
+    if shared_links_enabled is not None:
+        set_nested(
+            json_data, ["shared_links_enabled"], shared_links_enabled.lower() == "true"
+        )
+    if shared_links_sidebar_web is not None:
+        set_nested(
+            json_data,
+            ["shared_links_sidebar_web"],
+            shared_links_sidebar_web.lower() == "true",
+        )
+    if tags_enabled is not None:
+        set_nested(json_data, ["tags_enabled"], tags_enabled.lower() == "true")
+    if tags_sidebar_web is not None:
+        set_nested(json_data, ["tags_sidebar_web"], tags_sidebar_web.lower() == "true")
+    from immich.client.models.user_preferences_update_dto import (
+        UserPreferencesUpdateDto,
+    )
 
-        user_preferences_update_dto = UserPreferencesUpdateDto.model_validate(json_data)
-        kwargs["user_preferences_update_dto"] = user_preferences_update_dto
+    user_preferences_update_dto = UserPreferencesUpdateDto.model_validate(json_data)
+    kwargs["user_preferences_update_dto"] = user_preferences_update_dto
     client = ctx.obj["client"]
     result = run_command(client, client.users, "update_my_preferences", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -506,7 +425,7 @@ def update_my_preferences(
 def update_my_user(
     ctx: typer.Context,
     avatar_color: str | None = typer.Option(
-        None, "--avatarColor", help="""Avatar color"""
+        None, "--avatar-color", help="""Avatar color"""
     ),
     email: str | None = typer.Option(None, "--email", help="""User email"""),
     name: str | None = typer.Option(None, "--name", help="""User name"""),
@@ -521,24 +440,20 @@ def update_my_user(
     Docs: https://api.immich.app/endpoints/users/updateMyUser
     """
     kwargs = {}
-    has_flags = any([avatar_color, email, name, password])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([avatar_color, email, name, password]):
-        json_data = {}
-        if avatar_color is not None:
-            set_nested(json_data, ["avatarColor"], avatar_color)
-        if email is not None:
-            set_nested(json_data, ["email"], email)
-        if name is not None:
-            set_nested(json_data, ["name"], name)
-        if password is not None:
-            set_nested(json_data, ["password"], password)
-        from immich.client.models.user_update_me_dto import UserUpdateMeDto
+    json_data = {}
+    if avatar_color is not None:
+        set_nested(json_data, ["avatar_color"], avatar_color)
+    if email is not None:
+        set_nested(json_data, ["email"], email)
+    if name is not None:
+        set_nested(json_data, ["name"], name)
+    if password is not None:
+        set_nested(json_data, ["password"], password)
+    from immich.client.models.user_update_me_dto import UserUpdateMeDto
 
-        user_update_me_dto = UserUpdateMeDto.model_validate(json_data)
-        kwargs["user_update_me_dto"] = user_update_me_dto
+    user_update_me_dto = UserUpdateMeDto.model_validate(json_data)
+    kwargs["user_update_me_dto"] = user_update_me_dto
     client = ctx.obj["client"]
     result = run_command(client, client.users, "update_my_user", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)

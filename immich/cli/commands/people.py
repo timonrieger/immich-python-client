@@ -20,14 +20,14 @@ Docs: https://api.immich.app/endpoints/people"""
 def create_person(
     ctx: typer.Context,
     birth_date: str | None = typer.Option(
-        None, "--birthDate", help="""Person date of birth"""
+        None, "--birth-date", help="""Person date of birth"""
     ),
     color: str | None = typer.Option(None, "--color", help="""Person color (hex)"""),
     is_favorite: Literal["true", "false"] | None = typer.Option(
-        None, "--isFavorite", help="""Mark as favorite"""
+        None, "--is-favorite", help="""Mark as favorite"""
     ),
     is_hidden: Literal["true", "false"] | None = typer.Option(
-        None, "--isHidden", help="""Person visibility (hidden)"""
+        None, "--is-hidden", help="""Person visibility (hidden)"""
     ),
     name: str | None = typer.Option(None, "--name", help="""Person name"""),
 ) -> None:
@@ -36,28 +36,24 @@ def create_person(
     Docs: https://api.immich.app/endpoints/people/createPerson
     """
     kwargs = {}
-    has_flags = any([birth_date, color, is_favorite, is_hidden, name])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([birth_date, color, is_favorite, is_hidden, name]):
-        json_data = {}
-        if birth_date is not None:
-            set_nested(json_data, ["birthDate"], birth_date)
-        if color is not None:
-            set_nested(json_data, ["color"], color)
-        if is_favorite is not None:
-            set_nested(json_data, ["isFavorite"], is_favorite.lower() == "true")
-        if is_hidden is not None:
-            set_nested(json_data, ["isHidden"], is_hidden.lower() == "true")
-        if name is not None:
-            set_nested(json_data, ["name"], name)
-        from immich.client.models.person_create_dto import PersonCreateDto
+    json_data = {}
+    if birth_date is not None:
+        set_nested(json_data, ["birth_date"], birth_date)
+    if color is not None:
+        set_nested(json_data, ["color"], color)
+    if is_favorite is not None:
+        set_nested(json_data, ["is_favorite"], is_favorite.lower() == "true")
+    if is_hidden is not None:
+        set_nested(json_data, ["is_hidden"], is_hidden.lower() == "true")
+    if name is not None:
+        set_nested(json_data, ["name"], name)
+    from immich.client.models.person_create_dto import PersonCreateDto
 
-        person_create_dto = PersonCreateDto.model_validate(json_data)
-        kwargs["person_create_dto"] = person_create_dto
+    person_create_dto = PersonCreateDto.model_validate(json_data)
+    kwargs["person_create_dto"] = person_create_dto
     client = ctx.obj["client"]
     result = run_command(client, client.people, "create_person", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -71,26 +67,22 @@ def delete_people(
     Docs: https://api.immich.app/endpoints/people/deletePeople
     """
     kwargs = {}
-    has_flags = any([ids])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([ids]):
-        json_data = {}
-        set_nested(json_data, ["ids"], ids)
-        from immich.client.models.bulk_ids_dto import BulkIdsDto
+    json_data = {}
+    set_nested(json_data, ["ids"], ids)
+    from immich.client.models.bulk_ids_dto import BulkIdsDto
 
-        bulk_ids_dto = BulkIdsDto.model_validate(json_data)
-        kwargs["bulk_ids_dto"] = bulk_ids_dto
+    bulk_ids_dto = BulkIdsDto.model_validate(json_data)
+    kwargs["bulk_ids_dto"] = bulk_ids_dto
     client = ctx.obj["client"]
     result = run_command(client, client.people, "delete_people", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("delete-person", deprecated=False)
 def delete_person(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Person ID"""),
 ) -> None:
     """Delete person
 
@@ -100,7 +92,7 @@ def delete_person(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.people, "delete_person", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -140,14 +132,14 @@ def get_all_people(
         kwargs["with_hidden"] = with_hidden.lower() == "true"
     client = ctx.obj["client"]
     result = run_command(client, client.people, "get_all_people", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("get-person", deprecated=False)
 def get_person(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Person ID"""),
 ) -> None:
     """Get a person
 
@@ -157,14 +149,14 @@ def get_person(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.people, "get_person", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("get-person-statistics", deprecated=False)
 def get_person_statistics(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Person ID"""),
 ) -> None:
     """Get person statistics
 
@@ -174,14 +166,14 @@ def get_person_statistics(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.people, "get_person_statistics", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("get-person-thumbnail", deprecated=False)
 def get_person_thumbnail(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Person ID"""),
 ) -> None:
     """Get person thumbnail
 
@@ -191,14 +183,14 @@ def get_person_thumbnail(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.people, "get_person_thumbnail", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("merge-person", deprecated=False)
 def merge_person(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Target person ID to merge into"""),
     ids: list[str] = typer.Option(..., "--ids", help="""Person IDs to merge"""),
 ) -> None:
     """Merge people
@@ -206,27 +198,23 @@ def merge_person(
     Docs: https://api.immich.app/endpoints/people/mergePerson
     """
     kwargs = {}
+    json_data = {}
     kwargs["id"] = id
-    has_flags = any([ids])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([ids]):
-        json_data = {}
-        set_nested(json_data, ["ids"], ids)
-        from immich.client.models.merge_person_dto import MergePersonDto
+    set_nested(json_data, ["ids"], ids)
+    from immich.client.models.merge_person_dto import MergePersonDto
 
-        merge_person_dto = MergePersonDto.model_validate(json_data)
-        kwargs["merge_person_dto"] = merge_person_dto
+    merge_person_dto = MergePersonDto.model_validate(json_data)
+    kwargs["merge_person_dto"] = merge_person_dto
     client = ctx.obj["client"]
     result = run_command(client, client.people, "merge_person", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("reassign-faces", deprecated=False)
 def reassign_faces(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Target person ID"""),
     data: list[str] = typer.Option(
         ...,
         "--data",
@@ -240,21 +228,17 @@ As a JSON string""",
     Docs: https://api.immich.app/endpoints/people/reassignFaces
     """
     kwargs = {}
+    json_data = {}
     kwargs["id"] = id
-    has_flags = any([data])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([data]):
-        json_data = {}
-        value_data = [json.loads(i) for i in data]
-        set_nested(json_data, ["data"], value_data)
-        from immich.client.models.asset_face_update_dto import AssetFaceUpdateDto
+    value_data = [json.loads(i) for i in data]
+    set_nested(json_data, ["data"], value_data)
+    from immich.client.models.asset_face_update_dto import AssetFaceUpdateDto
 
-        asset_face_update_dto = AssetFaceUpdateDto.model_validate(json_data)
-        kwargs["asset_face_update_dto"] = asset_face_update_dto
+    asset_face_update_dto = AssetFaceUpdateDto.model_validate(json_data)
+    kwargs["asset_face_update_dto"] = asset_face_update_dto
     client = ctx.obj["client"]
     result = run_command(client, client.people, "reassign_faces", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -274,41 +258,37 @@ As a JSON string""",
     Docs: https://api.immich.app/endpoints/people/updatePeople
     """
     kwargs = {}
-    has_flags = any([people])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([people]):
-        json_data = {}
-        value_people = [json.loads(i) for i in people]
-        set_nested(json_data, ["people"], value_people)
-        from immich.client.models.people_update_dto import PeopleUpdateDto
+    json_data = {}
+    value_people = [json.loads(i) for i in people]
+    set_nested(json_data, ["people"], value_people)
+    from immich.client.models.people_update_dto import PeopleUpdateDto
 
-        people_update_dto = PeopleUpdateDto.model_validate(json_data)
-        kwargs["people_update_dto"] = people_update_dto
+    people_update_dto = PeopleUpdateDto.model_validate(json_data)
+    kwargs["people_update_dto"] = people_update_dto
     client = ctx.obj["client"]
     result = run_command(client, client.people, "update_people", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("update-person", deprecated=False)
 def update_person(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Person ID"""),
     birth_date: str | None = typer.Option(
-        None, "--birthDate", help="""Person date of birth"""
+        None, "--birth-date", help="""Person date of birth"""
     ),
     color: str | None = typer.Option(None, "--color", help="""Person color (hex)"""),
     feature_face_asset_id: str | None = typer.Option(
         None,
-        "--featureFaceAssetId",
+        "--feature-face-asset-id",
         help="""Asset ID used for feature face thumbnail""",
     ),
     is_favorite: Literal["true", "false"] | None = typer.Option(
-        None, "--isFavorite", help="""Mark as favorite"""
+        None, "--is-favorite", help="""Mark as favorite"""
     ),
     is_hidden: Literal["true", "false"] | None = typer.Option(
-        None, "--isHidden", help="""Person visibility (hidden)"""
+        None, "--is-hidden", help="""Person visibility (hidden)"""
     ),
     name: str | None = typer.Option(None, "--name", help="""Person name"""),
 ) -> None:
@@ -317,31 +297,25 @@ def update_person(
     Docs: https://api.immich.app/endpoints/people/updatePerson
     """
     kwargs = {}
+    json_data = {}
     kwargs["id"] = id
-    has_flags = any(
-        [birth_date, color, feature_face_asset_id, is_favorite, is_hidden, name]
-    )
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([birth_date, color, feature_face_asset_id, is_favorite, is_hidden, name]):
-        json_data = {}
-        if birth_date is not None:
-            set_nested(json_data, ["birthDate"], birth_date)
-        if color is not None:
-            set_nested(json_data, ["color"], color)
-        if feature_face_asset_id is not None:
-            set_nested(json_data, ["featureFaceAssetId"], feature_face_asset_id)
-        if is_favorite is not None:
-            set_nested(json_data, ["isFavorite"], is_favorite.lower() == "true")
-        if is_hidden is not None:
-            set_nested(json_data, ["isHidden"], is_hidden.lower() == "true")
-        if name is not None:
-            set_nested(json_data, ["name"], name)
-        from immich.client.models.person_update_dto import PersonUpdateDto
+    if birth_date is not None:
+        set_nested(json_data, ["birth_date"], birth_date)
+    if color is not None:
+        set_nested(json_data, ["color"], color)
+    if feature_face_asset_id is not None:
+        set_nested(json_data, ["feature_face_asset_id"], feature_face_asset_id)
+    if is_favorite is not None:
+        set_nested(json_data, ["is_favorite"], is_favorite.lower() == "true")
+    if is_hidden is not None:
+        set_nested(json_data, ["is_hidden"], is_hidden.lower() == "true")
+    if name is not None:
+        set_nested(json_data, ["name"], name)
+    from immich.client.models.person_update_dto import PersonUpdateDto
 
-        person_update_dto = PersonUpdateDto.model_validate(json_data)
-        kwargs["person_update_dto"] = person_update_dto
+    person_update_dto = PersonUpdateDto.model_validate(json_data)
+    kwargs["person_update_dto"] = person_update_dto
     client = ctx.obj["client"]
     result = run_command(client, client.people, "update_person", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)

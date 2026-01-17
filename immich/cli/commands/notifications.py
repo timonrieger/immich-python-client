@@ -19,7 +19,7 @@ Docs: https://api.immich.app/endpoints/notifications"""
 @app.command("delete-notification", deprecated=False)
 def delete_notification(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Notification ID"""),
 ) -> None:
     """Delete a notification
 
@@ -29,7 +29,7 @@ def delete_notification(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.notifications, "delete_notification", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -43,28 +43,24 @@ def delete_notifications(
     Docs: https://api.immich.app/endpoints/notifications/deleteNotifications
     """
     kwargs = {}
-    has_flags = any([ids])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([ids]):
-        json_data = {}
-        set_nested(json_data, ["ids"], ids)
-        from immich.client.models.notification_delete_all_dto import (
-            NotificationDeleteAllDto,
-        )
+    json_data = {}
+    set_nested(json_data, ["ids"], ids)
+    from immich.client.models.notification_delete_all_dto import (
+        NotificationDeleteAllDto,
+    )
 
-        notification_delete_all_dto = NotificationDeleteAllDto.model_validate(json_data)
-        kwargs["notification_delete_all_dto"] = notification_delete_all_dto
+    notification_delete_all_dto = NotificationDeleteAllDto.model_validate(json_data)
+    kwargs["notification_delete_all_dto"] = notification_delete_all_dto
     client = ctx.obj["client"]
     result = run_command(client, client.notifications, "delete_notifications", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("get-notification", deprecated=False)
 def get_notification(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Notification ID"""),
 ) -> None:
     """Get a notification
 
@@ -74,7 +70,7 @@ def get_notification(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.notifications, "get_notification", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -107,16 +103,16 @@ def get_notifications(
         kwargs["unread"] = unread.lower() == "true"
     client = ctx.obj["client"]
     result = run_command(client, client.notifications, "get_notifications", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("update-notification", deprecated=False)
 def update_notification(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Notification ID"""),
     read_at: datetime | None = typer.Option(
-        None, "--readAt", help="""Date when notification was read"""
+        None, "--read-at", help="""Date when notification was read"""
     ),
 ) -> None:
     """Update a notification
@@ -124,21 +120,17 @@ def update_notification(
     Docs: https://api.immich.app/endpoints/notifications/updateNotification
     """
     kwargs = {}
+    json_data = {}
     kwargs["id"] = id
-    has_flags = any([read_at])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([read_at]):
-        json_data = {}
-        if read_at is not None:
-            set_nested(json_data, ["readAt"], read_at)
-        from immich.client.models.notification_update_dto import NotificationUpdateDto
+    if read_at is not None:
+        set_nested(json_data, ["read_at"], read_at)
+    from immich.client.models.notification_update_dto import NotificationUpdateDto
 
-        notification_update_dto = NotificationUpdateDto.model_validate(json_data)
-        kwargs["notification_update_dto"] = notification_update_dto
+    notification_update_dto = NotificationUpdateDto.model_validate(json_data)
+    kwargs["notification_update_dto"] = notification_update_dto
     client = ctx.obj["client"]
     result = run_command(client, client.notifications, "update_notification", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -147,7 +139,7 @@ def update_notifications(
     ctx: typer.Context,
     ids: list[str] = typer.Option(..., "--ids", help="""Notification IDs to update"""),
     read_at: datetime | None = typer.Option(
-        None, "--readAt", help="""Date when notifications were read"""
+        None, "--read-at", help="""Date when notifications were read"""
     ),
 ) -> None:
     """Update notifications
@@ -155,21 +147,17 @@ def update_notifications(
     Docs: https://api.immich.app/endpoints/notifications/updateNotifications
     """
     kwargs = {}
-    has_flags = any([ids, read_at])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([ids, read_at]):
-        json_data = {}
-        set_nested(json_data, ["ids"], ids)
-        if read_at is not None:
-            set_nested(json_data, ["readAt"], read_at)
-        from immich.client.models.notification_update_all_dto import (
-            NotificationUpdateAllDto,
-        )
+    json_data = {}
+    set_nested(json_data, ["ids"], ids)
+    if read_at is not None:
+        set_nested(json_data, ["read_at"], read_at)
+    from immich.client.models.notification_update_all_dto import (
+        NotificationUpdateAllDto,
+    )
 
-        notification_update_all_dto = NotificationUpdateAllDto.model_validate(json_data)
-        kwargs["notification_update_all_dto"] = notification_update_all_dto
+    notification_update_all_dto = NotificationUpdateAllDto.model_validate(json_data)
+    kwargs["notification_update_all_dto"] = notification_update_all_dto
     client = ctx.obj["client"]
     result = run_command(client, client.notifications, "update_notifications", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)

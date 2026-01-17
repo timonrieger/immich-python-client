@@ -17,59 +17,55 @@ Docs: https://api.immich.app/endpoints/download"""
 @app.command("download-archive", deprecated=False)
 def download_archive(
     ctx: typer.Context,
+    asset_ids: list[str] = typer.Option(..., "--asset-ids", help="""Asset IDs"""),
     key: str | None = typer.Option(
         None, "--key", help="""Access key for shared links"""
     ),
     slug: str | None = typer.Option(
         None, "--slug", help="""Access slug for shared links"""
     ),
-    asset_ids: list[str] = typer.Option(..., "--assetIds", help="""Asset IDs"""),
 ) -> None:
     """Download asset archive
 
     Docs: https://api.immich.app/endpoints/download/downloadArchive
     """
     kwargs = {}
+    json_data = {}
     if key is not None:
         kwargs["key"] = key
     if slug is not None:
         kwargs["slug"] = slug
-    has_flags = any([asset_ids])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([asset_ids]):
-        json_data = {}
-        set_nested(json_data, ["assetIds"], asset_ids)
-        from immich.client.models.asset_ids_dto import AssetIdsDto
+    set_nested(json_data, ["asset_ids"], asset_ids)
+    from immich.client.models.asset_ids_dto import AssetIdsDto
 
-        asset_ids_dto = AssetIdsDto.model_validate(json_data)
-        kwargs["asset_ids_dto"] = asset_ids_dto
+    asset_ids_dto = AssetIdsDto.model_validate(json_data)
+    kwargs["asset_ids_dto"] = asset_ids_dto
     client = ctx.obj["client"]
     result = run_command(client, client.download, "download_archive", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("get-download-info", deprecated=False)
 def get_download_info(
     ctx: typer.Context,
+    album_id: str | None = typer.Option(
+        None, "--album-id", help="""Album ID to download"""
+    ),
+    archive_size: int | None = typer.Option(
+        None, "--archive-size", help="""Archive size limit in bytes""", min=1
+    ),
+    asset_ids: list[str] | None = typer.Option(
+        None, "--asset-ids", help="""Asset IDs to download"""
+    ),
     key: str | None = typer.Option(
         None, "--key", help="""Access key for shared links"""
     ),
     slug: str | None = typer.Option(
         None, "--slug", help="""Access slug for shared links"""
     ),
-    album_id: str | None = typer.Option(
-        None, "--albumId", help="""Album ID to download"""
-    ),
-    archive_size: int | None = typer.Option(
-        None, "--archiveSize", help="""Archive size limit in bytes""", min=1
-    ),
-    asset_ids: list[str] | None = typer.Option(
-        None, "--assetIds", help="""Asset IDs to download"""
-    ),
     user_id: str | None = typer.Option(
-        None, "--userId", help="""User ID to download assets from"""
+        None, "--user-id", help="""User ID to download assets from"""
     ),
 ) -> None:
     """Retrieve download information
@@ -77,28 +73,24 @@ def get_download_info(
     Docs: https://api.immich.app/endpoints/download/getDownloadInfo
     """
     kwargs = {}
+    json_data = {}
     if key is not None:
         kwargs["key"] = key
     if slug is not None:
         kwargs["slug"] = slug
-    has_flags = any([album_id, archive_size, asset_ids, user_id])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([album_id, archive_size, asset_ids, user_id]):
-        json_data = {}
-        if album_id is not None:
-            set_nested(json_data, ["albumId"], album_id)
-        if archive_size is not None:
-            set_nested(json_data, ["archiveSize"], archive_size)
-        if asset_ids is not None:
-            set_nested(json_data, ["assetIds"], asset_ids)
-        if user_id is not None:
-            set_nested(json_data, ["userId"], user_id)
-        from immich.client.models.download_info_dto import DownloadInfoDto
+    if album_id is not None:
+        set_nested(json_data, ["album_id"], album_id)
+    if archive_size is not None:
+        set_nested(json_data, ["archive_size"], archive_size)
+    if asset_ids is not None:
+        set_nested(json_data, ["asset_ids"], asset_ids)
+    if user_id is not None:
+        set_nested(json_data, ["user_id"], user_id)
+    from immich.client.models.download_info_dto import DownloadInfoDto
 
-        download_info_dto = DownloadInfoDto.model_validate(json_data)
-        kwargs["download_info_dto"] = download_info_dto
+    download_info_dto = DownloadInfoDto.model_validate(json_data)
+    kwargs["download_info_dto"] = download_info_dto
     client = ctx.obj["client"]
     result = run_command(client, client.download, "get_download_info", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)

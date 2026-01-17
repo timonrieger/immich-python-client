@@ -40,42 +40,38 @@ As a JSON string""",
 As a JSON string""",
     ),
     name: str = typer.Option(..., "--name", help="""Workflow name"""),
-    trigger_type: str = typer.Option(..., "--triggerType", help="""Trigger type"""),
+    trigger_type: str = typer.Option(..., "--trigger-type", help="""Trigger type"""),
 ) -> None:
     """Create a workflow
 
     Docs: https://api.immich.app/endpoints/workflows/createWorkflow
     """
     kwargs = {}
-    has_flags = any([actions, description, enabled, filters, name, trigger_type])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([actions, description, enabled, filters, name, trigger_type]):
-        json_data = {}
-        value_actions = [json.loads(i) for i in actions]
-        set_nested(json_data, ["actions"], value_actions)
-        if description is not None:
-            set_nested(json_data, ["description"], description)
-        if enabled is not None:
-            set_nested(json_data, ["enabled"], enabled.lower() == "true")
-        value_filters = [json.loads(i) for i in filters]
-        set_nested(json_data, ["filters"], value_filters)
-        set_nested(json_data, ["name"], name)
-        set_nested(json_data, ["triggerType"], trigger_type)
-        from immich.client.models.workflow_create_dto import WorkflowCreateDto
+    json_data = {}
+    value_actions = [json.loads(i) for i in actions]
+    set_nested(json_data, ["actions"], value_actions)
+    if description is not None:
+        set_nested(json_data, ["description"], description)
+    if enabled is not None:
+        set_nested(json_data, ["enabled"], enabled.lower() == "true")
+    value_filters = [json.loads(i) for i in filters]
+    set_nested(json_data, ["filters"], value_filters)
+    set_nested(json_data, ["name"], name)
+    set_nested(json_data, ["trigger_type"], trigger_type)
+    from immich.client.models.workflow_create_dto import WorkflowCreateDto
 
-        workflow_create_dto = WorkflowCreateDto.model_validate(json_data)
-        kwargs["workflow_create_dto"] = workflow_create_dto
+    workflow_create_dto = WorkflowCreateDto.model_validate(json_data)
+    kwargs["workflow_create_dto"] = workflow_create_dto
     client = ctx.obj["client"]
     result = run_command(client, client.workflows, "create_workflow", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("delete-workflow", deprecated=False)
 def delete_workflow(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Workflow ID"""),
 ) -> None:
     """Delete a workflow
 
@@ -85,14 +81,14 @@ def delete_workflow(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.workflows, "delete_workflow", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("get-workflow", deprecated=False)
 def get_workflow(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Workflow ID"""),
 ) -> None:
     """Retrieve a workflow
 
@@ -102,7 +98,7 @@ def get_workflow(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.workflows, "get_workflow", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -117,14 +113,14 @@ def get_workflows(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.workflows, "get_workflows", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("update-workflow", deprecated=False)
 def update_workflow(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Workflow ID"""),
     actions: list[str] | None = typer.Option(
         None,
         "--actions",
@@ -147,7 +143,7 @@ As a JSON string""",
     ),
     name: str | None = typer.Option(None, "--name", help="""Workflow name"""),
     trigger_type: str | None = typer.Option(
-        None, "--triggerType", help="""Trigger type"""
+        None, "--trigger-type", help="""Trigger type"""
     ),
 ) -> None:
     """Update a workflow
@@ -155,31 +151,27 @@ As a JSON string""",
     Docs: https://api.immich.app/endpoints/workflows/updateWorkflow
     """
     kwargs = {}
+    json_data = {}
     kwargs["id"] = id
-    has_flags = any([actions, description, enabled, filters, name, trigger_type])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([actions, description, enabled, filters, name, trigger_type]):
-        json_data = {}
-        if actions is not None:
-            value_actions = [json.loads(i) for i in actions]
-            set_nested(json_data, ["actions"], value_actions)
-        if description is not None:
-            set_nested(json_data, ["description"], description)
-        if enabled is not None:
-            set_nested(json_data, ["enabled"], enabled.lower() == "true")
-        if filters is not None:
-            value_filters = [json.loads(i) for i in filters]
-            set_nested(json_data, ["filters"], value_filters)
-        if name is not None:
-            set_nested(json_data, ["name"], name)
-        if trigger_type is not None:
-            set_nested(json_data, ["triggerType"], trigger_type)
-        from immich.client.models.workflow_update_dto import WorkflowUpdateDto
+    if actions is not None:
+        value_actions = [json.loads(i) for i in actions]
+        set_nested(json_data, ["actions"], value_actions)
+    if description is not None:
+        set_nested(json_data, ["description"], description)
+    if enabled is not None:
+        set_nested(json_data, ["enabled"], enabled.lower() == "true")
+    if filters is not None:
+        value_filters = [json.loads(i) for i in filters]
+        set_nested(json_data, ["filters"], value_filters)
+    if name is not None:
+        set_nested(json_data, ["name"], name)
+    if trigger_type is not None:
+        set_nested(json_data, ["trigger_type"], trigger_type)
+    from immich.client.models.workflow_update_dto import WorkflowUpdateDto
 
-        workflow_update_dto = WorkflowUpdateDto.model_validate(json_data)
-        kwargs["workflow_update_dto"] = workflow_update_dto
+    workflow_update_dto = WorkflowUpdateDto.model_validate(json_data)
+    kwargs["workflow_update_dto"] = workflow_update_dto
     client = ctx.obj["client"]
     result = run_command(client, client.workflows, "update_workflow", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)

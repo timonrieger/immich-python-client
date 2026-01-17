@@ -19,7 +19,7 @@ Docs: https://api.immich.app/endpoints/partners"""
 def create_partner(
     ctx: typer.Context,
     shared_with_id: str = typer.Option(
-        ..., "--sharedWithId", help="""User ID to share with"""
+        ..., "--shared-with-id", help="""User ID to share with"""
     ),
 ) -> None:
     """Create a partner
@@ -27,26 +27,22 @@ def create_partner(
     Docs: https://api.immich.app/endpoints/partners/createPartner
     """
     kwargs = {}
-    has_flags = any([shared_with_id])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([shared_with_id]):
-        json_data = {}
-        set_nested(json_data, ["sharedWithId"], shared_with_id)
-        from immich.client.models.partner_create_dto import PartnerCreateDto
+    json_data = {}
+    set_nested(json_data, ["shared_with_id"], shared_with_id)
+    from immich.client.models.partner_create_dto import PartnerCreateDto
 
-        partner_create_dto = PartnerCreateDto.model_validate(json_data)
-        kwargs["partner_create_dto"] = partner_create_dto
+    partner_create_dto = PartnerCreateDto.model_validate(json_data)
+    kwargs["partner_create_dto"] = partner_create_dto
     client = ctx.obj["client"]
     result = run_command(client, client.partners, "create_partner", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("create-partner-deprecated", deprecated=True)
 def create_partner_deprecated(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""User ID to share with"""),
 ) -> None:
     """Create a partner
 
@@ -56,7 +52,7 @@ def create_partner_deprecated(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.partners, "create_partner_deprecated", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -75,14 +71,14 @@ def get_partners(
     kwargs["direction"] = direction
     client = ctx.obj["client"]
     result = run_command(client, client.partners, "get_partners", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("remove-partner", deprecated=False)
 def remove_partner(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Partner ID"""),
 ) -> None:
     """Remove a partner
 
@@ -92,16 +88,16 @@ def remove_partner(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.partners, "remove_partner", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("update-partner", deprecated=False)
 def update_partner(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Partner ID"""),
     in_timeline: Literal["true", "false"] = typer.Option(
-        ..., "--inTimeline", help="""Show partner assets in timeline"""
+        ..., "--in-timeline", help="""Show partner assets in timeline"""
     ),
 ) -> None:
     """Update a partner
@@ -109,18 +105,15 @@ def update_partner(
     Docs: https://api.immich.app/endpoints/partners/updatePartner
     """
     kwargs = {}
+    json_data = {}
     kwargs["id"] = id
-    has_flags = any([in_timeline])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([in_timeline]):
-        json_data = {}
-        set_nested(json_data, ["inTimeline"], in_timeline.lower() == "true")
-        from immich.client.models.partner_update_dto import PartnerUpdateDto
+    set_nested(json_data, ["in_timeline"], in_timeline.lower() == "true")
+    set_nested(json_data, ["in_timeline"], in_timeline)
+    from immich.client.models.partner_update_dto import PartnerUpdateDto
 
-        partner_update_dto = PartnerUpdateDto.model_validate(json_data)
-        kwargs["partner_update_dto"] = partner_update_dto
+    partner_update_dto = PartnerUpdateDto.model_validate(json_data)
+    kwargs["partner_update_dto"] = partner_update_dto
     client = ctx.obj["client"]
     result = run_command(client, client.partners, "update_partner", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)

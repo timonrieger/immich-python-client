@@ -57,7 +57,7 @@ def get_map_markers(
         kwargs["with_shared_albums"] = with_shared_albums.lower() == "true"
     client = ctx.obj["client"]
     result = run_command(client, client.map, "get_map_markers", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -76,5 +76,5 @@ def reverse_geocode(
     kwargs["lon"] = lon
     client = ctx.obj["client"]
     result = run_command(client, client.map, "reverse_geocode", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)

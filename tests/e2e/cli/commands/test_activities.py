@@ -19,11 +19,9 @@ def test_create_activity(
 ) -> None:
     """Test create-activity command with different activity types and validate response structure."""
     activity_args = [
-        "--format",
-        "json",
         "activities",
         "create-activity",
-        "--albumId",
+        "--album-id",
         str(album.id),
         "--type",
         activity_type.value,
@@ -49,7 +47,7 @@ def test_delete_activity(runner: CliRunner, activity: ActivityResponseDto) -> No
     """Test delete-activity command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "activities", "delete-activity", str(activity.id)],
+        ["activities", "delete-activity", str(activity.id)],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -63,8 +61,6 @@ def test_get_activities(runner: CliRunner, album: AlbumResponseDto) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "activities",
             "get-activities",
             "--album-id",
@@ -87,8 +83,6 @@ def test_get_activities_with_filters(
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "activities",
             "get-activities",
             "--album-id",
@@ -112,8 +106,6 @@ def test_get_activity_statistics(runner: CliRunner, album: AlbumResponseDto) -> 
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "activities",
             "get-activity-statistics",
             "--album-id",

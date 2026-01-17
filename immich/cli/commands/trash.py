@@ -25,7 +25,7 @@ def empty_trash(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.trash, "empty_trash", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -39,19 +39,15 @@ def restore_assets(
     Docs: https://api.immich.app/endpoints/trash/restoreAssets
     """
     kwargs = {}
-    has_flags = any([ids])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([ids]):
-        json_data = {}
-        set_nested(json_data, ["ids"], ids)
-        from immich.client.models.bulk_ids_dto import BulkIdsDto
+    json_data = {}
+    set_nested(json_data, ["ids"], ids)
+    from immich.client.models.bulk_ids_dto import BulkIdsDto
 
-        bulk_ids_dto = BulkIdsDto.model_validate(json_data)
-        kwargs["bulk_ids_dto"] = bulk_ids_dto
+    bulk_ids_dto = BulkIdsDto.model_validate(json_data)
+    kwargs["bulk_ids_dto"] = bulk_ids_dto
     client = ctx.obj["client"]
     result = run_command(client, client.trash, "restore_assets", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -66,5 +62,5 @@ def restore_trash(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.trash, "restore_trash", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)

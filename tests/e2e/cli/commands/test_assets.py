@@ -28,8 +28,6 @@ def test_get_asset_info(runner: CliRunner, asset: AssetResponseDto) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "assets",
             "get-asset-info",
             asset_id,
@@ -46,7 +44,7 @@ def test_get_asset_statistics(runner: CliRunner) -> None:
     """Test get-asset-statistics command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "assets", "get-asset-statistics"],
+        ["assets", "get-asset-statistics"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -59,8 +57,6 @@ def test_get_asset_statistics_with_filters(runner: CliRunner) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "assets",
             "get-asset-statistics",
             "--is-favorite",
@@ -81,8 +77,6 @@ def test_get_asset_metadata(runner: CliRunner, asset: AssetResponseDto) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "assets",
             "get-asset-metadata",
             asset_id,
@@ -103,8 +97,6 @@ def test_get_asset_metadata_by_key(runner: CliRunner, asset: AssetResponseDto) -
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "assets",
             "get-asset-metadata-by-key",
             asset_id,
@@ -122,7 +114,7 @@ def test_get_random(runner: CliRunner) -> None:
     """Test get-random command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "assets", "get-random", "--count", "5"],
+        ["assets", "get-random", "--count", "5"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -139,14 +131,12 @@ def test_update_asset(runner: CliRunner, asset: AssetResponseDto) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "assets",
             "update-asset",
             asset_id,
             "--description",
             description,
-            "--isFavorite",
+            "--is-favorite",
             "true",
         ],
     )
@@ -179,8 +169,6 @@ async def test_update_assets(
         runner.invoke,
         cli_app,
         [
-            "--format",
-            "json",
             "assets",
             "update-assets",
             "--ids",
@@ -189,7 +177,7 @@ async def test_update_assets(
             asset_ids[1],
             "--description",
             description,
-            "--isFavorite",
+            "--is-favorite",
             "true",
         ],
     )
@@ -234,13 +222,11 @@ async def test_check_existing_assets(
         runner.invoke,
         cli_app,
         [
-            "--format",
-            "json",
             "assets",
             "check-existing-assets",
-            "--deviceAssetIds",
+            "--device-asset-ids",
             device_asset_id,
-            "--deviceId",
+            "--device-id",
             device_id,
         ],
     )
@@ -263,8 +249,6 @@ async def test_check_bulk_upload(
         runner.invoke,
         cli_app,
         [
-            "--format",
-            "json",
             "assets",
             "check-bulk-upload",
         ]
@@ -306,8 +290,6 @@ async def test_delete_assets(
         runner.invoke,
         cli_app,
         [
-            "--format",
-            "json",
             "assets",
             "delete-assets",
             "--ids",
@@ -333,8 +315,6 @@ def test_update_asset_metadata(runner: CliRunner, asset: AssetResponseDto) -> No
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "assets",
             "update-asset-metadata",
             asset_id,
@@ -365,8 +345,6 @@ def test_delete_asset_metadata(runner: CliRunner, asset: AssetResponseDto) -> No
     add_result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "assets",
             "update-asset-metadata",
             asset_id,
@@ -384,8 +362,6 @@ def test_delete_asset_metadata(runner: CliRunner, asset: AssetResponseDto) -> No
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "assets",
             "delete-asset-metadata",
             asset_id,
@@ -404,8 +380,6 @@ def test_get_asset_ocr(runner: CliRunner, asset: AssetResponseDto) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "assets",
             "get-asset-ocr",
             asset_id,
@@ -441,12 +415,10 @@ async def test_copy_asset(
         runner.invoke,
         cli_app,
         [
-            "--format",
-            "json",
             "assets",
             "update-asset",
             source_asset.id,
-            "--isFavorite",
+            "--is-favorite",
             "true",
         ],
     )
@@ -467,13 +439,11 @@ async def test_copy_asset(
         runner.invoke,
         cli_app,
         [
-            "--format",
-            "json",
             "assets",
             "copy-asset",
-            "--sourceId",
+            "--source-id",
             source_asset.id,
-            "--targetId",
+            "--target-id",
             target_asset.id,
             "--favorite",
             "true",
@@ -493,11 +463,9 @@ def test_run_asset_jobs(runner: CliRunner, asset: AssetResponseDto) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "assets",
             "run-asset-jobs",
-            "--assetIds",
+            "--asset-ids",
             asset_id,
             "--name",
             "regenerate-thumbnail",

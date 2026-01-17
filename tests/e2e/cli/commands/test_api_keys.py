@@ -18,8 +18,6 @@ def test_create_api_key(runner: CliRunner) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "api-keys",
             "create-api-key",
             "--name",
@@ -42,7 +40,7 @@ def test_get_api_keys(runner: CliRunner, api_key: APIKeyResponseDto) -> None:
     api_key_id = api_key.id
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "api-keys", "get-api-keys"],
+        ["api-keys", "get-api-keys"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -61,8 +59,6 @@ def test_get_api_key(runner: CliRunner, api_key: APIKeyResponseDto) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "api-keys",
             "get-api-key",
             api_key_id,
@@ -79,7 +75,7 @@ def test_get_my_api_key(runner: CliRunner) -> None:
     """Test get-my-api-key command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "api-keys", "get-my-api-key"],
+        ["api-keys", "get-my-api-key"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -94,8 +90,6 @@ def test_update_api_key(runner: CliRunner, api_key: APIKeyResponseDto) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "api-keys",
             "update-api-key",
             api_key_id,
@@ -120,7 +114,7 @@ def test_delete_api_key(runner: CliRunner, api_key: APIKeyResponseDto) -> None:
     api_key_id = api_key.id
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "api-keys", "delete-api-key", api_key_id],
+        ["api-keys", "delete-api-key", api_key_id],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)

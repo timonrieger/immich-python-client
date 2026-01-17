@@ -18,7 +18,7 @@ Docs: https://api.immich.app/endpoints/stacks"""
 def create_stack(
     ctx: typer.Context,
     asset_ids: list[str] = typer.Option(
-        ..., "--assetIds", help="""Asset IDs (first becomes primary, min 2)"""
+        ..., "--asset-ids", help="""Asset IDs (first becomes primary, min 2)"""
     ),
 ) -> None:
     """Create a stack
@@ -26,26 +26,22 @@ def create_stack(
     Docs: https://api.immich.app/endpoints/stacks/createStack
     """
     kwargs = {}
-    has_flags = any([asset_ids])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([asset_ids]):
-        json_data = {}
-        set_nested(json_data, ["assetIds"], asset_ids)
-        from immich.client.models.stack_create_dto import StackCreateDto
+    json_data = {}
+    set_nested(json_data, ["asset_ids"], asset_ids)
+    from immich.client.models.stack_create_dto import StackCreateDto
 
-        stack_create_dto = StackCreateDto.model_validate(json_data)
-        kwargs["stack_create_dto"] = stack_create_dto
+    stack_create_dto = StackCreateDto.model_validate(json_data)
+    kwargs["stack_create_dto"] = stack_create_dto
     client = ctx.obj["client"]
     result = run_command(client, client.stacks, "create_stack", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("delete-stack", deprecated=False)
 def delete_stack(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Stack ID"""),
 ) -> None:
     """Delete a stack
 
@@ -55,7 +51,7 @@ def delete_stack(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.stacks, "delete_stack", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -69,26 +65,22 @@ def delete_stacks(
     Docs: https://api.immich.app/endpoints/stacks/deleteStacks
     """
     kwargs = {}
-    has_flags = any([ids])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([ids]):
-        json_data = {}
-        set_nested(json_data, ["ids"], ids)
-        from immich.client.models.bulk_ids_dto import BulkIdsDto
+    json_data = {}
+    set_nested(json_data, ["ids"], ids)
+    from immich.client.models.bulk_ids_dto import BulkIdsDto
 
-        bulk_ids_dto = BulkIdsDto.model_validate(json_data)
-        kwargs["bulk_ids_dto"] = bulk_ids_dto
+    bulk_ids_dto = BulkIdsDto.model_validate(json_data)
+    kwargs["bulk_ids_dto"] = bulk_ids_dto
     client = ctx.obj["client"]
     result = run_command(client, client.stacks, "delete_stacks", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("get-stack", deprecated=False)
 def get_stack(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Stack ID"""),
 ) -> None:
     """Retrieve a stack
 
@@ -98,15 +90,15 @@ def get_stack(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.stacks, "get_stack", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("remove-asset-from-stack", deprecated=False)
 def remove_asset_from_stack(
     ctx: typer.Context,
-    asset_id: str,
-    id: str,
+    asset_id: str = typer.Argument(..., help="""Asset ID to remove"""),
+    id: str = typer.Argument(..., help="""Stack ID"""),
 ) -> None:
     """Remove an asset from a stack
 
@@ -117,7 +109,7 @@ def remove_asset_from_stack(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.stacks, "remove_asset_from_stack", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -137,16 +129,16 @@ def search_stacks(
         kwargs["primary_asset_id"] = primary_asset_id
     client = ctx.obj["client"]
     result = run_command(client, client.stacks, "search_stacks", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
 @app.command("update-stack", deprecated=False)
 def update_stack(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Stack ID"""),
     primary_asset_id: str | None = typer.Option(
-        None, "--primaryAssetId", help="""Primary asset ID"""
+        None, "--primary-asset-id", help="""Primary asset ID"""
     ),
 ) -> None:
     """Update a stack
@@ -154,19 +146,15 @@ def update_stack(
     Docs: https://api.immich.app/endpoints/stacks/updateStack
     """
     kwargs = {}
+    json_data = {}
     kwargs["id"] = id
-    has_flags = any([primary_asset_id])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([primary_asset_id]):
-        json_data = {}
-        if primary_asset_id is not None:
-            set_nested(json_data, ["primaryAssetId"], primary_asset_id)
-        from immich.client.models.stack_update_dto import StackUpdateDto
+    if primary_asset_id is not None:
+        set_nested(json_data, ["primary_asset_id"], primary_asset_id)
+    from immich.client.models.stack_update_dto import StackUpdateDto
 
-        stack_update_dto = StackUpdateDto.model_validate(json_data)
-        kwargs["stack_update_dto"] = stack_update_dto
+    stack_update_dto = StackUpdateDto.model_validate(json_data)
+    kwargs["stack_update_dto"] = stack_update_dto
     client = ctx.obj["client"]
     result = run_command(client, client.stacks, "update_stack", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)

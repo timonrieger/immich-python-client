@@ -53,7 +53,7 @@ def get_time_bucket(
     time_bucket: str = typer.Option(
         ...,
         "--time-bucket",
-        help="""Time bucket identifier in YYYY-MM-DD format (e.g., "2024-01-01" for January 2024)""",
+        help="""Time bucket identifier in YYYY-MM-DD format (e.g., "2024-01-01" for January 2024)2024-01-01""",
     ),
     user_id: str | None = typer.Option(
         None, "--user-id", help="""Filter assets by specific user ID"""
@@ -109,7 +109,7 @@ def get_time_bucket(
         kwargs["with_stacked"] = with_stacked.lower() == "true"
     client = ctx.obj["client"]
     result = run_command(client, client.timeline, "get_time_bucket", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -201,5 +201,5 @@ def get_time_buckets(
         kwargs["with_stacked"] = with_stacked.lower() == "true"
     client = ctx.obj["client"]
     result = run_command(client, client.timeline, "get_time_buckets", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)

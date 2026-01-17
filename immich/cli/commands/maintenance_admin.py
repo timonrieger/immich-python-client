@@ -24,22 +24,18 @@ def maintenance_login(
     Docs: https://api.immich.app/endpoints/maintenance-admin/maintenanceLogin
     """
     kwargs = {}
-    has_flags = any([token])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([token]):
-        json_data = {}
-        if token is not None:
-            set_nested(json_data, ["token"], token)
-        from immich.client.models.maintenance_login_dto import MaintenanceLoginDto
+    json_data = {}
+    if token is not None:
+        set_nested(json_data, ["token"], token)
+    from immich.client.models.maintenance_login_dto import MaintenanceLoginDto
 
-        maintenance_login_dto = MaintenanceLoginDto.model_validate(json_data)
-        kwargs["maintenance_login_dto"] = maintenance_login_dto
+    maintenance_login_dto = MaintenanceLoginDto.model_validate(json_data)
+    kwargs["maintenance_login_dto"] = maintenance_login_dto
     client = ctx.obj["client"]
     result = run_command(
         client, client.maintenance_admin, "maintenance_login", **kwargs
     )
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -53,19 +49,15 @@ def set_maintenance_mode(
     Docs: https://api.immich.app/endpoints/maintenance-admin/setMaintenanceMode
     """
     kwargs = {}
-    has_flags = any([action])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([action]):
-        json_data = {}
-        set_nested(json_data, ["action"], action)
-        from immich.client.models.set_maintenance_mode_dto import SetMaintenanceModeDto
+    json_data = {}
+    set_nested(json_data, ["action"], action)
+    from immich.client.models.set_maintenance_mode_dto import SetMaintenanceModeDto
 
-        set_maintenance_mode_dto = SetMaintenanceModeDto.model_validate(json_data)
-        kwargs["set_maintenance_mode_dto"] = set_maintenance_mode_dto
+    set_maintenance_mode_dto = SetMaintenanceModeDto.model_validate(json_data)
+    kwargs["set_maintenance_mode_dto"] = set_maintenance_mode_dto
     client = ctx.obj["client"]
     result = run_command(
         client, client.maintenance_admin, "set_maintenance_mode", **kwargs
     )
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)

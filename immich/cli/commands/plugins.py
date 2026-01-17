@@ -17,7 +17,7 @@ Docs: https://api.immich.app/endpoints/plugins"""
 @app.command("get-plugin", deprecated=False)
 def get_plugin(
     ctx: typer.Context,
-    id: str,
+    id: str = typer.Argument(..., help="""Plugin ID"""),
 ) -> None:
     """Retrieve a plugin
 
@@ -27,7 +27,7 @@ def get_plugin(
     kwargs["id"] = id
     client = ctx.obj["client"]
     result = run_command(client, client.plugins, "get_plugin", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -42,7 +42,7 @@ def get_plugin_triggers(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.plugins, "get_plugin_triggers", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -57,5 +57,5 @@ def get_plugins(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.plugins, "get_plugins", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)

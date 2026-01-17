@@ -32,7 +32,7 @@ def test_get_about_info(runner: CliRunner) -> None:
     """Test get-about-info command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "server", "get-about-info"],
+        ["server", "get-about-info"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -44,7 +44,7 @@ def test_get_apk_links(runner: CliRunner) -> None:
     """Test get-apk-links command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "server", "get-apk-links"],
+        ["server", "get-apk-links"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -56,7 +56,7 @@ def test_get_server_config(runner: CliRunner) -> None:
     """Test get-server-config command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "server", "get-server-config"],
+        ["server", "get-server-config"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -68,7 +68,7 @@ def test_get_server_features(runner: CliRunner) -> None:
     """Test get-server-features command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "server", "get-server-features"],
+        ["server", "get-server-features"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -80,7 +80,7 @@ def test_get_server_statistics(runner: CliRunner) -> None:
     """Test get-server-statistics command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "server", "get-server-statistics"],
+        ["server", "get-server-statistics"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -92,7 +92,7 @@ def test_get_server_version(runner: CliRunner) -> None:
     """Test get-server-version command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "server", "get-server-version"],
+        ["server", "get-server-version"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -104,7 +104,7 @@ def test_get_storage(runner: CliRunner) -> None:
     """Test get-storage command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "server", "get-storage"],
+        ["server", "get-storage"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -116,7 +116,7 @@ def test_get_supported_media_types(runner: CliRunner) -> None:
     """Test get-supported-media-types command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "server", "get-supported-media-types"],
+        ["server", "get-supported-media-types"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -128,7 +128,7 @@ def test_get_theme(runner: CliRunner) -> None:
     """Test get-theme command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "server", "get-theme"],
+        ["server", "get-theme"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -140,7 +140,7 @@ def test_get_version_check(runner: CliRunner) -> None:
     """Test get-version-check command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "server", "get-version-check"],
+        ["server", "get-version-check"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -152,7 +152,7 @@ def test_get_version_history(runner: CliRunner) -> None:
     """Test get-version-history command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "server", "get-version-history"],
+        ["server", "get-version-history"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -166,7 +166,7 @@ def test_ping_server(runner: CliRunner) -> None:
     """Test ping-server command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "server", "ping-server"],
+        ["server", "ping-server"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -179,13 +179,11 @@ def test_set_server_license(runner: CliRunner) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "--format",
-            "json",
             "server",
             "set-server-license",
-            "--licenseKey",
+            "--license-key",
             LICENSE_KEY,
-            "--activationKey",
+            "--activation-key",
             ACTIVATION_KEY,
         ],
     )
@@ -203,7 +201,7 @@ def test_get_server_license_after_set(
     """Test get-server-license command - requires license to be set."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "server", "get-server-license"],
+        ["server", "get-server-license"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -217,7 +215,7 @@ def test_get_server_license_before_set(runner: CliRunner) -> None:
     """Test get-server-license command without license set."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "server", "get-server-license"],
+        ["server", "get-server-license"],
     )
     # 404 error code
     assert result.exit_code == 4, result.stdout + result.stderr
@@ -229,7 +227,7 @@ def test_delete_server_license(runner: CliRunner, license: LicenseResponseDto) -
     """Test delete-server-license command - requires license to be set first."""
     result = runner.invoke(
         cli_app,
-        ["--format", "json", "server", "delete-server-license"],
+        ["server", "delete-server-license"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)

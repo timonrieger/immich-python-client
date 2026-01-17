@@ -28,7 +28,7 @@ def get_admin_onboarding(
     result = run_command(
         client, client.system_metadata, "get_admin_onboarding", **kwargs
     )
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -45,7 +45,7 @@ def get_reverse_geocoding_state(
     result = run_command(
         client, client.system_metadata, "get_reverse_geocoding_state", **kwargs
     )
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -62,7 +62,7 @@ def get_version_check_state(
     result = run_command(
         client, client.system_metadata, "get_version_check_state", **kwargs
     )
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -70,7 +70,7 @@ def get_version_check_state(
 def update_admin_onboarding(
     ctx: typer.Context,
     is_onboarded: Literal["true", "false"] = typer.Option(
-        ..., "--isOnboarded", help="""Is admin onboarded"""
+        ..., "--is-onboarded", help="""Is admin onboarded"""
     ),
 ) -> None:
     """Update admin onboarding
@@ -78,21 +78,18 @@ def update_admin_onboarding(
     Docs: https://api.immich.app/endpoints/system-metadata/updateAdminOnboarding
     """
     kwargs = {}
-    has_flags = any([is_onboarded])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([is_onboarded]):
-        json_data = {}
-        set_nested(json_data, ["isOnboarded"], is_onboarded.lower() == "true")
-        from immich.client.models.admin_onboarding_update_dto import (
-            AdminOnboardingUpdateDto,
-        )
+    json_data = {}
+    set_nested(json_data, ["is_onboarded"], is_onboarded.lower() == "true")
+    set_nested(json_data, ["is_onboarded"], is_onboarded)
+    from immich.client.models.admin_onboarding_update_dto import (
+        AdminOnboardingUpdateDto,
+    )
 
-        admin_onboarding_update_dto = AdminOnboardingUpdateDto.model_validate(json_data)
-        kwargs["admin_onboarding_update_dto"] = admin_onboarding_update_dto
+    admin_onboarding_update_dto = AdminOnboardingUpdateDto.model_validate(json_data)
+    kwargs["admin_onboarding_update_dto"] = admin_onboarding_update_dto
     client = ctx.obj["client"]
     result = run_command(
         client, client.system_metadata, "update_admin_onboarding", **kwargs
     )
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)

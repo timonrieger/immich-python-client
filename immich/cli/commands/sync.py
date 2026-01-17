@@ -19,7 +19,7 @@ Docs: https://api.immich.app/endpoints/sync"""
 @app.command("delete-sync-ack", deprecated=False)
 def delete_sync_ack(
     ctx: typer.Context,
-    types: list[str] | None = typer.Option(
+    types: list[SyncEntityType] | None = typer.Option(
         None, "--types", help="""Sync entity types to delete acks for"""
     ),
 ) -> None:
@@ -28,20 +28,16 @@ def delete_sync_ack(
     Docs: https://api.immich.app/endpoints/sync/deleteSyncAck
     """
     kwargs = {}
-    has_flags = any([types])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([types]):
-        json_data = {}
-        if types is not None:
-            set_nested(json_data, ["types"], types)
-        from immich.client.models.sync_ack_delete_dto import SyncAckDeleteDto
+    json_data = {}
+    if types is not None:
+        set_nested(json_data, ["types"], types)
+    from immich.client.models.sync_ack_delete_dto import SyncAckDeleteDto
 
-        sync_ack_delete_dto = SyncAckDeleteDto.model_validate(json_data)
-        kwargs["sync_ack_delete_dto"] = sync_ack_delete_dto
+    sync_ack_delete_dto = SyncAckDeleteDto.model_validate(json_data)
+    kwargs["sync_ack_delete_dto"] = sync_ack_delete_dto
     client = ctx.obj["client"]
     result = run_command(client, client.sync, "delete_sync_ack", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -49,29 +45,25 @@ def delete_sync_ack(
 def get_delta_sync(
     ctx: typer.Context,
     updated_after: datetime = typer.Option(
-        ..., "--updatedAfter", help="""Sync assets updated after this date"""
+        ..., "--updated-after", help="""Sync assets updated after this date"""
     ),
-    user_ids: list[str] = typer.Option(..., "--userIds", help="""User IDs to sync"""),
+    user_ids: list[str] = typer.Option(..., "--user-ids", help="""User IDs to sync"""),
 ) -> None:
     """Get delta sync for user
 
     Docs: https://api.immich.app/endpoints/sync/getDeltaSync
     """
     kwargs = {}
-    has_flags = any([updated_after, user_ids])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([updated_after, user_ids]):
-        json_data = {}
-        set_nested(json_data, ["updatedAfter"], updated_after)
-        set_nested(json_data, ["userIds"], user_ids)
-        from immich.client.models.asset_delta_sync_dto import AssetDeltaSyncDto
+    json_data = {}
+    set_nested(json_data, ["updated_after"], updated_after)
+    set_nested(json_data, ["user_ids"], user_ids)
+    from immich.client.models.asset_delta_sync_dto import AssetDeltaSyncDto
 
-        asset_delta_sync_dto = AssetDeltaSyncDto.model_validate(json_data)
-        kwargs["asset_delta_sync_dto"] = asset_delta_sync_dto
+    asset_delta_sync_dto = AssetDeltaSyncDto.model_validate(json_data)
+    kwargs["asset_delta_sync_dto"] = asset_delta_sync_dto
     client = ctx.obj["client"]
     result = run_command(client, client.sync, "get_delta_sync", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -79,39 +71,35 @@ def get_delta_sync(
 def get_full_sync_for_user(
     ctx: typer.Context,
     last_id: str | None = typer.Option(
-        None, "--lastId", help="""Last asset ID (pagination)"""
+        None, "--last-id", help="""Last asset ID (pagination)"""
     ),
     limit: int = typer.Option(
         ..., "--limit", help="""Maximum number of assets to return""", min=1
     ),
     updated_until: datetime = typer.Option(
-        ..., "--updatedUntil", help="""Sync assets updated until this date"""
+        ..., "--updated-until", help="""Sync assets updated until this date"""
     ),
-    user_id: str | None = typer.Option(None, "--userId", help="""Filter by user ID"""),
+    user_id: str | None = typer.Option(None, "--user-id", help="""Filter by user ID"""),
 ) -> None:
     """Get full sync for user
 
     Docs: https://api.immich.app/endpoints/sync/getFullSyncForUser
     """
     kwargs = {}
-    has_flags = any([last_id, limit, updated_until, user_id])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([last_id, limit, updated_until, user_id]):
-        json_data = {}
-        if last_id is not None:
-            set_nested(json_data, ["lastId"], last_id)
-        set_nested(json_data, ["limit"], limit)
-        set_nested(json_data, ["updatedUntil"], updated_until)
-        if user_id is not None:
-            set_nested(json_data, ["userId"], user_id)
-        from immich.client.models.asset_full_sync_dto import AssetFullSyncDto
+    json_data = {}
+    if last_id is not None:
+        set_nested(json_data, ["last_id"], last_id)
+    set_nested(json_data, ["limit"], limit)
+    set_nested(json_data, ["updated_until"], updated_until)
+    if user_id is not None:
+        set_nested(json_data, ["user_id"], user_id)
+    from immich.client.models.asset_full_sync_dto import AssetFullSyncDto
 
-        asset_full_sync_dto = AssetFullSyncDto.model_validate(json_data)
-        kwargs["asset_full_sync_dto"] = asset_full_sync_dto
+    asset_full_sync_dto = AssetFullSyncDto.model_validate(json_data)
+    kwargs["asset_full_sync_dto"] = asset_full_sync_dto
     client = ctx.obj["client"]
     result = run_command(client, client.sync, "get_full_sync_for_user", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -126,7 +114,7 @@ def get_sync_ack(
     kwargs = {}
     client = ctx.obj["client"]
     result = run_command(client, client.sync, "get_sync_ack", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -136,28 +124,26 @@ def get_sync_stream(
     reset: Literal["true", "false"] | None = typer.Option(
         None, "--reset", help="""Reset sync state"""
     ),
-    types: list[str] = typer.Option(..., "--types", help="""Sync request types"""),
+    types: list[SyncRequestType] = typer.Option(
+        ..., "--types", help="""Sync request types"""
+    ),
 ) -> None:
     """Stream sync changes
 
     Docs: https://api.immich.app/endpoints/sync/getSyncStream
     """
     kwargs = {}
-    has_flags = any([reset, types])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([reset, types]):
-        json_data = {}
-        if reset is not None:
-            set_nested(json_data, ["reset"], reset.lower() == "true")
-        set_nested(json_data, ["types"], types)
-        from immich.client.models.sync_stream_dto import SyncStreamDto
+    json_data = {}
+    if reset is not None:
+        set_nested(json_data, ["reset"], reset.lower() == "true")
+    set_nested(json_data, ["types"], types)
+    from immich.client.models.sync_stream_dto import SyncStreamDto
 
-        sync_stream_dto = SyncStreamDto.model_validate(json_data)
-        kwargs["sync_stream_dto"] = sync_stream_dto
+    sync_stream_dto = SyncStreamDto.model_validate(json_data)
+    kwargs["sync_stream_dto"] = sync_stream_dto
     client = ctx.obj["client"]
     result = run_command(client, client.sync, "get_sync_stream", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
 
@@ -173,17 +159,13 @@ def send_sync_ack(
     Docs: https://api.immich.app/endpoints/sync/sendSyncAck
     """
     kwargs = {}
-    has_flags = any([acks])
-    if not has_flags:
-        raise SystemExit("Error: Request body is required. Use dotted body flags.")
-    if any([acks]):
-        json_data = {}
-        set_nested(json_data, ["acks"], acks)
-        from immich.client.models.sync_ack_set_dto import SyncAckSetDto
+    json_data = {}
+    set_nested(json_data, ["acks"], acks)
+    from immich.client.models.sync_ack_set_dto import SyncAckSetDto
 
-        sync_ack_set_dto = SyncAckSetDto.model_validate(json_data)
-        kwargs["sync_ack_set_dto"] = sync_ack_set_dto
+    sync_ack_set_dto = SyncAckSetDto.model_validate(json_data)
+    kwargs["sync_ack_set_dto"] = sync_ack_set_dto
     client = ctx.obj["client"]
     result = run_command(client, client.sync, "send_sync_ack", **kwargs)
-    format_mode = ctx.obj.get("format", "pretty")
+    format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
