@@ -93,7 +93,7 @@ async def client_with_access_token(env: dict[str, str]):
         )
 
         client = AsyncClient(
-            base_url=env[IMMICH_API_URL], bearer_token=login_response.access_token
+            base_url=env[IMMICH_API_URL], access_token=login_response.access_token
         )
 
         # Mark admin as onboarded

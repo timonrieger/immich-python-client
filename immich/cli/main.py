@@ -231,7 +231,7 @@ def _callback(
                 typer.secho(f"- {field}: {value} (from {source})", fg="yellow")
         ctx.obj["client"] = AsyncClient(
             api_key=config.api_key,
-            bearer_token=config.access_token,
+            access_token=config.access_token,
             base_url=config.base_url,
         )
 

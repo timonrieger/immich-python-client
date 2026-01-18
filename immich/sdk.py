@@ -52,16 +52,14 @@ def _normalize_base_url(base_url: str) -> str:
 def _build_configuration(
     *,
     api_key: Optional[str],
-    bearer_token: Optional[str],
+    access_token: Optional[str],
     base_url: str,
 ) -> Configuration:
     config = Configuration(host=_normalize_base_url(base_url))
     if api_key:
-        # Security scheme name is `api_key` (header: x-api-key)
         config.api_key["api_key"] = api_key
-    if bearer_token:
-        # JWT access token (Authorization: Bearer <token>)
-        config.access_token = bearer_token
+    if access_token:
+        config.access_token = access_token
     return config
 
 
@@ -290,7 +288,7 @@ class AsyncClient:
         self,
         *,
         api_key: Optional[str] = None,
-        bearer_token: Optional[str] = None,
+        access_token: Optional[str] = None,
         base_url: str,
         http_client: Optional[ClientSession] = None,
     ) -> None:
@@ -298,7 +296,7 @@ class AsyncClient:
         self._injected_http_client = http_client
         self.config = _build_configuration(
             api_key=api_key,
-            bearer_token=bearer_token,
+            access_token=access_token,
             base_url=base_url,
         )
         self.base_client = ApiClient(configuration=self.config)

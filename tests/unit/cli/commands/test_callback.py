@@ -38,7 +38,7 @@ class TestCallbackConfigResolution:
         call_kwargs = mock_api_calls.call_args.kwargs
         assert call_kwargs["base_url"] == "https://cli.immich.app/api"
         assert call_kwargs["api_key"] == "cli-key"
-        assert call_kwargs["bearer_token"] == "cli-token"
+        assert call_kwargs["access_token"] == "cli-token"
 
     def test_profile_values_used_when_cli_options_missing(
         self, runner: CliRunner, mock_config_path: Path, mock_api_calls: MagicMock
@@ -62,7 +62,7 @@ class TestCallbackConfigResolution:
         call_kwargs = mock_api_calls.call_args.kwargs
         assert call_kwargs["base_url"] == "https://profile.immich.app/api"
         assert call_kwargs["api_key"] == "profile-key"
-        assert call_kwargs["bearer_token"] == "profile-token"
+        assert call_kwargs["access_token"] == "profile-token"
 
     def test_partial_cli_options_merge_with_profile(
         self, runner: CliRunner, mock_config_path: Path, mock_api_calls: MagicMock
@@ -91,7 +91,7 @@ class TestCallbackConfigResolution:
         call_kwargs = mock_api_calls.call_args.kwargs
         assert call_kwargs["base_url"] == "https://cli.immich.app/api"
         assert call_kwargs["api_key"] == "profile-key"
-        assert call_kwargs["bearer_token"] == "profile-token"
+        assert call_kwargs["access_token"] == "profile-token"
 
     def test_custom_profile_resolution(
         self, runner: CliRunner, mock_config_path: Path, mock_api_calls: MagicMock
@@ -123,4 +123,4 @@ class TestCallbackConfigResolution:
         call_kwargs = mock_api_calls.call_args.kwargs
         assert call_kwargs["base_url"] == "https://prod.immich.app/api"
         assert call_kwargs["api_key"] == "prod-key"
-        assert call_kwargs["bearer_token"] is None
+        assert call_kwargs["access_token"] is None
