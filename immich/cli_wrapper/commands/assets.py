@@ -183,15 +183,15 @@ def upload(
         "--album-name",
         help="Album name to create or use (if not provided, no album operations are performed)",
     ),
-    delete_after_upload: bool = typer.Option(
+    delete_uploads: bool = typer.Option(
         False,
-        "--delete-after-upload/--keep-after-upload",
+        "--delete-uploads/--keep-uploads",
         help="Delete successfully uploaded files locally",
     ),
     delete_duplicates: bool = typer.Option(
         False,
         "--delete-duplicates/--keep-duplicates",
-        help="Delete duplicate files locally",
+        help="Delete rejected duplicate files locally",
     ),
     dry_run: bool = typer.Option(
         False,
@@ -220,8 +220,8 @@ def upload(
         kwargs["include_sidecars"] = include_sidecars
     if album_name is not None:
         kwargs["album_name"] = album_name
-    if delete_after_upload is not None:
-        kwargs["delete_after_upload"] = delete_after_upload
+    if delete_uploads is not None:
+        kwargs["delete_uploads"] = delete_uploads
     if delete_duplicates is not None:
         kwargs["delete_duplicates"] = delete_duplicates
     if dry_run is not None:

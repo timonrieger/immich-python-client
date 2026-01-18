@@ -465,7 +465,7 @@ async def update_albums(
 async def delete_files(
     uploaded: list[UploadedEntry],
     rejected: list[RejectedEntry],
-    delete_after_upload: bool = False,
+    delete_uploads: bool = False,
     delete_duplicates: bool = False,
     include_sidecars: bool = True,
     dry_run: bool = False,
@@ -474,7 +474,7 @@ async def delete_files(
 
     :param uploaded: List of successfully uploaded entries.
     :param rejected: List of rejected entries (e.g., duplicates).
-    :param delete_after_upload: Whether to delete files that were successfully uploaded.
+    :param delete_uploads: Whether to delete files that were successfully uploaded.
     :param delete_duplicates: Whether to delete files that were rejected as duplicates.
     :param include_sidecars: Whether to also delete sidecar files (.xmp).
     :param dry_run: If True, log deletions without actually deleting files.
@@ -482,7 +482,7 @@ async def delete_files(
     :return: None
     """
     to_delete: list[Path] = []
-    if delete_after_upload:
+    if delete_uploads:
         for _ in uploaded:
             to_delete.append(_.filepath)
 

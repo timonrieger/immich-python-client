@@ -175,7 +175,7 @@ class AssetsApiWrapped(AssetsApi):
         show_progress: bool = True,
         include_sidecars: bool = True,
         album_name: Optional[str] = None,
-        delete_after_upload: bool = False,
+        delete_uploads: bool = False,
         delete_duplicates: bool = False,
         dry_run: bool = False,
     ) -> UploadResult:
@@ -190,7 +190,7 @@ class AssetsApiWrapped(AssetsApi):
         :param show_progress: Whether to show progress bars.
         :param include_sidecars: Whether to automatically detect and upload XMP sidecar files.
         :param album_name: Album name to create or use. If None, no album operations are performed.
-        :param delete_after_upload: Whether to delete successfully uploaded files locally.
+        :param delete_uploads: Whether to delete successfully uploaded files locally.
         :param delete_duplicates: Whether to delete duplicate files locally.
         :param dry_run: If True, simulate uploads without actually uploading.
 
@@ -241,7 +241,7 @@ class AssetsApiWrapped(AssetsApi):
         await delete_files(
             uploaded=uploaded,
             rejected=rejected,
-            delete_after_upload=delete_after_upload,
+            delete_uploads=delete_uploads,
             delete_duplicates=delete_duplicates,
             include_sidecars=include_sidecars,
             dry_run=dry_run,
