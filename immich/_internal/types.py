@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 _MaybeBaseModel = Optional[Union[BaseModel, list[BaseModel]]]
 _FormatMode = Literal["pretty", "json"]
+_LogLevel = Literal["info", "warning", "error", "debug"]
 
 
 class ClientConfig(BaseModel):

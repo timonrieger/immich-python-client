@@ -4,7 +4,7 @@ import rtoml
 import typer
 
 from immich._internal.consts import CONFIG_DIR, CONFIG_FILE, SECRET_KEYS
-from immich._internal.types import ClientConfig
+from immich._internal.types import ClientConfig, _LogLevel
 
 
 def set_path(data: dict[str, Any], path: str, value: Any) -> dict[str, Any]:
@@ -151,3 +151,27 @@ def mask(obj: Any, start: int = 3, end: int = 3, key: Optional[str] = None) -> A
         if key is None or _is_secret_key(key):
             return _redact_secret(obj, start, end)
     return obj
+
+
+def print_(
+    message: str,
+    *,
+    level: _LogLevel = "info",
+    ctx: Optional[typer.Context] = None,
+    **kwargs: Any,
+) -> None:
+    """
+    Print a message in verbose mode.
+    :param message: The message to print
+    :param level: The level of the message
+    :param ctx: The context to use
+    :param kwargs: Additional keyword arguments to pass to typer.secho
+    """
+    if ctx is not None and ctx.obj["verbose"] and level == "debug":
+        typer.secho(message, fg="blue", **kwargs)
+    elif level == "info":
+        typer.secho(message, **kwargs)
+    elif level == "warning":
+        typer.secho(message, fg="yellow", **kwargs)
+    elif level == "error":
+        typer.secho(message, fg="red", **kwargs)

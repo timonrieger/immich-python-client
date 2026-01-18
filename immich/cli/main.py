@@ -14,7 +14,7 @@ from immich._internal.consts import (
     IMMICH_API_URL,
     IMMICH_FORMAT,
 )
-from immich._internal.cli.utils import resolve_client_config, mask
+from immich._internal.cli.utils import resolve_client_config, mask, print_
 
 try:
     import typer
@@ -147,7 +147,7 @@ app.add_typer(workflows_commands.app, name="workflows", rich_help_panel="API com
 
 def version_callback(value: bool) -> None:
     if value:
-        print(f"immich CLI (unofficial) {version('immich')}")
+        print_(f"immich CLI (unofficial) {version('immich')}", level="info")
         raise typer.Exit(0)
 
 
@@ -222,7 +222,7 @@ def _callback(
                 for k, v in ctx.params.items()
                 if k in ClientConfig.model_fields.keys() and v is not None
             }
-            typer.secho("Configuration used:", fg="yellow")
+            print_("Configuration used:", level="debug", ctx=ctx)
             for field in ClientConfig.model_fields.keys():
                 value = getattr(config, field)
                 if field in ("api_key", "access_token") and value:
@@ -230,7 +230,7 @@ def _callback(
                 elif value is None:
                     value = "None"
                 source = "cli/env" if field in cli_vars else f"profile '{profile}'"
-                typer.secho(f"- {field}: {value} (from {source})", fg="yellow")
+                print_(f"- {field}: {value} (from {source})", level="debug", ctx=ctx)
         ctx.obj["client"] = AsyncClient(
             api_key=config.api_key,
             access_token=config.access_token,
