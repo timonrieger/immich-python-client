@@ -480,7 +480,7 @@ async def test_download_asset_to_file(
     result = await asyncio.to_thread(
         runner.invoke,
         cli_app,
-        ["assets", "download-asset-to-file", asset_id, str(out_dir), "--hide-progress"],
+        ["assets", "download-asset-to-file", asset_id, str(out_dir)],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -520,7 +520,6 @@ async def test_play_asset_video_to_file(
             "play-asset-video-to-file",
             video_asset.id,
             str(out_dir),
-            "--hide-progress",
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
@@ -556,7 +555,6 @@ async def test_view_asset_to_file(
             str(out_dir),
             "--size",
             "thumbnail",
-            "--hide-progress",
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
@@ -590,8 +588,7 @@ async def test_upload(
             "upload",
             str(img1),
             str(img2),
-            "--check-duplicates",
-            "--hide-progress",
+            "--skip-duplicates",
             "--concurrency",
             "1",
         ],
