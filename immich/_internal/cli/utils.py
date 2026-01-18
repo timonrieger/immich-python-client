@@ -7,7 +7,7 @@ from immich._internal.consts import CONFIG_DIR, CONFIG_FILE, SECRET_KEYS
 from immich._internal.types import ClientConfig, _LogLevel
 
 
-def set_path(data: dict[str, Any], path: str, value: Any) -> dict[str, Any]:
+def set_path(data: dict[str, Any], path: str, value: Any) -> None:
     """
     Set a nested dictionary value using a path list.
 
@@ -66,7 +66,6 @@ def check_config() -> None:
     if not CONFIG_FILE.exists():
         typer.echo("Config file does not exist. Run 'immich config set' to create it.")
         raise typer.Exit(code=1)
-    return True
 
 
 def resolve_client_config(config: ClientConfig, profile: str) -> ClientConfig:

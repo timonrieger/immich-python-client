@@ -131,6 +131,7 @@ def python_type_from_schema(
     elif schema_type == "object":
         # Click can't map arbitrary objects; accept JSON as a string.
         return "str"
+    return "str"
 
 
 def resolve_schema_ref(spec: dict[str, Any], ref: str) -> dict[str, Any]:
@@ -240,6 +241,7 @@ def flatten_schema(
             )
 
         return results
+    return []
 
 
 def get_request_body_info(
@@ -441,7 +443,7 @@ def generate_command_function(
                         )
             if idx == len(param_data) - 1:
                 # Validate and create model
-                model_instance = to_snake_case(param.model_name)
+                model_instance = to_snake_case(param.model_name)  # type: ignore[invalid-argument-type]
                 lines.append(
                     f"    {model_instance} = {param.model_name}.model_validate(json_data)"
                 )

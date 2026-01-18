@@ -1,6 +1,7 @@
 import asyncio
 import json
 from collections.abc import Awaitable, Callable
+from uuid import UUID
 
 import pytest
 from typer.testing import CliRunner
@@ -24,7 +25,9 @@ def test_create_album(runner: CliRunner, user: UserResponseDto) -> None:
     """Test create-album command with description and validate response structure."""
     album_name = "Test Album with Description"
     description = "Test description"
-    album_users = [AlbumUserCreateDto(role=AlbumUserRole.EDITOR, userId=user.id)]
+    album_users = [
+        AlbumUserCreateDto(role=AlbumUserRole.EDITOR, userId=UUID(str(user.id)))
+    ]
     result = runner.invoke(
         cli_app,
         [
@@ -77,8 +80,10 @@ async def test_get_all_albums_with_shared_filter(
     album_factory: Callable[..., Awaitable[AlbumResponseDto]],
 ) -> None:
     """Test get-all-albums command with shared filter and validate response structure."""
-    album_users = [AlbumUserCreateDto(role=AlbumUserRole.VIEWER, userId=user.id)]
-    request = CreateAlbumDto(albumName="Test Album", albumUsers=album_users)
+    album_users = [
+        AlbumUserCreateDto(role=AlbumUserRole.VIEWER, userId=UUID(str(user.id)))
+    ]
+    request = CreateAlbumDto(albumName="Test Album", album_users=album_users)
     album = await album_factory(request.model_dump())
     result = await asyncio.to_thread(
         runner.invoke,
@@ -107,8 +112,10 @@ async def test_get_all_albums_non_shared_filter(
     album_factory: Callable[..., Awaitable[AlbumResponseDto]],
 ) -> None:
     """Test get-all-albums command with no shared filter and validate response structure."""
-    album_users = [AlbumUserCreateDto(role=AlbumUserRole.VIEWER, userId=user.id)]
-    request = CreateAlbumDto(albumName="Test Album", albumUsers=album_users)
+    album_users = [
+        AlbumUserCreateDto(role=AlbumUserRole.VIEWER, userId=UUID(str(user.id)))
+    ]
+    request = CreateAlbumDto(albumName="Test Album", album_users=album_users)
     album = await album_factory(request.model_dump())
     result = await asyncio.to_thread(
         runner.invoke,
@@ -282,7 +289,9 @@ def test_add_users_to_album(
 ) -> None:
     """Test add-users-to-album command and validate response structure."""
     album_id = album.id
-    album_users = [AlbumUserCreateDto(role=AlbumUserRole.VIEWER, userId=user.id)]
+    album_users = [
+        AlbumUserCreateDto(role=AlbumUserRole.VIEWER, userId=UUID(str(user.id)))
+    ]
     result = runner.invoke(
         cli_app,
         [
@@ -312,7 +321,9 @@ def test_remove_user_from_album(
 ) -> None:
     """Test remove-user-from-album command and validate response structure."""
     # First add the user to the album
-    album_users = [AlbumUserCreateDto(role=AlbumUserRole.VIEWER, userId=user.id)]
+    album_users = [
+        AlbumUserCreateDto(role=AlbumUserRole.VIEWER, userId=UUID(str(user.id)))
+    ]
     add_result = runner.invoke(
         cli_app,
         [
@@ -352,7 +363,9 @@ def test_update_album_user(
 ) -> None:
     """Test update-album-user command and validate response structure."""
     # First add the user to the album
-    album_users = [AlbumUserCreateDto(role=AlbumUserRole.VIEWER, userId=user.id)]
+    album_users = [
+        AlbumUserCreateDto(role=AlbumUserRole.VIEWER, userId=UUID(str(user.id)))
+    ]
     add_result = runner.invoke(
         cli_app,
         [

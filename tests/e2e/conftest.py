@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import AsyncGenerator, Awaitable, Callable, Optional
+from typing import AsyncGenerator, Awaitable, Callable, Generator, Optional
 from uuid import UUID, uuid4
 
 import pytest
@@ -113,7 +113,7 @@ async def client_with_access_token(env: dict[str, str]):
 @pytest.fixture
 def test_image_factory(
     tmp_path: Path, teardown: bool
-) -> Callable[[Optional[Path], Optional[str]], Path]:
+) -> Generator[Callable[[Optional[str]], Path], None, None]:
     """Factory fixture: yields a callable to create test images and auto-clean them up.
 
     Example:
@@ -134,7 +134,7 @@ def test_image_factory(
 @pytest.fixture
 def test_image(
     test_image_factory: Callable[[], Path],
-) -> AsyncGenerator[Path, None]:
+) -> Generator[Path, None, None]:
     """Create a minimal JPEG test image."""
     yield test_image_factory()
 
@@ -142,7 +142,7 @@ def test_image(
 @pytest.fixture
 def test_video_factory(
     tmp_path: Path, teardown: bool
-) -> Callable[[Optional[Path], Optional[str]], Path]:
+) -> Generator[Callable[[Optional[str]], Path], None, None]:
     """Factory fixture: yields a callable to create test videos and auto-clean them up.
 
     Example:
@@ -171,7 +171,7 @@ def test_video_factory(
 @pytest.fixture
 def test_video(
     test_video_factory: Callable[[], Path],
-) -> AsyncGenerator[Path, None]:
+) -> Generator[Path, None, None]:
     """Create a minimal MP4 test video."""
     yield test_video_factory()
 
@@ -382,7 +382,7 @@ async def get_asset_info_factory(
 
     async def _get_asset_info(asset_id: str) -> AssetResponseDto:
         try:
-            return await client_with_api_key.assets.get_asset_info(asset_id)
+            return await client_with_api_key.assets.get_asset_info(UUID(str(asset_id)))
         except Exception as e:
             pytest.skip(f"Get asset info failed:\n{e}")
 
@@ -408,7 +408,7 @@ async def pin_code_setup(
         except Exception:
             pass
         await client_with_api_key.authentication.setup_pin_code(
-            PinCodeSetupDto(pin_code=pin_code)
+            PinCodeSetupDto(pinCode=pin_code)
         )
         assert (
             await client_with_api_key.authentication.get_auth_status()
@@ -440,7 +440,7 @@ async def pin_code_change(
 
     try:
         await client_with_api_key.authentication.change_pin_code(
-            PinCodeChangeDto(new_pin_code=new_pin, password="password")
+            PinCodeChangeDto(newPinCode=new_pin, password="password")
         )
     except Exception as e:
         pytest.skip(f"PIN code change failed:\n{e}")

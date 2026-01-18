@@ -14,6 +14,7 @@ from rich.progress import (
     DownloadColumn,
     TransferSpeedColumn,
     TimeRemainingColumn,
+    TaskID,
 )
 
 
@@ -127,7 +128,7 @@ async def download_file(
     *,
     show_progress: bool = True,
     progress: Optional[Progress] = None,
-    task_id: Optional[int] = None,
+    task_id: Optional[TaskID] = None,
     resumeable: bool = True,
 ) -> Path:
     """

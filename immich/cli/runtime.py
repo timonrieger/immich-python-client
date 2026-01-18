@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import json
 import sys
-from typing import Any, Awaitable, Callable, Union
+from typing import Any, Awaitable, Callable
 
 from pydantic import BaseModel
 from typer import Context
@@ -35,7 +35,7 @@ def set_nested(d: dict[str, Any], path: list[str], value: Any) -> None:
 def print_response(data: _MaybeBaseModel, ctx: Context) -> None:
     """Print response data."""
 
-    def convert_to_dict(obj: _MaybeBaseModel) -> Union[list[dict], dict, None]:
+    def convert_to_dict(obj: _MaybeBaseModel) -> Any:
         """Recursively convert Pydantic models to dicts."""
         if isinstance(obj, list):
             return [convert_to_dict(item) for item in obj]
@@ -55,7 +55,7 @@ def handle_api_error(e: ApiException) -> None:
     sys.exit(1 if e.status is None else e.status // 100)
 
 
-async def run_async(coro: Callable[..., Awaitable[Any]]) -> Any:
+async def run_async(coro: Awaitable[Any]) -> Any:
     """Run async coroutine from sync context."""
     return await coro
 
@@ -67,7 +67,7 @@ def run_command(
     **kwargs: Any,
 ) -> Any:
     """Run a client API method and return result."""
-    method = getattr(api_group, method_name, None)
+    method: Callable[..., Awaitable[Any]] = getattr(api_group, method_name)
 
     async def _call_and_close() -> Any:
         try:
