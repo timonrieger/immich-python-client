@@ -18,7 +18,6 @@ from immich.client import (
     AssetStatsResponseDto,
     CheckExistingAssetsResponseDto,
 )
-from immich.client.models.asset_metadata_key import AssetMetadataKey
 
 
 @pytest.mark.e2e
@@ -100,7 +99,7 @@ def test_get_asset_metadata_by_key(runner: CliRunner, asset: AssetResponseDto) -
             "assets",
             "get-asset-metadata-by-key",
             asset_id,
-            AssetMetadataKey.MOBILE_MINUS_APP.value,
+            "mobile-app",
         ],
     )
     # This might fail if metadata doesn't exist, which is acceptable
@@ -308,9 +307,7 @@ def test_update_asset_metadata(runner: CliRunner, asset: AssetResponseDto) -> No
     """Test update-asset-metadata command and validate response structure."""
     asset_id = asset.id
     metadata_items = [
-        AssetMetadataUpsertItemDto(
-            key=AssetMetadataKey.MOBILE_MINUS_APP.value, value={"test": "data"}
-        )
+        AssetMetadataUpsertItemDto(key="mobile-app", value={"test": "data"})
     ]
     result = runner.invoke(
         cli_app,
@@ -337,9 +334,7 @@ def test_delete_asset_metadata(runner: CliRunner, asset: AssetResponseDto) -> No
     """Test delete-asset-metadata command and validate response structure."""
     asset_id = asset.id
     metadata_items = [
-        AssetMetadataUpsertItemDto(
-            key=AssetMetadataKey.MOBILE_MINUS_APP.value, value={"test": "data"}
-        )
+        AssetMetadataUpsertItemDto(key="mobile-app", value={"test": "data"})
     ]
     # First add metadata
     add_result = runner.invoke(
@@ -365,7 +360,7 @@ def test_delete_asset_metadata(runner: CliRunner, asset: AssetResponseDto) -> No
             "assets",
             "delete-asset-metadata",
             asset_id,
-            AssetMetadataKey.MOBILE_MINUS_APP.value,
+            "mobile-app",
         ],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
