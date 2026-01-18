@@ -18,16 +18,17 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing import Any, ClassVar, Dict, List
+from uuid import UUID
 from typing import Optional, Set
 from typing_extensions import Self
 
 
-class SyncAssetMetadataV1(BaseModel):
+class AssetMetadataBulkUpsertItemDto(BaseModel):
     """
-    SyncAssetMetadataV1
+    AssetMetadataBulkUpsertItemDto
     """  # noqa: E501
 
-    asset_id: StrictStr = Field(alias="assetId")
+    asset_id: UUID = Field(alias="assetId")
     key: StrictStr
     value: Dict[str, Any]
     __properties: ClassVar[List[str]] = ["assetId", "key", "value"]
@@ -49,7 +50,7 @@ class SyncAssetMetadataV1(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of SyncAssetMetadataV1 from a JSON string"""
+        """Create an instance of AssetMetadataBulkUpsertItemDto from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -73,7 +74,7 @@ class SyncAssetMetadataV1(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of SyncAssetMetadataV1 from a dict"""
+        """Create an instance of AssetMetadataBulkUpsertItemDto from a dict"""
         if obj is None:
             return None
 

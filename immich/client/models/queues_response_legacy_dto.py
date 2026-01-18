@@ -31,6 +31,7 @@ class QueuesResponseLegacyDto(BaseModel):
     background_task: QueueResponseLegacyDto = Field(alias="backgroundTask")
     backup_database: QueueResponseLegacyDto = Field(alias="backupDatabase")
     duplicate_detection: QueueResponseLegacyDto = Field(alias="duplicateDetection")
+    editor: QueueResponseLegacyDto
     face_detection: QueueResponseLegacyDto = Field(alias="faceDetection")
     facial_recognition: QueueResponseLegacyDto = Field(alias="facialRecognition")
     library: QueueResponseLegacyDto
@@ -51,6 +52,7 @@ class QueuesResponseLegacyDto(BaseModel):
         "backgroundTask",
         "backupDatabase",
         "duplicateDetection",
+        "editor",
         "faceDetection",
         "facialRecognition",
         "library",
@@ -113,6 +115,9 @@ class QueuesResponseLegacyDto(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of duplicate_detection
         if self.duplicate_detection:
             _dict["duplicateDetection"] = self.duplicate_detection.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of editor
+        if self.editor:
+            _dict["editor"] = self.editor.to_dict()
         # override the default output from pydantic by calling `to_dict()` of face_detection
         if self.face_detection:
             _dict["faceDetection"] = self.face_detection.to_dict()
@@ -184,6 +189,9 @@ class QueuesResponseLegacyDto(BaseModel):
                     obj["duplicateDetection"]
                 )
                 if obj.get("duplicateDetection") is not None
+                else None,
+                "editor": QueueResponseLegacyDto.from_dict(obj["editor"])
+                if obj.get("editor") is not None
                 else None,
                 "faceDetection": QueueResponseLegacyDto.from_dict(obj["faceDetection"])
                 if obj.get("faceDetection") is not None

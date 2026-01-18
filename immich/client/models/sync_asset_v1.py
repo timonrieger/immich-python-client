@@ -17,7 +17,7 @@ import re  # noqa: F401
 import json
 
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from immich.client.models.asset_type_enum import AssetTypeEnum
 from immich.client.models.asset_visibility import AssetVisibility
@@ -33,8 +33,10 @@ class SyncAssetV1(BaseModel):
     checksum: StrictStr
     deleted_at: Optional[datetime] = Field(alias="deletedAt")
     duration: Optional[StrictStr]
+    edit_count: StrictInt = Field(alias="editCount")
     file_created_at: Optional[datetime] = Field(alias="fileCreatedAt")
     file_modified_at: Optional[datetime] = Field(alias="fileModifiedAt")
+    height: Optional[StrictInt]
     id: StrictStr
     is_favorite: StrictBool = Field(alias="isFavorite")
     library_id: Optional[StrictStr] = Field(alias="libraryId")
@@ -46,12 +48,15 @@ class SyncAssetV1(BaseModel):
     thumbhash: Optional[StrictStr]
     type: AssetTypeEnum
     visibility: AssetVisibility
+    width: Optional[StrictInt]
     __properties: ClassVar[List[str]] = [
         "checksum",
         "deletedAt",
         "duration",
+        "editCount",
         "fileCreatedAt",
         "fileModifiedAt",
+        "height",
         "id",
         "isFavorite",
         "libraryId",
@@ -63,6 +68,7 @@ class SyncAssetV1(BaseModel):
         "thumbhash",
         "type",
         "visibility",
+        "width",
     ]
 
     model_config = ConfigDict(
@@ -125,6 +131,11 @@ class SyncAssetV1(BaseModel):
         ):
             _dict["fileModifiedAt"] = None
 
+        # set to None if height (nullable) is None
+        # and model_fields_set contains the field
+        if self.height is None and "height" in self.model_fields_set:
+            _dict["height"] = None
+
         # set to None if library_id (nullable) is None
         # and model_fields_set contains the field
         if self.library_id is None and "library_id" in self.model_fields_set:
@@ -153,6 +164,11 @@ class SyncAssetV1(BaseModel):
         if self.thumbhash is None and "thumbhash" in self.model_fields_set:
             _dict["thumbhash"] = None
 
+        # set to None if width (nullable) is None
+        # and model_fields_set contains the field
+        if self.width is None and "width" in self.model_fields_set:
+            _dict["width"] = None
+
         return _dict
 
     @classmethod
@@ -169,8 +185,10 @@ class SyncAssetV1(BaseModel):
                 "checksum": obj.get("checksum"),
                 "deletedAt": obj.get("deletedAt"),
                 "duration": obj.get("duration"),
+                "editCount": obj.get("editCount"),
                 "fileCreatedAt": obj.get("fileCreatedAt"),
                 "fileModifiedAt": obj.get("fileModifiedAt"),
+                "height": obj.get("height"),
                 "id": obj.get("id"),
                 "isFavorite": obj.get("isFavorite"),
                 "libraryId": obj.get("libraryId"),
@@ -182,6 +200,7 @@ class SyncAssetV1(BaseModel):
                 "thumbhash": obj.get("thumbhash"),
                 "type": obj.get("type"),
                 "visibility": obj.get("visibility"),
+                "width": obj.get("width"),
             }
         )
         return _obj

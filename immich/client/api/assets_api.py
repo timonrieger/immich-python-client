@@ -26,10 +26,20 @@ from immich.client.models.asset_bulk_upload_check_response_dto import (
     AssetBulkUploadCheckResponseDto,
 )
 from immich.client.models.asset_copy_dto import AssetCopyDto
+from immich.client.models.asset_edit_action_list_dto import AssetEditActionListDto
+from immich.client.models.asset_edits_dto import AssetEditsDto
 from immich.client.models.asset_jobs_dto import AssetJobsDto
 from immich.client.models.asset_media_response_dto import AssetMediaResponseDto
 from immich.client.models.asset_media_size import AssetMediaSize
-from immich.client.models.asset_metadata_key import AssetMetadataKey
+from immich.client.models.asset_metadata_bulk_delete_dto import (
+    AssetMetadataBulkDeleteDto,
+)
+from immich.client.models.asset_metadata_bulk_response_dto import (
+    AssetMetadataBulkResponseDto,
+)
+from immich.client.models.asset_metadata_bulk_upsert_dto import (
+    AssetMetadataBulkUpsertDto,
+)
 from immich.client.models.asset_metadata_response_dto import AssetMetadataResponseDto
 from immich.client.models.asset_metadata_upsert_dto import AssetMetadataUpsertDto
 from immich.client.models.asset_metadata_upsert_item_dto import (
@@ -813,7 +823,7 @@ class AssetsApi:
     async def delete_asset_metadata(
         self,
         id: UUID,
-        key: AssetMetadataKey,
+        key: StrictStr,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -833,7 +843,7 @@ class AssetsApi:
         :param id: (required)
         :type id: UUID
         :param key: (required)
-        :type key: AssetMetadataKey
+        :type key: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -881,7 +891,7 @@ class AssetsApi:
     async def delete_asset_metadata_with_http_info(
         self,
         id: UUID,
-        key: AssetMetadataKey,
+        key: StrictStr,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -901,7 +911,7 @@ class AssetsApi:
         :param id: (required)
         :type id: UUID
         :param key: (required)
-        :type key: AssetMetadataKey
+        :type key: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -949,7 +959,7 @@ class AssetsApi:
     async def delete_asset_metadata_without_preload_content(
         self,
         id: UUID,
-        key: AssetMetadataKey,
+        key: StrictStr,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -969,7 +979,7 @@ class AssetsApi:
         :param id: (required)
         :type id: UUID
         :param key: (required)
-        :type key: AssetMetadataKey
+        :type key: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1035,7 +1045,7 @@ class AssetsApi:
         if id is not None:
             _path_params["id"] = id
         if key is not None:
-            _path_params["key"] = key.value
+            _path_params["key"] = key
         # process the query parameters
         # process the header parameters
         # process the form parameters
@@ -1305,9 +1315,255 @@ class AssetsApi:
         )
 
     @validate_call
+    async def delete_bulk_asset_metadata(
+        self,
+        asset_metadata_bulk_delete_dto: AssetMetadataBulkDeleteDto,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]
+            ],
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> None:
+        """Delete asset metadata
+
+        Delete metadata key-value pairs for multiple assets.
+
+        :param asset_metadata_bulk_delete_dto: (required)
+        :type asset_metadata_bulk_delete_dto: AssetMetadataBulkDeleteDto
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """  # noqa: E501
+
+        _param = self._delete_bulk_asset_metadata_serialize(
+            asset_metadata_bulk_delete_dto=asset_metadata_bulk_delete_dto,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index,
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            "204": None,
+        }
+        response_data = await self.api_client.call_api(
+            *_param, _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+    @validate_call
+    async def delete_bulk_asset_metadata_with_http_info(
+        self,
+        asset_metadata_bulk_delete_dto: AssetMetadataBulkDeleteDto,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]
+            ],
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[None]:
+        """Delete asset metadata
+
+        Delete metadata key-value pairs for multiple assets.
+
+        :param asset_metadata_bulk_delete_dto: (required)
+        :type asset_metadata_bulk_delete_dto: AssetMetadataBulkDeleteDto
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """  # noqa: E501
+
+        _param = self._delete_bulk_asset_metadata_serialize(
+            asset_metadata_bulk_delete_dto=asset_metadata_bulk_delete_dto,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index,
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            "204": None,
+        }
+        response_data = await self.api_client.call_api(
+            *_param, _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+    @validate_call
+    async def delete_bulk_asset_metadata_without_preload_content(
+        self,
+        asset_metadata_bulk_delete_dto: AssetMetadataBulkDeleteDto,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]
+            ],
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Delete asset metadata
+
+        Delete metadata key-value pairs for multiple assets.
+
+        :param asset_metadata_bulk_delete_dto: (required)
+        :type asset_metadata_bulk_delete_dto: AssetMetadataBulkDeleteDto
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """  # noqa: E501
+
+        _param = self._delete_bulk_asset_metadata_serialize(
+            asset_metadata_bulk_delete_dto=asset_metadata_bulk_delete_dto,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index,
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            "204": None,
+        }
+        response_data = await self.api_client.call_api(
+            *_param, _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+    def _delete_bulk_asset_metadata_serialize(
+        self,
+        asset_metadata_bulk_delete_dto,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+        _host = None
+
+        _collection_formats: Dict[str, str] = {}
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+        if asset_metadata_bulk_delete_dto is not None:
+            _body_params = asset_metadata_bulk_delete_dto
+
+        # set the HTTP header `Content-Type`
+        if _content_type:
+            _header_params["Content-Type"] = _content_type
+        else:
+            _default_content_type = self.api_client.select_header_content_type(
+                ["application/json"]
+            )
+            if _default_content_type is not None:
+                _header_params["Content-Type"] = _default_content_type
+
+        # authentication setting
+        _auth_settings: List[str] = ["cookie", "api_key", "bearer"]
+
+        return self.api_client.param_serialize(
+            method="DELETE",
+            resource_path="/assets/metadata",
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth,
+        )
+
+    @validate_call
     async def download_asset(
         self,
         id: UUID,
+        edited: Optional[StrictBool] = None,
         key: Optional[StrictStr] = None,
         slug: Optional[StrictStr] = None,
         _request_timeout: Union[
@@ -1328,6 +1584,8 @@ class AssetsApi:
 
         :param id: (required)
         :type id: UUID
+        :param edited:
+        :type edited: bool
         :param key:
         :type key: str
         :param slug:
@@ -1356,6 +1614,7 @@ class AssetsApi:
 
         _param = self._download_asset_serialize(
             id=id,
+            edited=edited,
             key=key,
             slug=slug,
             _request_auth=_request_auth,
@@ -1380,6 +1639,7 @@ class AssetsApi:
     async def download_asset_with_http_info(
         self,
         id: UUID,
+        edited: Optional[StrictBool] = None,
         key: Optional[StrictStr] = None,
         slug: Optional[StrictStr] = None,
         _request_timeout: Union[
@@ -1400,6 +1660,8 @@ class AssetsApi:
 
         :param id: (required)
         :type id: UUID
+        :param edited:
+        :type edited: bool
         :param key:
         :type key: str
         :param slug:
@@ -1428,6 +1690,7 @@ class AssetsApi:
 
         _param = self._download_asset_serialize(
             id=id,
+            edited=edited,
             key=key,
             slug=slug,
             _request_auth=_request_auth,
@@ -1452,6 +1715,7 @@ class AssetsApi:
     async def download_asset_without_preload_content(
         self,
         id: UUID,
+        edited: Optional[StrictBool] = None,
         key: Optional[StrictStr] = None,
         slug: Optional[StrictStr] = None,
         _request_timeout: Union[
@@ -1472,6 +1736,8 @@ class AssetsApi:
 
         :param id: (required)
         :type id: UUID
+        :param edited:
+        :type edited: bool
         :param key:
         :type key: str
         :param slug:
@@ -1500,6 +1766,7 @@ class AssetsApi:
 
         _param = self._download_asset_serialize(
             id=id,
+            edited=edited,
             key=key,
             slug=slug,
             _request_auth=_request_auth,
@@ -1519,6 +1786,7 @@ class AssetsApi:
     def _download_asset_serialize(
         self,
         id,
+        edited,
         key,
         slug,
         _request_auth,
@@ -1543,6 +1811,9 @@ class AssetsApi:
         if id is not None:
             _path_params["id"] = id
         # process the query parameters
+        if edited is not None:
+            _query_params.append(("edited", edited))
+
         if key is not None:
             _query_params.append(("key", key))
 
@@ -1565,6 +1836,272 @@ class AssetsApi:
         return self.api_client.param_serialize(
             method="GET",
             resource_path="/assets/{id}/original",
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth,
+        )
+
+    @validate_call
+    async def edit_asset(
+        self,
+        id: UUID,
+        asset_edit_action_list_dto: AssetEditActionListDto,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]
+            ],
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> AssetEditsDto:
+        """Apply edits to an existing asset
+
+        Apply a series of edit actions (crop, rotate, mirror) to the specified asset.
+
+        :param id: (required)
+        :type id: UUID
+        :param asset_edit_action_list_dto: (required)
+        :type asset_edit_action_list_dto: AssetEditActionListDto
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """  # noqa: E501
+
+        _param = self._edit_asset_serialize(
+            id=id,
+            asset_edit_action_list_dto=asset_edit_action_list_dto,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index,
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            "200": "AssetEditsDto",
+        }
+        response_data = await self.api_client.call_api(
+            *_param, _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+    @validate_call
+    async def edit_asset_with_http_info(
+        self,
+        id: UUID,
+        asset_edit_action_list_dto: AssetEditActionListDto,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]
+            ],
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[AssetEditsDto]:
+        """Apply edits to an existing asset
+
+        Apply a series of edit actions (crop, rotate, mirror) to the specified asset.
+
+        :param id: (required)
+        :type id: UUID
+        :param asset_edit_action_list_dto: (required)
+        :type asset_edit_action_list_dto: AssetEditActionListDto
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """  # noqa: E501
+
+        _param = self._edit_asset_serialize(
+            id=id,
+            asset_edit_action_list_dto=asset_edit_action_list_dto,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index,
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            "200": "AssetEditsDto",
+        }
+        response_data = await self.api_client.call_api(
+            *_param, _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+    @validate_call
+    async def edit_asset_without_preload_content(
+        self,
+        id: UUID,
+        asset_edit_action_list_dto: AssetEditActionListDto,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]
+            ],
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Apply edits to an existing asset
+
+        Apply a series of edit actions (crop, rotate, mirror) to the specified asset.
+
+        :param id: (required)
+        :type id: UUID
+        :param asset_edit_action_list_dto: (required)
+        :type asset_edit_action_list_dto: AssetEditActionListDto
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """  # noqa: E501
+
+        _param = self._edit_asset_serialize(
+            id=id,
+            asset_edit_action_list_dto=asset_edit_action_list_dto,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index,
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            "200": "AssetEditsDto",
+        }
+        response_data = await self.api_client.call_api(
+            *_param, _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+    def _edit_asset_serialize(
+        self,
+        id,
+        asset_edit_action_list_dto,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+        _host = None
+
+        _collection_formats: Dict[str, str] = {}
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        if id is not None:
+            _path_params["id"] = id
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+        if asset_edit_action_list_dto is not None:
+            _body_params = asset_edit_action_list_dto
+
+        # set the HTTP header `Accept`
+        if "Accept" not in _header_params:
+            _header_params["Accept"] = self.api_client.select_header_accept(
+                ["application/json"]
+            )
+
+        # set the HTTP header `Content-Type`
+        if _content_type:
+            _header_params["Content-Type"] = _content_type
+        else:
+            _default_content_type = self.api_client.select_header_content_type(
+                ["application/json"]
+            )
+            if _default_content_type is not None:
+                _header_params["Content-Type"] = _default_content_type
+
+        # authentication setting
+        _auth_settings: List[str] = ["cookie", "api_key", "bearer"]
+
+        return self.api_client.param_serialize(
+            method="PUT",
+            resource_path="/assets/{id}/edits",
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -1815,6 +2352,247 @@ class AssetsApi:
         return self.api_client.param_serialize(
             method="GET",
             resource_path="/assets/device/{deviceId}",
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth,
+        )
+
+    @validate_call
+    async def get_asset_edits(
+        self,
+        id: UUID,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]
+            ],
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> AssetEditsDto:
+        """Retrieve edits for an existing asset
+
+        Retrieve a series of edit actions (crop, rotate, mirror) associated with the specified asset.
+
+        :param id: (required)
+        :type id: UUID
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """  # noqa: E501
+
+        _param = self._get_asset_edits_serialize(
+            id=id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index,
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            "200": "AssetEditsDto",
+        }
+        response_data = await self.api_client.call_api(
+            *_param, _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+    @validate_call
+    async def get_asset_edits_with_http_info(
+        self,
+        id: UUID,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]
+            ],
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[AssetEditsDto]:
+        """Retrieve edits for an existing asset
+
+        Retrieve a series of edit actions (crop, rotate, mirror) associated with the specified asset.
+
+        :param id: (required)
+        :type id: UUID
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """  # noqa: E501
+
+        _param = self._get_asset_edits_serialize(
+            id=id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index,
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            "200": "AssetEditsDto",
+        }
+        response_data = await self.api_client.call_api(
+            *_param, _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+    @validate_call
+    async def get_asset_edits_without_preload_content(
+        self,
+        id: UUID,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]
+            ],
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Retrieve edits for an existing asset
+
+        Retrieve a series of edit actions (crop, rotate, mirror) associated with the specified asset.
+
+        :param id: (required)
+        :type id: UUID
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """  # noqa: E501
+
+        _param = self._get_asset_edits_serialize(
+            id=id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index,
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            "200": "AssetEditsDto",
+        }
+        response_data = await self.api_client.call_api(
+            *_param, _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+    def _get_asset_edits_serialize(
+        self,
+        id,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+        _host = None
+
+        _collection_formats: Dict[str, str] = {}
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        if id is not None:
+            _path_params["id"] = id
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+
+        # set the HTTP header `Accept`
+        if "Accept" not in _header_params:
+            _header_params["Accept"] = self.api_client.select_header_accept(
+                ["application/json"]
+            )
+
+        # authentication setting
+        _auth_settings: List[str] = ["cookie", "api_key", "bearer"]
+
+        return self.api_client.param_serialize(
+            method="GET",
+            resource_path="/assets/{id}/edits",
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -2345,7 +3123,7 @@ class AssetsApi:
     async def get_asset_metadata_by_key(
         self,
         id: UUID,
-        key: AssetMetadataKey,
+        key: StrictStr,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2365,7 +3143,7 @@ class AssetsApi:
         :param id: (required)
         :type id: UUID
         :param key: (required)
-        :type key: AssetMetadataKey
+        :type key: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2413,7 +3191,7 @@ class AssetsApi:
     async def get_asset_metadata_by_key_with_http_info(
         self,
         id: UUID,
-        key: AssetMetadataKey,
+        key: StrictStr,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2433,7 +3211,7 @@ class AssetsApi:
         :param id: (required)
         :type id: UUID
         :param key: (required)
-        :type key: AssetMetadataKey
+        :type key: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2481,7 +3259,7 @@ class AssetsApi:
     async def get_asset_metadata_by_key_without_preload_content(
         self,
         id: UUID,
-        key: AssetMetadataKey,
+        key: StrictStr,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2501,7 +3279,7 @@ class AssetsApi:
         :param id: (required)
         :type id: UUID
         :param key: (required)
-        :type key: AssetMetadataKey
+        :type key: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2567,7 +3345,7 @@ class AssetsApi:
         if id is not None:
             _path_params["id"] = id
         if key is not None:
-            _path_params["key"] = key.value
+            _path_params["key"] = key
         # process the query parameters
         # process the header parameters
         # process the form parameters
@@ -3633,6 +4411,241 @@ class AssetsApi:
         return self.api_client.param_serialize(
             method="GET",
             resource_path="/assets/{id}/video/playback",
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth,
+        )
+
+    @validate_call
+    async def remove_asset_edits(
+        self,
+        id: UUID,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]
+            ],
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> None:
+        """Remove edits from an existing asset
+
+        Removes all edit actions (crop, rotate, mirror) associated with the specified asset.
+
+        :param id: (required)
+        :type id: UUID
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """  # noqa: E501
+
+        _param = self._remove_asset_edits_serialize(
+            id=id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index,
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            "204": None,
+        }
+        response_data = await self.api_client.call_api(
+            *_param, _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+    @validate_call
+    async def remove_asset_edits_with_http_info(
+        self,
+        id: UUID,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]
+            ],
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[None]:
+        """Remove edits from an existing asset
+
+        Removes all edit actions (crop, rotate, mirror) associated with the specified asset.
+
+        :param id: (required)
+        :type id: UUID
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """  # noqa: E501
+
+        _param = self._remove_asset_edits_serialize(
+            id=id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index,
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            "204": None,
+        }
+        response_data = await self.api_client.call_api(
+            *_param, _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+    @validate_call
+    async def remove_asset_edits_without_preload_content(
+        self,
+        id: UUID,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]
+            ],
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Remove edits from an existing asset
+
+        Removes all edit actions (crop, rotate, mirror) associated with the specified asset.
+
+        :param id: (required)
+        :type id: UUID
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """  # noqa: E501
+
+        _param = self._remove_asset_edits_serialize(
+            id=id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index,
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            "204": None,
+        }
+        response_data = await self.api_client.call_api(
+            *_param, _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+    def _remove_asset_edits_serialize(
+        self,
+        id,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+        _host = None
+
+        _collection_formats: Dict[str, str] = {}
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        if id is not None:
+            _path_params["id"] = id
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+
+        # authentication setting
+        _auth_settings: List[str] = ["cookie", "api_key", "bearer"]
+
+        return self.api_client.param_serialize(
+            method="DELETE",
+            resource_path="/assets/{id}/edits",
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -5059,6 +6072,257 @@ class AssetsApi:
         )
 
     @validate_call
+    async def update_bulk_asset_metadata(
+        self,
+        asset_metadata_bulk_upsert_dto: AssetMetadataBulkUpsertDto,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]
+            ],
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> List[AssetMetadataBulkResponseDto]:
+        """Upsert asset metadata
+
+        Upsert metadata key-value pairs for multiple assets.
+
+        :param asset_metadata_bulk_upsert_dto: (required)
+        :type asset_metadata_bulk_upsert_dto: AssetMetadataBulkUpsertDto
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """  # noqa: E501
+
+        _param = self._update_bulk_asset_metadata_serialize(
+            asset_metadata_bulk_upsert_dto=asset_metadata_bulk_upsert_dto,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index,
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            "200": "List[AssetMetadataBulkResponseDto]",
+        }
+        response_data = await self.api_client.call_api(
+            *_param, _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+    @validate_call
+    async def update_bulk_asset_metadata_with_http_info(
+        self,
+        asset_metadata_bulk_upsert_dto: AssetMetadataBulkUpsertDto,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]
+            ],
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[List[AssetMetadataBulkResponseDto]]:
+        """Upsert asset metadata
+
+        Upsert metadata key-value pairs for multiple assets.
+
+        :param asset_metadata_bulk_upsert_dto: (required)
+        :type asset_metadata_bulk_upsert_dto: AssetMetadataBulkUpsertDto
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """  # noqa: E501
+
+        _param = self._update_bulk_asset_metadata_serialize(
+            asset_metadata_bulk_upsert_dto=asset_metadata_bulk_upsert_dto,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index,
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            "200": "List[AssetMetadataBulkResponseDto]",
+        }
+        response_data = await self.api_client.call_api(
+            *_param, _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+    @validate_call
+    async def update_bulk_asset_metadata_without_preload_content(
+        self,
+        asset_metadata_bulk_upsert_dto: AssetMetadataBulkUpsertDto,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]
+            ],
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Upsert asset metadata
+
+        Upsert metadata key-value pairs for multiple assets.
+
+        :param asset_metadata_bulk_upsert_dto: (required)
+        :type asset_metadata_bulk_upsert_dto: AssetMetadataBulkUpsertDto
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """  # noqa: E501
+
+        _param = self._update_bulk_asset_metadata_serialize(
+            asset_metadata_bulk_upsert_dto=asset_metadata_bulk_upsert_dto,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index,
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            "200": "List[AssetMetadataBulkResponseDto]",
+        }
+        response_data = await self.api_client.call_api(
+            *_param, _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+    def _update_bulk_asset_metadata_serialize(
+        self,
+        asset_metadata_bulk_upsert_dto,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+        _host = None
+
+        _collection_formats: Dict[str, str] = {}
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+        if asset_metadata_bulk_upsert_dto is not None:
+            _body_params = asset_metadata_bulk_upsert_dto
+
+        # set the HTTP header `Accept`
+        if "Accept" not in _header_params:
+            _header_params["Accept"] = self.api_client.select_header_accept(
+                ["application/json"]
+            )
+
+        # set the HTTP header `Content-Type`
+        if _content_type:
+            _header_params["Content-Type"] = _content_type
+        else:
+            _default_content_type = self.api_client.select_header_content_type(
+                ["application/json"]
+            )
+            if _default_content_type is not None:
+                _header_params["Content-Type"] = _default_content_type
+
+        # authentication setting
+        _auth_settings: List[str] = ["cookie", "api_key", "bearer"]
+
+        return self.api_client.param_serialize(
+            method="PUT",
+            resource_path="/assets/metadata",
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth,
+        )
+
+    @validate_call
     async def upload_asset(
         self,
         asset_data: Union[StrictBytes, StrictStr, Tuple[StrictStr, StrictBytes]],
@@ -5066,7 +6330,6 @@ class AssetsApi:
         device_id: StrictStr,
         file_created_at: datetime,
         file_modified_at: datetime,
-        metadata: List[AssetMetadataUpsertItemDto],
         key: Optional[StrictStr] = None,
         slug: Optional[StrictStr] = None,
         x_immich_checksum: Annotated[
@@ -5079,6 +6342,7 @@ class AssetsApi:
         filename: Optional[StrictStr] = None,
         is_favorite: Optional[StrictBool] = None,
         live_photo_video_id: Optional[UUID] = None,
+        metadata: Optional[List[AssetMetadataUpsertItemDto]] = None,
         sidecar_data: Optional[
             Union[StrictBytes, StrictStr, Tuple[StrictStr, StrictBytes]]
         ] = None,
@@ -5109,8 +6373,6 @@ class AssetsApi:
         :type file_created_at: datetime
         :param file_modified_at: (required)
         :type file_modified_at: datetime
-        :param metadata: (required)
-        :type metadata: List[AssetMetadataUpsertItemDto]
         :param key:
         :type key: str
         :param slug:
@@ -5125,6 +6387,8 @@ class AssetsApi:
         :type is_favorite: bool
         :param live_photo_video_id:
         :type live_photo_video_id: UUID
+        :param metadata:
+        :type metadata: List[AssetMetadataUpsertItemDto]
         :param sidecar_data:
         :type sidecar_data: bytearray
         :param visibility:
@@ -5157,7 +6421,6 @@ class AssetsApi:
             device_id=device_id,
             file_created_at=file_created_at,
             file_modified_at=file_modified_at,
-            metadata=metadata,
             key=key,
             slug=slug,
             x_immich_checksum=x_immich_checksum,
@@ -5165,6 +6428,7 @@ class AssetsApi:
             filename=filename,
             is_favorite=is_favorite,
             live_photo_video_id=live_photo_video_id,
+            metadata=metadata,
             sidecar_data=sidecar_data,
             visibility=visibility,
             _request_auth=_request_auth,
@@ -5174,6 +6438,7 @@ class AssetsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
+            "200": "AssetMediaResponseDto",
             "201": "AssetMediaResponseDto",
         }
         response_data = await self.api_client.call_api(
@@ -5193,7 +6458,6 @@ class AssetsApi:
         device_id: StrictStr,
         file_created_at: datetime,
         file_modified_at: datetime,
-        metadata: List[AssetMetadataUpsertItemDto],
         key: Optional[StrictStr] = None,
         slug: Optional[StrictStr] = None,
         x_immich_checksum: Annotated[
@@ -5206,6 +6470,7 @@ class AssetsApi:
         filename: Optional[StrictStr] = None,
         is_favorite: Optional[StrictBool] = None,
         live_photo_video_id: Optional[UUID] = None,
+        metadata: Optional[List[AssetMetadataUpsertItemDto]] = None,
         sidecar_data: Optional[
             Union[StrictBytes, StrictStr, Tuple[StrictStr, StrictBytes]]
         ] = None,
@@ -5236,8 +6501,6 @@ class AssetsApi:
         :type file_created_at: datetime
         :param file_modified_at: (required)
         :type file_modified_at: datetime
-        :param metadata: (required)
-        :type metadata: List[AssetMetadataUpsertItemDto]
         :param key:
         :type key: str
         :param slug:
@@ -5252,6 +6515,8 @@ class AssetsApi:
         :type is_favorite: bool
         :param live_photo_video_id:
         :type live_photo_video_id: UUID
+        :param metadata:
+        :type metadata: List[AssetMetadataUpsertItemDto]
         :param sidecar_data:
         :type sidecar_data: bytearray
         :param visibility:
@@ -5284,7 +6549,6 @@ class AssetsApi:
             device_id=device_id,
             file_created_at=file_created_at,
             file_modified_at=file_modified_at,
-            metadata=metadata,
             key=key,
             slug=slug,
             x_immich_checksum=x_immich_checksum,
@@ -5292,6 +6556,7 @@ class AssetsApi:
             filename=filename,
             is_favorite=is_favorite,
             live_photo_video_id=live_photo_video_id,
+            metadata=metadata,
             sidecar_data=sidecar_data,
             visibility=visibility,
             _request_auth=_request_auth,
@@ -5301,6 +6566,7 @@ class AssetsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
+            "200": "AssetMediaResponseDto",
             "201": "AssetMediaResponseDto",
         }
         response_data = await self.api_client.call_api(
@@ -5320,7 +6586,6 @@ class AssetsApi:
         device_id: StrictStr,
         file_created_at: datetime,
         file_modified_at: datetime,
-        metadata: List[AssetMetadataUpsertItemDto],
         key: Optional[StrictStr] = None,
         slug: Optional[StrictStr] = None,
         x_immich_checksum: Annotated[
@@ -5333,6 +6598,7 @@ class AssetsApi:
         filename: Optional[StrictStr] = None,
         is_favorite: Optional[StrictBool] = None,
         live_photo_video_id: Optional[UUID] = None,
+        metadata: Optional[List[AssetMetadataUpsertItemDto]] = None,
         sidecar_data: Optional[
             Union[StrictBytes, StrictStr, Tuple[StrictStr, StrictBytes]]
         ] = None,
@@ -5363,8 +6629,6 @@ class AssetsApi:
         :type file_created_at: datetime
         :param file_modified_at: (required)
         :type file_modified_at: datetime
-        :param metadata: (required)
-        :type metadata: List[AssetMetadataUpsertItemDto]
         :param key:
         :type key: str
         :param slug:
@@ -5379,6 +6643,8 @@ class AssetsApi:
         :type is_favorite: bool
         :param live_photo_video_id:
         :type live_photo_video_id: UUID
+        :param metadata:
+        :type metadata: List[AssetMetadataUpsertItemDto]
         :param sidecar_data:
         :type sidecar_data: bytearray
         :param visibility:
@@ -5411,7 +6677,6 @@ class AssetsApi:
             device_id=device_id,
             file_created_at=file_created_at,
             file_modified_at=file_modified_at,
-            metadata=metadata,
             key=key,
             slug=slug,
             x_immich_checksum=x_immich_checksum,
@@ -5419,6 +6684,7 @@ class AssetsApi:
             filename=filename,
             is_favorite=is_favorite,
             live_photo_video_id=live_photo_video_id,
+            metadata=metadata,
             sidecar_data=sidecar_data,
             visibility=visibility,
             _request_auth=_request_auth,
@@ -5428,6 +6694,7 @@ class AssetsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
+            "200": "AssetMediaResponseDto",
             "201": "AssetMediaResponseDto",
         }
         response_data = await self.api_client.call_api(
@@ -5442,7 +6709,6 @@ class AssetsApi:
         device_id,
         file_created_at,
         file_modified_at,
-        metadata,
         key,
         slug,
         x_immich_checksum,
@@ -5450,6 +6716,7 @@ class AssetsApi:
         filename,
         is_favorite,
         live_photo_video_id,
+        metadata,
         sidecar_data,
         visibility,
         _request_auth,
@@ -5548,6 +6815,7 @@ class AssetsApi:
     async def view_asset(
         self,
         id: UUID,
+        edited: Optional[StrictBool] = None,
         key: Optional[StrictStr] = None,
         size: Optional[AssetMediaSize] = None,
         slug: Optional[StrictStr] = None,
@@ -5569,6 +6837,8 @@ class AssetsApi:
 
         :param id: (required)
         :type id: UUID
+        :param edited:
+        :type edited: bool
         :param key:
         :type key: str
         :param size:
@@ -5599,6 +6869,7 @@ class AssetsApi:
 
         _param = self._view_asset_serialize(
             id=id,
+            edited=edited,
             key=key,
             size=size,
             slug=slug,
@@ -5624,6 +6895,7 @@ class AssetsApi:
     async def view_asset_with_http_info(
         self,
         id: UUID,
+        edited: Optional[StrictBool] = None,
         key: Optional[StrictStr] = None,
         size: Optional[AssetMediaSize] = None,
         slug: Optional[StrictStr] = None,
@@ -5645,6 +6917,8 @@ class AssetsApi:
 
         :param id: (required)
         :type id: UUID
+        :param edited:
+        :type edited: bool
         :param key:
         :type key: str
         :param size:
@@ -5675,6 +6949,7 @@ class AssetsApi:
 
         _param = self._view_asset_serialize(
             id=id,
+            edited=edited,
             key=key,
             size=size,
             slug=slug,
@@ -5700,6 +6975,7 @@ class AssetsApi:
     async def view_asset_without_preload_content(
         self,
         id: UUID,
+        edited: Optional[StrictBool] = None,
         key: Optional[StrictStr] = None,
         size: Optional[AssetMediaSize] = None,
         slug: Optional[StrictStr] = None,
@@ -5721,6 +6997,8 @@ class AssetsApi:
 
         :param id: (required)
         :type id: UUID
+        :param edited:
+        :type edited: bool
         :param key:
         :type key: str
         :param size:
@@ -5751,6 +7029,7 @@ class AssetsApi:
 
         _param = self._view_asset_serialize(
             id=id,
+            edited=edited,
             key=key,
             size=size,
             slug=slug,
@@ -5771,6 +7050,7 @@ class AssetsApi:
     def _view_asset_serialize(
         self,
         id,
+        edited,
         key,
         size,
         slug,
@@ -5796,6 +7076,9 @@ class AssetsApi:
         if id is not None:
             _path_params["id"] = id
         # process the query parameters
+        if edited is not None:
+            _query_params.append(("edited", edited))
+
         if key is not None:
             _query_params.append(("key", key))
 

@@ -114,7 +114,7 @@ def copy_asset(
 def delete_asset_metadata(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-    key: AssetMetadataKey = typer.Argument(..., help=""""""),
+    key: str = typer.Argument(..., help=""""""),
 ) -> None:
     """Delete asset metadata by key
 
@@ -154,10 +154,40 @@ def delete_assets(
     print_response(result, format_mode)
 
 
+@app.command("delete-bulk-asset-metadata", deprecated=False)
+def delete_bulk_asset_metadata(
+    ctx: typer.Context,
+    items: list[str] = typer.Option(..., "--items", help="""As a JSON string"""),
+) -> None:
+    """Delete asset metadata
+
+    Docs: https://api.immich.app/endpoints/assets/deleteBulkAssetMetadata
+    """
+    kwargs = {}
+    json_data = {}
+    value_items = [json.loads(i) for i in items]
+    set_nested(json_data, ["items"], value_items)
+    from immich.client.models.asset_metadata_bulk_delete_dto import (
+        AssetMetadataBulkDeleteDto,
+    )
+
+    asset_metadata_bulk_delete_dto = AssetMetadataBulkDeleteDto.model_validate(
+        json_data
+    )
+    kwargs["asset_metadata_bulk_delete_dto"] = asset_metadata_bulk_delete_dto
+    client = ctx.obj["client"]
+    result = run_command(client, client.assets, "delete_bulk_asset_metadata", **kwargs)
+    format_mode = ctx.obj.get("format")
+    print_response(result, format_mode)
+
+
 @app.command("download-asset", deprecated=False)
 def download_asset(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
+    edited: Literal["true", "false"] | None = typer.Option(
+        None, "--edited", help=""""""
+    ),
     key: str | None = typer.Option(None, "--key", help=""""""),
     slug: str | None = typer.Option(None, "--slug", help=""""""),
 ) -> None:
@@ -166,6 +196,8 @@ def download_asset(
     Docs: https://api.immich.app/endpoints/assets/downloadAsset
     """
     kwargs = {}
+    if edited is not None:
+        kwargs["edited"] = edited.lower() == "true"
     kwargs["id"] = id
     if key is not None:
         kwargs["key"] = key
@@ -173,6 +205,37 @@ def download_asset(
         kwargs["slug"] = slug
     client = ctx.obj["client"]
     result = run_command(client, client.assets, "download_asset", **kwargs)
+    format_mode = ctx.obj.get("format")
+    print_response(result, format_mode)
+
+
+@app.command("edit-asset", deprecated=False)
+def edit_asset(
+    ctx: typer.Context,
+    id: str = typer.Argument(..., help=""""""),
+    edits: list[str] = typer.Option(
+        ...,
+        "--edits",
+        help="""list of edits
+
+As a JSON string""",
+    ),
+) -> None:
+    """Apply edits to an existing asset
+
+    Docs: https://api.immich.app/endpoints/assets/editAsset
+    """
+    kwargs = {}
+    json_data = {}
+    kwargs["id"] = id
+    value_edits = [json.loads(i) for i in edits]
+    set_nested(json_data, ["edits"], value_edits)
+    from immich.client.models.asset_edit_action_list_dto import AssetEditActionListDto
+
+    asset_edit_action_list_dto = AssetEditActionListDto.model_validate(json_data)
+    kwargs["asset_edit_action_list_dto"] = asset_edit_action_list_dto
+    client = ctx.obj["client"]
+    result = run_command(client, client.assets, "edit_asset", **kwargs)
     format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
@@ -192,6 +255,23 @@ def get_all_user_assets_by_device_id(
     result = run_command(
         client, client.assets, "get_all_user_assets_by_device_id", **kwargs
     )
+    format_mode = ctx.obj.get("format")
+    print_response(result, format_mode)
+
+
+@app.command("get-asset-edits", deprecated=False)
+def get_asset_edits(
+    ctx: typer.Context,
+    id: str = typer.Argument(..., help=""""""),
+) -> None:
+    """Retrieve edits for an existing asset
+
+    Docs: https://api.immich.app/endpoints/assets/getAssetEdits
+    """
+    kwargs = {}
+    kwargs["id"] = id
+    client = ctx.obj["client"]
+    result = run_command(client, client.assets, "get_asset_edits", **kwargs)
     format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
@@ -240,7 +320,7 @@ def get_asset_metadata(
 def get_asset_metadata_by_key(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-    key: AssetMetadataKey = typer.Argument(..., help=""""""),
+    key: str = typer.Argument(..., help=""""""),
 ) -> None:
     """Retrieve asset metadata by key
 
@@ -339,6 +419,23 @@ def play_asset_video(
         kwargs["slug"] = slug
     client = ctx.obj["client"]
     result = run_command(client, client.assets, "play_asset_video", **kwargs)
+    format_mode = ctx.obj.get("format")
+    print_response(result, format_mode)
+
+
+@app.command("remove-asset-edits", deprecated=False)
+def remove_asset_edits(
+    ctx: typer.Context,
+    id: str = typer.Argument(..., help=""""""),
+) -> None:
+    """Remove edits from an existing asset
+
+    Docs: https://api.immich.app/endpoints/assets/removeAssetEdits
+    """
+    kwargs = {}
+    kwargs["id"] = id
+    client = ctx.obj["client"]
+    result = run_command(client, client.assets, "remove_asset_edits", **kwargs)
     format_mode = ctx.obj.get("format")
     print_response(result, format_mode)
 
@@ -546,6 +643,33 @@ def update_assets(
     print_response(result, format_mode)
 
 
+@app.command("update-bulk-asset-metadata", deprecated=False)
+def update_bulk_asset_metadata(
+    ctx: typer.Context,
+    items: list[str] = typer.Option(..., "--items", help="""As a JSON string"""),
+) -> None:
+    """Upsert asset metadata
+
+    Docs: https://api.immich.app/endpoints/assets/updateBulkAssetMetadata
+    """
+    kwargs = {}
+    json_data = {}
+    value_items = [json.loads(i) for i in items]
+    set_nested(json_data, ["items"], value_items)
+    from immich.client.models.asset_metadata_bulk_upsert_dto import (
+        AssetMetadataBulkUpsertDto,
+    )
+
+    asset_metadata_bulk_upsert_dto = AssetMetadataBulkUpsertDto.model_validate(
+        json_data
+    )
+    kwargs["asset_metadata_bulk_upsert_dto"] = asset_metadata_bulk_upsert_dto
+    client = ctx.obj["client"]
+    result = run_command(client, client.assets, "update_bulk_asset_metadata", **kwargs)
+    format_mode = ctx.obj.get("format")
+    print_response(result, format_mode)
+
+
 @app.command("upload-asset", deprecated=False)
 def upload_asset(
     ctx: typer.Context,
@@ -563,7 +687,9 @@ def upload_asset(
     live_photo_video_id: str | None = typer.Option(
         None, "--live-photo-video-id", help=""""""
     ),
-    metadata: list[str] = typer.Option(..., "--metadata", help="""As a JSON string"""),
+    metadata: list[str] | None = typer.Option(
+        None, "--metadata", help="""As a JSON string"""
+    ),
     sidecar_data: Path | None = typer.Option(None, "--sidecar-data", help=""""""),
     slug: str | None = typer.Option(None, "--slug", help=""""""),
     visibility: str | None = typer.Option(None, "--visibility", help=""""""),
@@ -598,8 +724,9 @@ def upload_asset(
         set_nested(json_data, ["is_favorite"], is_favorite.lower() == "true")
     if live_photo_video_id is not None:
         set_nested(json_data, ["live_photo_video_id"], live_photo_video_id)
-    value_metadata = [json.loads(i) for i in metadata]
-    set_nested(json_data, ["metadata"], value_metadata)
+    if metadata is not None:
+        value_metadata = [json.loads(i) for i in metadata]
+        set_nested(json_data, ["metadata"], value_metadata)
     if sidecar_data is not None:
         set_nested(
             json_data, ["sidecar_data"], (sidecar_data.name, sidecar_data.read_bytes())
@@ -620,6 +747,9 @@ def upload_asset(
 def view_asset(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
+    edited: Literal["true", "false"] | None = typer.Option(
+        None, "--edited", help=""""""
+    ),
     key: str | None = typer.Option(None, "--key", help=""""""),
     size: AssetMediaSize | None = typer.Option(None, "--size", help=""""""),
     slug: str | None = typer.Option(None, "--slug", help=""""""),
@@ -629,6 +759,8 @@ def view_asset(
     Docs: https://api.immich.app/endpoints/assets/viewAsset
     """
     kwargs = {}
+    if edited is not None:
+        kwargs["edited"] = edited.lower() == "true"
     kwargs["id"] = id
     if key is not None:
         kwargs["key"] = key

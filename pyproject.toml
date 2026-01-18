@@ -85,7 +85,7 @@ module-name = "immich"
 module-root = ""
 
 [tool.ruff]
-lint.ignore = ["F403", "F405"]
+lint.ignore = ["F403", "F405", "F841"] # F841: Unused local variable (after client gen)
 
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"

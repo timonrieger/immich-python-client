@@ -16,21 +16,22 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic import BaseModel, ConfigDict
 from typing import Any, ClassVar, Dict, List
+from immich.client.models.asset_metadata_bulk_delete_item_dto import (
+    AssetMetadataBulkDeleteItemDto,
+)
 from typing import Optional, Set
 from typing_extensions import Self
 
 
-class SyncAssetMetadataV1(BaseModel):
+class AssetMetadataBulkDeleteDto(BaseModel):
     """
-    SyncAssetMetadataV1
+    AssetMetadataBulkDeleteDto
     """  # noqa: E501
 
-    asset_id: StrictStr = Field(alias="assetId")
-    key: StrictStr
-    value: Dict[str, Any]
-    __properties: ClassVar[List[str]] = ["assetId", "key", "value"]
+    items: List[AssetMetadataBulkDeleteItemDto]
+    __properties: ClassVar[List[str]] = ["items"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -49,7 +50,7 @@ class SyncAssetMetadataV1(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of SyncAssetMetadataV1 from a JSON string"""
+        """Create an instance of AssetMetadataBulkDeleteDto from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -69,11 +70,18 @@ class SyncAssetMetadataV1(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of each item in items (list)
+        _items = []
+        if self.items:
+            for _item_items in self.items:
+                if _item_items:
+                    _items.append(_item_items.to_dict())
+            _dict["items"] = _items
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of SyncAssetMetadataV1 from a dict"""
+        """Create an instance of AssetMetadataBulkDeleteDto from a dict"""
         if obj is None:
             return None
 
@@ -82,9 +90,12 @@ class SyncAssetMetadataV1(BaseModel):
 
         _obj = cls.model_validate(
             {
-                "assetId": obj.get("assetId"),
-                "key": obj.get("key"),
-                "value": obj.get("value"),
+                "items": [
+                    AssetMetadataBulkDeleteItemDto.from_dict(_item)
+                    for _item in obj["items"]
+                ]
+                if obj.get("items") is not None
+                else None
             }
         )
         return _obj

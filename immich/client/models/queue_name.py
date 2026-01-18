@@ -42,6 +42,7 @@ class QueueName(str, Enum):
     BACKUPDATABASE = "backupDatabase"
     OCR = "ocr"
     WORKFLOW = "workflow"
+    EDITOR = "editor"
 
     @classmethod
     def from_json(cls, json_str: str) -> Self:

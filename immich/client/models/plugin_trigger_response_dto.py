@@ -16,21 +16,22 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Any, ClassVar, Dict, List
+from immich.client.models.plugin_context_type import PluginContextType
+from immich.client.models.plugin_trigger_type import PluginTriggerType
 from typing import Optional, Set
 from typing_extensions import Self
 
 
-class SyncAssetMetadataV1(BaseModel):
+class PluginTriggerResponseDto(BaseModel):
     """
-    SyncAssetMetadataV1
+    PluginTriggerResponseDto
     """  # noqa: E501
 
-    asset_id: StrictStr = Field(alias="assetId")
-    key: StrictStr
-    value: Dict[str, Any]
-    __properties: ClassVar[List[str]] = ["assetId", "key", "value"]
+    context_type: PluginContextType = Field(alias="contextType")
+    type: PluginTriggerType
+    __properties: ClassVar[List[str]] = ["contextType", "type"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -49,7 +50,7 @@ class SyncAssetMetadataV1(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of SyncAssetMetadataV1 from a JSON string"""
+        """Create an instance of PluginTriggerResponseDto from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -73,7 +74,7 @@ class SyncAssetMetadataV1(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of SyncAssetMetadataV1 from a dict"""
+        """Create an instance of PluginTriggerResponseDto from a dict"""
         if obj is None:
             return None
 
@@ -81,10 +82,6 @@ class SyncAssetMetadataV1(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate(
-            {
-                "assetId": obj.get("assetId"),
-                "key": obj.get("key"),
-                "value": obj.get("value"),
-            }
+            {"contextType": obj.get("contextType"), "type": obj.get("type")}
         )
         return _obj

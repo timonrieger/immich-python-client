@@ -16,21 +16,27 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Any, ClassVar, Dict, List
+from typing_extensions import Annotated
+from uuid import UUID
+from immich.client.models.asset_edit_action_list_dto_edits_inner import (
+    AssetEditActionListDtoEditsInner,
+)
 from typing import Optional, Set
 from typing_extensions import Self
 
 
-class SyncAssetMetadataV1(BaseModel):
+class AssetEditsDto(BaseModel):
     """
-    SyncAssetMetadataV1
+    AssetEditsDto
     """  # noqa: E501
 
-    asset_id: StrictStr = Field(alias="assetId")
-    key: StrictStr
-    value: Dict[str, Any]
-    __properties: ClassVar[List[str]] = ["assetId", "key", "value"]
+    asset_id: UUID = Field(alias="assetId")
+    edits: Annotated[List[AssetEditActionListDtoEditsInner], Field(min_length=1)] = (
+        Field(description="list of edits")
+    )
+    __properties: ClassVar[List[str]] = ["assetId", "edits"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -49,7 +55,7 @@ class SyncAssetMetadataV1(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of SyncAssetMetadataV1 from a JSON string"""
+        """Create an instance of AssetEditsDto from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -69,11 +75,18 @@ class SyncAssetMetadataV1(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of each item in edits (list)
+        _items = []
+        if self.edits:
+            for _item_edits in self.edits:
+                if _item_edits:
+                    _items.append(_item_edits.to_dict())
+            _dict["edits"] = _items
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of SyncAssetMetadataV1 from a dict"""
+        """Create an instance of AssetEditsDto from a dict"""
         if obj is None:
             return None
 
@@ -83,8 +96,12 @@ class SyncAssetMetadataV1(BaseModel):
         _obj = cls.model_validate(
             {
                 "assetId": obj.get("assetId"),
-                "key": obj.get("key"),
-                "value": obj.get("value"),
+                "edits": [
+                    AssetEditActionListDtoEditsInner.from_dict(_item)
+                    for _item in obj["edits"]
+                ]
+                if obj.get("edits") is not None
+                else None,
             }
         )
         return _obj

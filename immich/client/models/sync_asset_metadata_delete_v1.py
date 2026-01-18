@@ -18,7 +18,6 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing import Any, ClassVar, Dict, List
-from immich.client.models.asset_metadata_key import AssetMetadataKey
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -29,7 +28,7 @@ class SyncAssetMetadataDeleteV1(BaseModel):
     """  # noqa: E501
 
     asset_id: StrictStr = Field(alias="assetId")
-    key: AssetMetadataKey
+    key: StrictStr
     __properties: ClassVar[List[str]] = ["assetId", "key"]
 
     model_config = ConfigDict(

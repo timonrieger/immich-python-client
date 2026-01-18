@@ -17,9 +17,8 @@ import re  # noqa: F401
 import json
 
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing import Any, ClassVar, Dict, List
-from immich.client.models.asset_metadata_key import AssetMetadataKey
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -29,7 +28,7 @@ class AssetMetadataResponseDto(BaseModel):
     AssetMetadataResponseDto
     """  # noqa: E501
 
-    key: AssetMetadataKey
+    key: StrictStr
     updated_at: datetime = Field(alias="updatedAt")
     value: Dict[str, Any]
     __properties: ClassVar[List[str]] = ["key", "updatedAt", "value"]

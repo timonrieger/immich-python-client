@@ -16,21 +16,21 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List
+from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt
+from typing import Any, ClassVar, Dict, List, Union
 from typing import Optional, Set
 from typing_extensions import Self
 
 
-class SyncAssetMetadataV1(BaseModel):
+class RotateParameters(BaseModel):
     """
-    SyncAssetMetadataV1
+    RotateParameters
     """  # noqa: E501
 
-    asset_id: StrictStr = Field(alias="assetId")
-    key: StrictStr
-    value: Dict[str, Any]
-    __properties: ClassVar[List[str]] = ["assetId", "key", "value"]
+    angle: Union[StrictFloat, StrictInt] = Field(
+        description="Rotation angle in degrees"
+    )
+    __properties: ClassVar[List[str]] = ["angle"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -49,7 +49,7 @@ class SyncAssetMetadataV1(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of SyncAssetMetadataV1 from a JSON string"""
+        """Create an instance of RotateParameters from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -73,18 +73,12 @@ class SyncAssetMetadataV1(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of SyncAssetMetadataV1 from a dict"""
+        """Create an instance of RotateParameters from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate(
-            {
-                "assetId": obj.get("assetId"),
-                "key": obj.get("key"),
-                "value": obj.get("value"),
-            }
-        )
+        _obj = cls.model_validate({"angle": obj.get("angle")})
         return _obj

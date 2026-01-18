@@ -90,6 +90,13 @@ __all__ = [
     "AssetCopyDto",
     "AssetDeltaSyncDto",
     "AssetDeltaSyncResponseDto",
+    "AssetEditAction",
+    "AssetEditActionCrop",
+    "AssetEditActionListDto",
+    "AssetEditActionListDtoEditsInner",
+    "AssetEditActionMirror",
+    "AssetEditActionRotate",
+    "AssetEditsDto",
     "AssetFaceCreateDto",
     "AssetFaceDeleteDto",
     "AssetFaceResponseDto",
@@ -104,7 +111,11 @@ __all__ = [
     "AssetMediaResponseDto",
     "AssetMediaSize",
     "AssetMediaStatus",
-    "AssetMetadataKey",
+    "AssetMetadataBulkDeleteDto",
+    "AssetMetadataBulkDeleteItemDto",
+    "AssetMetadataBulkResponseDto",
+    "AssetMetadataBulkUpsertDto",
+    "AssetMetadataBulkUpsertItemDto",
     "AssetMetadataResponseDto",
     "AssetMetadataUpsertDto",
     "AssetMetadataUpsertItemDto",
@@ -133,6 +144,7 @@ __all__ = [
     "CreateAlbumDto",
     "CreateLibraryDto",
     "CreateProfileImageResponseDto",
+    "CropParameters",
     "DatabaseBackupConfig",
     "DownloadArchiveInfo",
     "DownloadInfoDto",
@@ -177,6 +189,8 @@ __all__ = [
     "MemoryUpdateDto",
     "MergePersonDto",
     "MetadataSearchDto",
+    "MirrorAxis",
+    "MirrorParameters",
     "NotificationCreateDto",
     "NotificationDeleteAllDto",
     "NotificationDto",
@@ -212,9 +226,10 @@ __all__ = [
     "PinCodeSetupDto",
     "PlacesResponseDto",
     "PluginActionResponseDto",
-    "PluginContext",
+    "PluginContextType",
     "PluginFilterResponseDto",
     "PluginResponseDto",
+    "PluginTriggerResponseDto",
     "PluginTriggerType",
     "PurchaseResponse",
     "PurchaseUpdate",
@@ -236,6 +251,7 @@ __all__ = [
     "ReactionLevel",
     "ReactionType",
     "ReverseGeocodingStateResponseDto",
+    "RotateParameters",
     "SearchAlbumResponseDto",
     "SearchAssetResponseDto",
     "SearchExploreItem",
@@ -512,6 +528,23 @@ from immich.client.models.asset_delta_sync_dto import (
 from immich.client.models.asset_delta_sync_response_dto import (
     AssetDeltaSyncResponseDto as AssetDeltaSyncResponseDto,
 )
+from immich.client.models.asset_edit_action import AssetEditAction as AssetEditAction
+from immich.client.models.asset_edit_action_crop import (
+    AssetEditActionCrop as AssetEditActionCrop,
+)
+from immich.client.models.asset_edit_action_list_dto import (
+    AssetEditActionListDto as AssetEditActionListDto,
+)
+from immich.client.models.asset_edit_action_list_dto_edits_inner import (
+    AssetEditActionListDtoEditsInner as AssetEditActionListDtoEditsInner,
+)
+from immich.client.models.asset_edit_action_mirror import (
+    AssetEditActionMirror as AssetEditActionMirror,
+)
+from immich.client.models.asset_edit_action_rotate import (
+    AssetEditActionRotate as AssetEditActionRotate,
+)
+from immich.client.models.asset_edits_dto import AssetEditsDto as AssetEditsDto
 from immich.client.models.asset_face_create_dto import (
     AssetFaceCreateDto as AssetFaceCreateDto,
 )
@@ -544,7 +577,21 @@ from immich.client.models.asset_media_response_dto import (
 )
 from immich.client.models.asset_media_size import AssetMediaSize as AssetMediaSize
 from immich.client.models.asset_media_status import AssetMediaStatus as AssetMediaStatus
-from immich.client.models.asset_metadata_key import AssetMetadataKey as AssetMetadataKey
+from immich.client.models.asset_metadata_bulk_delete_dto import (
+    AssetMetadataBulkDeleteDto as AssetMetadataBulkDeleteDto,
+)
+from immich.client.models.asset_metadata_bulk_delete_item_dto import (
+    AssetMetadataBulkDeleteItemDto as AssetMetadataBulkDeleteItemDto,
+)
+from immich.client.models.asset_metadata_bulk_response_dto import (
+    AssetMetadataBulkResponseDto as AssetMetadataBulkResponseDto,
+)
+from immich.client.models.asset_metadata_bulk_upsert_dto import (
+    AssetMetadataBulkUpsertDto as AssetMetadataBulkUpsertDto,
+)
+from immich.client.models.asset_metadata_bulk_upsert_item_dto import (
+    AssetMetadataBulkUpsertItemDto as AssetMetadataBulkUpsertItemDto,
+)
 from immich.client.models.asset_metadata_response_dto import (
     AssetMetadataResponseDto as AssetMetadataResponseDto,
 )
@@ -601,6 +648,7 @@ from immich.client.models.create_library_dto import CreateLibraryDto as CreateLi
 from immich.client.models.create_profile_image_response_dto import (
     CreateProfileImageResponseDto as CreateProfileImageResponseDto,
 )
+from immich.client.models.crop_parameters import CropParameters as CropParameters
 from immich.client.models.database_backup_config import (
     DatabaseBackupConfig as DatabaseBackupConfig,
 )
@@ -691,6 +739,8 @@ from immich.client.models.merge_person_dto import MergePersonDto as MergePersonD
 from immich.client.models.metadata_search_dto import (
     MetadataSearchDto as MetadataSearchDto,
 )
+from immich.client.models.mirror_axis import MirrorAxis as MirrorAxis
+from immich.client.models.mirror_parameters import MirrorParameters as MirrorParameters
 from immich.client.models.notification_create_dto import (
     NotificationCreateDto as NotificationCreateDto,
 )
@@ -760,12 +810,17 @@ from immich.client.models.places_response_dto import (
 from immich.client.models.plugin_action_response_dto import (
     PluginActionResponseDto as PluginActionResponseDto,
 )
-from immich.client.models.plugin_context import PluginContext as PluginContext
+from immich.client.models.plugin_context_type import (
+    PluginContextType as PluginContextType,
+)
 from immich.client.models.plugin_filter_response_dto import (
     PluginFilterResponseDto as PluginFilterResponseDto,
 )
 from immich.client.models.plugin_response_dto import (
     PluginResponseDto as PluginResponseDto,
+)
+from immich.client.models.plugin_trigger_response_dto import (
+    PluginTriggerResponseDto as PluginTriggerResponseDto,
 )
 from immich.client.models.plugin_trigger_type import (
     PluginTriggerType as PluginTriggerType,
@@ -802,6 +857,7 @@ from immich.client.models.reaction_type import ReactionType as ReactionType
 from immich.client.models.reverse_geocoding_state_response_dto import (
     ReverseGeocodingStateResponseDto as ReverseGeocodingStateResponseDto,
 )
+from immich.client.models.rotate_parameters import RotateParameters as RotateParameters
 from immich.client.models.search_album_response_dto import (
     SearchAlbumResponseDto as SearchAlbumResponseDto,
 )

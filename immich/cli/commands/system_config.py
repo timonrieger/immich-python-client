@@ -149,6 +149,9 @@ def update_config(
     job_background_task_concurrency: int = typer.Option(
         ..., "--job-background-task-concurrency", help="""""", min=1
     ),
+    job_editor_concurrency: int = typer.Option(
+        ..., "--job-editor-concurrency", help="""""", min=1
+    ),
     job_face_detection_concurrency: int = typer.Option(
         ..., "--job-face-detection-concurrency", help="""""", min=1
     ),
@@ -473,6 +476,7 @@ def update_config(
     set_nested(
         json_data, ["job_background_task_concurrency"], job_background_task_concurrency
     )
+    set_nested(json_data, ["job_editor_concurrency"], job_editor_concurrency)
     set_nested(
         json_data, ["job_face_detection_concurrency"], job_face_detection_concurrency
     )

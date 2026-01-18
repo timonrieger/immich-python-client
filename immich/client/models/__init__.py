@@ -51,6 +51,15 @@ from immich.client.models.asset_bulk_upload_check_result import (
 from immich.client.models.asset_copy_dto import AssetCopyDto
 from immich.client.models.asset_delta_sync_dto import AssetDeltaSyncDto
 from immich.client.models.asset_delta_sync_response_dto import AssetDeltaSyncResponseDto
+from immich.client.models.asset_edit_action import AssetEditAction
+from immich.client.models.asset_edit_action_crop import AssetEditActionCrop
+from immich.client.models.asset_edit_action_list_dto import AssetEditActionListDto
+from immich.client.models.asset_edit_action_list_dto_edits_inner import (
+    AssetEditActionListDtoEditsInner,
+)
+from immich.client.models.asset_edit_action_mirror import AssetEditActionMirror
+from immich.client.models.asset_edit_action_rotate import AssetEditActionRotate
+from immich.client.models.asset_edits_dto import AssetEditsDto
 from immich.client.models.asset_face_create_dto import AssetFaceCreateDto
 from immich.client.models.asset_face_delete_dto import AssetFaceDeleteDto
 from immich.client.models.asset_face_response_dto import AssetFaceResponseDto
@@ -67,7 +76,21 @@ from immich.client.models.asset_jobs_dto import AssetJobsDto
 from immich.client.models.asset_media_response_dto import AssetMediaResponseDto
 from immich.client.models.asset_media_size import AssetMediaSize
 from immich.client.models.asset_media_status import AssetMediaStatus
-from immich.client.models.asset_metadata_key import AssetMetadataKey
+from immich.client.models.asset_metadata_bulk_delete_dto import (
+    AssetMetadataBulkDeleteDto,
+)
+from immich.client.models.asset_metadata_bulk_delete_item_dto import (
+    AssetMetadataBulkDeleteItemDto,
+)
+from immich.client.models.asset_metadata_bulk_response_dto import (
+    AssetMetadataBulkResponseDto,
+)
+from immich.client.models.asset_metadata_bulk_upsert_dto import (
+    AssetMetadataBulkUpsertDto,
+)
+from immich.client.models.asset_metadata_bulk_upsert_item_dto import (
+    AssetMetadataBulkUpsertItemDto,
+)
 from immich.client.models.asset_metadata_response_dto import AssetMetadataResponseDto
 from immich.client.models.asset_metadata_upsert_dto import AssetMetadataUpsertDto
 from immich.client.models.asset_metadata_upsert_item_dto import (
@@ -104,6 +127,7 @@ from immich.client.models.create_library_dto import CreateLibraryDto
 from immich.client.models.create_profile_image_response_dto import (
     CreateProfileImageResponseDto,
 )
+from immich.client.models.crop_parameters import CropParameters
 from immich.client.models.database_backup_config import DatabaseBackupConfig
 from immich.client.models.download_archive_info import DownloadArchiveInfo
 from immich.client.models.download_info_dto import DownloadInfoDto
@@ -154,6 +178,8 @@ from immich.client.models.memory_type import MemoryType
 from immich.client.models.memory_update_dto import MemoryUpdateDto
 from immich.client.models.merge_person_dto import MergePersonDto
 from immich.client.models.metadata_search_dto import MetadataSearchDto
+from immich.client.models.mirror_axis import MirrorAxis
+from immich.client.models.mirror_parameters import MirrorParameters
 from immich.client.models.notification_create_dto import NotificationCreateDto
 from immich.client.models.notification_delete_all_dto import NotificationDeleteAllDto
 from immich.client.models.notification_dto import NotificationDto
@@ -195,9 +221,10 @@ from immich.client.models.pin_code_reset_dto import PinCodeResetDto
 from immich.client.models.pin_code_setup_dto import PinCodeSetupDto
 from immich.client.models.places_response_dto import PlacesResponseDto
 from immich.client.models.plugin_action_response_dto import PluginActionResponseDto
-from immich.client.models.plugin_context import PluginContext
+from immich.client.models.plugin_context_type import PluginContextType
 from immich.client.models.plugin_filter_response_dto import PluginFilterResponseDto
 from immich.client.models.plugin_response_dto import PluginResponseDto
+from immich.client.models.plugin_trigger_response_dto import PluginTriggerResponseDto
 from immich.client.models.plugin_trigger_type import PluginTriggerType
 from immich.client.models.purchase_response import PurchaseResponse
 from immich.client.models.purchase_update import PurchaseUpdate
@@ -221,6 +248,7 @@ from immich.client.models.reaction_type import ReactionType
 from immich.client.models.reverse_geocoding_state_response_dto import (
     ReverseGeocodingStateResponseDto,
 )
+from immich.client.models.rotate_parameters import RotateParameters
 from immich.client.models.search_album_response_dto import SearchAlbumResponseDto
 from immich.client.models.search_asset_response_dto import SearchAssetResponseDto
 from immich.client.models.search_explore_item import SearchExploreItem
