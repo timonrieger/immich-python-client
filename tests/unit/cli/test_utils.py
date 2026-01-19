@@ -1,4 +1,6 @@
 from pathlib import Path
+from unittest.mock import Mock, patch
+
 import pytest
 import typer
 
@@ -12,6 +14,7 @@ from immich.cli.utils import (
     _redact_secret,
     set_path,
     write_config,
+    print_,
 )
 from immich._internal.types import ClientConfig
 
@@ -261,3 +264,39 @@ class TestMask:
         assert mask(123) == 123
         assert mask(True) is True
         assert mask(None) is None
+
+
+class TestPrint:
+    """Tests for print_ function."""
+
+    @patch("immich.cli.utils.print")
+    def test_print_warning(self, mock_print: Mock) -> None:
+        """Test print_ with warning type."""
+        print_("Test warning message", type="warning")
+        mock_print.assert_called_once_with(
+            "[yellow][bold][Warning][/bold] Test warning message[/yellow]"
+        )
+
+    @patch("immich.cli.utils.print")
+    def test_print_debug_with_verbose_true(self, mock_print: Mock) -> None:
+        """Test print_ with debug type when verbose is True."""
+        ctx = Mock(spec=typer.Context)
+        ctx.obj = {"verbose": True}
+        print_("Test debug message", type="debug", ctx=ctx)
+        mock_print.assert_called_once_with(
+            "[blue][bold][Debug][/bold] Test debug message[/blue]"
+        )
+
+    @patch("immich.cli.utils.print")
+    def test_print_debug_with_verbose_false(self, mock_print: Mock) -> None:
+        """Test print_ with debug type when verbose is False."""
+        ctx = Mock(spec=typer.Context)
+        ctx.obj = {"verbose": False}
+        print_("Test debug message", type="debug", ctx=ctx)
+        mock_print.assert_not_called()
+
+    @patch("immich.cli.utils.print")
+    def test_print_debug_without_ctx(self, mock_print: Mock) -> None:
+        """Test print_ with debug type when ctx is None."""
+        print_("Test debug message", type="debug", ctx=None)
+        mock_print.assert_not_called()

@@ -1,4 +1,5 @@
 from pathlib import Path
+from unittest.mock import patch
 
 import rtoml
 from typer.testing import CliRunner
@@ -117,3 +118,33 @@ class TestSetup:
             == "https://new.immich.app/api"
         )
         assert config_data["profiles"]["default"]["api_key"] == "new-key"
+
+    @patch("immich.cli.wrapper.setup.run_command")
+    def test_setup_ping_server_validation_fails(
+        self, mock_run_command, runner: CliRunner, mock_config_path: Path
+    ):
+        """Test setup command when ping server validation fails."""
+        # Mock run_command to raise an exception simulating a failed ping
+        mock_run_command.side_effect = Exception("Connection refused")
+
+        result = runner.invoke(
+            app,
+            [
+                "setup",
+                "--base-url",
+                "https://invalid.immich.app/api",
+                "--api-key",
+                "test-key",
+                "--access-token",
+                "",
+            ],
+        )
+
+        assert result.exit_code == 1
+        # Check both stdout and stderr for the error message
+        output = result.stdout + result.stderr
+        assert "Error validating server" in output
+        # Config file should not be created when validation fails
+        assert not mock_config_path.exists()
+        # Verify run_command was called for validation
+        mock_run_command.assert_called_once()

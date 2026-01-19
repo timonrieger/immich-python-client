@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from typer.testing import CliRunner
 
@@ -128,3 +128,61 @@ class TestCallbackConfigResolution:
         assert call_kwargs["api_key"] == "prod-key"
         # Access token is omitted because it is not set in the profile
         assert call_kwargs["access_token"] is None
+
+    def test_no_base_url_exits_with_error(
+        self, runner: CliRunner, mock_config_path: Path
+    ) -> None:
+        """Test that missing base_url exits with error code 1."""
+        # Create config file without base_url
+        mock_config_path.parent.mkdir(parents=True, exist_ok=True)
+        mock_config_path.write_text('[profiles.default]\napi_key = "profile-key"\n')
+
+        result = runner.invoke(
+            main.app,
+            ["server", "get-about-info"],
+        )
+
+        assert result.exit_code == 1
+        assert "No base URL provided" in result.output
+        assert "immich setup" in result.output
+
+    @patch("immich.cli.main.print_")
+    def test_verbose_mode_prints_debug_config(
+        self,
+        mock_print: MagicMock,
+        runner: CliRunner,
+        mock_config_path: Path,
+        mock_api_calls: MagicMock,
+    ) -> None:
+        """Test that verbose mode prints debug configuration messages."""
+        mock_config_path.parent.mkdir(parents=True, exist_ok=True)
+        mock_config_path.write_text(
+            "[profiles.default]\n"
+            'base_url = "https://profile.immich.app/api"\n'
+            'api_key = "profile-key"\n'
+        )
+
+        result = runner.invoke(
+            main.app,
+            [
+                "--verbose",
+                "--base-url",
+                "https://cli.immich.app/api",
+                "--api-key",
+                "cli-key",
+                "server",
+                "get-about-info",
+            ],
+        )
+
+        assert result.exit_code == 0
+        # Verify print_ was called with "Configuration used:" debug message
+        debug_calls = [
+            call
+            for call in mock_print.call_args_list
+            if call.kwargs.get("type") == "debug"
+        ]
+        assert len(debug_calls) > 0
+        assert any("Configuration used:" in str(call.args[0]) for call in debug_calls)
+        # Verify that configuration fields are printed
+        assert any("base_url" in str(call.args[0]) for call in debug_calls)

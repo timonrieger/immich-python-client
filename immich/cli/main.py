@@ -22,7 +22,7 @@ from immich.cli.utils import resolve_client_config, mask, print_
 try:
     import typer
     from rich.console import Console
-except ImportError:
+except ImportError:  # pragma: no cover
     print(
         "Error: CLI dependencies not installed. Install with: pip install immich[cli]",
         file=sys.stderr,
@@ -148,14 +148,14 @@ app.add_typer(views_commands.app, name="views", rich_help_panel="API commands")
 app.add_typer(workflows_commands.app, name="workflows", rich_help_panel="API commands")
 
 
-def version_callback(value: bool) -> None:
+def version_callback(value: bool) -> None:  # pragma: no cover
     if value:
         print_(f"immich CLI (unofficial) {version('immich')}", type="output")
         raise typer.Exit(0)
 
 
 @app.callback(invoke_without_command=False)
-def _callback(
+def callback(
     ctx: typer.Context,
     verbose: bool = typer.Option(
         False,
@@ -253,5 +253,5 @@ def _callback(
         )
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     app()
