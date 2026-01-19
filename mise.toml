@@ -16,37 +16,19 @@ description = "Run type checking"
 
 [tasks."test:unit:cli"]
 run = "uv run pytest tests/unit/cli"
-description = "Run tests with pytest"
+description = "Run CLI unit tests with pytest"
 
 [tasks."test:unit:client"]
 run = "uv run pytest tests/unit/client"
-description = "Run tests with pytest"
-
-[tasks."test:unit"]
-run = [
-  { task = "test:unit:client" },
-  { task = "test:unit:cli" },
-]
-description = "Run unit tests sequentially"
+description = "Run client unit tests with pytest"
 
 [tasks."test:e2e:cli"]
 run = "uv run pytest tests/e2e/cli"
-description = "Run e2e CLI tests"
+description = "Run e2e CLI tests with pytest"
 
 [tasks."test:e2e:client"]
 run = "uv run pytest tests/e2e/client"
-description = "Run e2e client tests"
-
-[tasks."test:e2e"]
-run = [
-  { task = "test:e2e:client" },
-  { task = "test:e2e:cli" },
-]
-description = "Run e2e tests sequentially"
-
-[tasks."test:unit:cov"]
-run = "uv run pytest tests/unit --cov=immich --cov-report=html --cov-report=term"
-description = "Run tests with coverage report"
+description = "Run e2e client tests with pytest"
 
 [tasks.install]
 run = "uv sync"
