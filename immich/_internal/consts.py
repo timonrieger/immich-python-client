@@ -1,6 +1,7 @@
 from pathlib import Path
 
 DEVICE_ID = "immich-py"
+DEMO_API_URL = "https://demo.immich.app/api"
 API_KEY_URL = "https://my.immich.app/user-settings?isOpen=api-keys"
 CONFIG_DIR = Path.home() / ".immich-py"
 CONFIG_FILE = CONFIG_DIR / "config.toml"

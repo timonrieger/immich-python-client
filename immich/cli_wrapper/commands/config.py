@@ -17,7 +17,6 @@ app = typer.Typer(
 
 @app.command("set")
 def set(
-    ctx: typer.Context,
     key: str = typer.Argument(..., help="Dot-separated config key"),
     value: str = typer.Option(
         ...,

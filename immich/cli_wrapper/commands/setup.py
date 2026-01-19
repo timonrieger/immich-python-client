@@ -1,10 +1,10 @@
+import os
 import typer
 from typing import Optional
 from immich._internal.consts import (
     CONFIG_FILE,
     DEFAULT_PROFILE,
-    IMMICH_ACCESS_TOKEN,
-    IMMICH_API_KEY,
+    DEMO_API_URL,
     IMMICH_API_URL,
 )
 from immich._internal.cli.utils import load_config, print_, set_path, write_config
@@ -22,27 +22,24 @@ def setup(
         help="Profile name. This can be used to set different server configurations.",
     ),
     base_url: str = typer.Option(
-        ...,
+        os.getenv(IMMICH_API_URL) or DEMO_API_URL,
         "--base-url",
-        help="The base URL of the Immich server, including the API path. (e.g., https://demo.immich.app/api)",
-        envvar=IMMICH_API_URL,
-        prompt="Base URL (e.g., https://demo.immich.app/api)",
+        help="The base URL of the Immich server, including the API path.",
+        prompt="Base URL",
     ),
     api_key: Optional[str] = typer.Option(
         "",
         "--api-key",
-        help="An API key to use with the profile.",
-        envvar=IMMICH_API_KEY,
-        prompt="API Key",
+        help="An API key to use with the profile ([green]recommended[/green])",
+        prompt="API Key (optional, recommended)",
         hide_input=True,
         show_default=False,
     ),
     access_token: Optional[str] = typer.Option(
         "",
         "--access-token",
-        help="An access token to use with the profile.",
-        envvar=IMMICH_ACCESS_TOKEN,
-        prompt="Access Token",
+        help="An access token to use with the profile ([red]not recommended[/red])",
+        prompt="Access Token (optional, not recommended)",
         hide_input=True,
         show_default=False,
     ),

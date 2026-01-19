@@ -232,9 +232,15 @@ def _callback(
                     value = "None"
                 source = "cli/env" if field in cli_vars else f"profile '{profile}'"
                 print_(f"- {field}: {value} (from {source})", type="debug", ctx=ctx)
+        if omit_access_token := (config.api_key is not None):
+            print_(
+                "Omitting access token because API key is provided.",
+                type="debug",
+                ctx=ctx,
+            )
         ctx.obj["client"] = AsyncClient(
             api_key=config.api_key,
-            access_token=config.access_token,
+            access_token=None if omit_access_token else config.access_token,
             base_url=config.base_url,
         )
 
