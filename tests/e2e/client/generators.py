@@ -16,6 +16,8 @@ def _create_jpeg_with_seed(seed: int) -> bytes:
     # This ensures better uniqueness even when seeds are close together
     img = Image.new("RGB", (2, 2))
     pixels = img.load()
+    # load() always returns PixelAccess for newly created images
+    assert pixels is not None
 
     # Use seed to set different pixel values across the 2x2 grid
     # Extract multiple values from seed to ensure variation
