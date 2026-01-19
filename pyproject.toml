@@ -92,6 +92,7 @@ asyncio_mode = "auto"
 markers = [
     "e2e: marks tests as end-to-end tests (deselect with '-m \"not e2e\"')",
 ]
+addopts = "--cov=immich --cov-report html"
 
 [tool.ty]
 environment.root = ['immich']
