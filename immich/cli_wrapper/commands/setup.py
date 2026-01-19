@@ -5,11 +5,9 @@ from immich._internal.consts import (
     CONFIG_FILE,
     DEFAULT_PROFILE,
     DEMO_API_URL,
-    IMMICH_ACCESS_TOKEN,
-    IMMICH_API_KEY,
     IMMICH_API_URL,
 )
-from immich._internal.cli.utils import load_config, mask, print_, set_path, write_config
+from immich._internal.cli.utils import load_config, print_, set_path, write_config
 from immich.cli.runtime import run_command
 
 from immich import AsyncClient
@@ -58,22 +56,18 @@ def setup(
         )
 
     if api_key is None:
-        env_api_key = os.getenv(IMMICH_API_KEY)
         api_key = typer.prompt(
-            "API Key (optional, recommended)"
-            + (f" [{mask(env_api_key)}]" if env_api_key else ""),
+            "API Key (optional, recommended)",
             # default=None is not possible input is required
-            default=env_api_key or "",
+            default="",
             show_default=False,
         )
 
     if not api_key and access_token is None:
-        env_access_token = os.getenv(IMMICH_ACCESS_TOKEN)
         access_token = typer.prompt(
-            "Access Token (optional, not recommended)"
-            + (f" [{mask(env_access_token)}]" if env_access_token else ""),
+            "Access Token (optional, not recommended)",
             # default=None is not possible input is required
-            default=env_access_token or "",
+            default="",
             show_default=False,
         )
 
