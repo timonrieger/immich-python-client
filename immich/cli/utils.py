@@ -1,6 +1,8 @@
 from typing import Any, Optional, cast, overload
+import json
 
 from rich import print as print_rich, print_json
+from rich.table import Table
 import rtoml
 import typer
 
@@ -153,6 +155,33 @@ def mask(obj: Any, start: int = 3, end: int = 3, key: Optional[str] = None) -> A
     return obj
 
 
+def _print_table(data: Any) -> None:  # pragma: no cover
+    """
+    Print data as a table using rich.
+    For dicts: creates a table with key/value columns.
+    For lists: prints multiple tables.
+    """
+    if isinstance(data, list):
+        for item in data:
+            _print_table(item)
+    elif isinstance(data, dict):
+        _print_dict_table(data)
+    else:
+        print_rich(str(data))
+
+
+def _print_dict_table(data: dict[str, Any]) -> None:  # pragma: no cover
+    """Print a dictionary as a table with key and value columns."""
+    table = Table(show_header=True, header_style="bold")
+    table.add_column("Key", style="cyan")
+    table.add_column("Value", style="green")
+
+    for key, value in data.items():
+        table.add_row(key, str(value))
+
+    print_rich(table)
+
+
 def print_(
     message: str,
     *,
@@ -176,6 +205,13 @@ def print_(
                     print_json(message)
                 case "json":
                     print(message)
+                case "table":  # pragma: no cover
+                    try:
+                        data = json.loads(message)
+                        _print_table(data)
+                    except json.JSONDecodeError:
+                        print(message)
+                    print_("The 'table' format is experimental.", type="warning")
         case "text":
             print(message)
         case "info":
