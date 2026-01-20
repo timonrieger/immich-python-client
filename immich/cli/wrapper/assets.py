@@ -18,7 +18,7 @@ def download_asset_to_file(
     ctx: typer.Context,
     id: str = typer.Argument(..., help="Asset ID (UUID)"),
     out_dir: Path = typer.Argument(
-        ..., help="Output directory for the downloaded file", exists=True
+        ..., help="Output directory for the downloaded file"
     ),
     key: str | None = typer.Option(
         None, "--key", help="Public share key (last path segment of /share/<key>)"
@@ -61,9 +61,7 @@ def download_asset_to_file(
 def play_asset_video_to_file(
     ctx: typer.Context,
     id: str = typer.Argument(..., help="Asset ID (UUID)"),
-    out_dir: Path = typer.Argument(
-        ..., help="Output directory for the video file", exists=True
-    ),
+    out_dir: Path = typer.Argument(..., help="Output directory for the video file"),
     key: str | None = typer.Option(
         None, "--key", help="Public share key (last path segment of /share/<key>)"
     ),
@@ -105,9 +103,7 @@ def play_asset_video_to_file(
 def view_asset_to_file(
     ctx: typer.Context,
     id: str = typer.Argument(..., help="Asset ID (UUID)"),
-    out_dir: Path = typer.Argument(
-        ..., help="Output directory for the thumbnail file", exists=True
-    ),
+    out_dir: Path = typer.Argument(..., help="Output directory for the thumbnail file"),
     key: str | None = typer.Option(
         None, "--key", help="Public share key (last path segment of /share/<key>)"
     ),

@@ -1,9 +1,40 @@
 # Getting Started
 
+## Installation
+
+Install the Immich CLI using pip:
+
+<div class="termy">
+
+```console
+$ pip install immich[cli]
+
+---> 100%
+```
+</div>
+
+### Shell completion
+
+Install shell completion for easier command-line usage. The command auto-detects the shell and installs the completion for it.
+
+<div class="termy">
+
+```console
+$ immich --install-completion
+
+fish completion installed in ~/.config/fish/completions/immich.fish
+Completion will take effect once you restart the terminal
+```
+</div>
+
+!!! note "Performance"
+    Due to the size of the CLI and Python's runtime overhead, the auto-completion is not as fast as I hoped it could be (see [typer#231](https://github.com/fastapi/typer/issues/231)).
+
+
 ## Set up your Immich server
 
-1. Have your Immich server running or use the [demo server](https://demo.immich.app)
-2. Get an API key from your [Immich account settings](https://my.immich.app/user-settings?isOpen=api-keys)
+1. Have your Immich server running or use the [demo server](https://demo.immich.app).
+2. Get an API key from your [Immich account settings](https://my.immich.app/user-settings?isOpen=api-keys).
 
 ## Create a profile
 
@@ -60,18 +91,3 @@ $ immich --format table server get-about-info
 </div>
 
 To see all available commands, run `immich --help` or see the [reference](./reference.md).
-
-## Configuration Priority
-
-Priority order (highest to lowest):
-
-1. Command-line flags (`--api-key`, `--base-url`)
-2. Environment variables
-3. Profile settings (from `immich setup`)
-
-This lets you switch between servers or override settings when needed. If you are unsure which configuration is used, run `immich --verbose <command>` to see the configuration in use.
-
-## Boolean Options
-
-- Flags like `--verbose`, `--dry-run` are simple toggles: present = true, absent = false.
-- Optional flags like `--albums` let you pass true, false, or omit them — omission lets the server apply its default.

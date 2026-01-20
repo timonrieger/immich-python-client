@@ -54,16 +54,18 @@ nav = [
   { "Overview" = [
     "overview/introduction.md",
     "overview/getting-started.md",
-    "overview/authentication.md",
     "overview/versioning.md",
     "overview/custom-functions.md"
   ]},
   { "CLI" = [
     "cli/getting-started.md",
+    "cli/examples.md",
+    "cli/env-vars.md",
     "cli/reference.md"
   ]},
   { "Client" = [
     "client/structure.md",
+    "client/authentication.md",
     "client/response-types.md",
     "client/session-management.md",
     "client/client.md",

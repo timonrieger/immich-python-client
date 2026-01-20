@@ -21,7 +21,7 @@ app = download_commands.app
 def download_archive_to_file(
     ctx: typer.Context,
     out_dir: Path = typer.Argument(
-        ..., help="Output directory for the downloaded ZIP archives", exists=True
+        ..., help="Output directory for the downloaded ZIP archives"
     ),
     key: str | None = typer.Option(
         None, "--key", help="Public share key (last path segment of /share/<key>)"
@@ -34,15 +34,17 @@ def download_archive_to_file(
         "--show-progress",
         help="Show progress bars (per-archive bytes + overall archive count)",
     ),
-    album_id: str | None = typer.Option(None, "--albumId", help="Album ID to download"),
+    album_id: str | None = typer.Option(
+        None, "--album-id", help="Album ID to download"
+    ),
     archive_size: int | None = typer.Option(
-        None, "--archiveSize", help="Archive size limit in bytes"
+        None, "--archive-size", help="Archive size limit in bytes"
     ),
     asset_ids: list[str] | None = typer.Option(
-        None, "--assetIds", help="Asset IDs to download"
+        None, "--asset-ids", help="Asset IDs to download"
     ),
     user_id: str | None = typer.Option(
-        None, "--userId", help="User ID to download assets from"
+        None, "--user-id", help="User ID to download assets from"
     ),
 ) -> None:  # pragma: no cover
     """Download one or more asset archives and save them to ZIP files.
@@ -52,13 +54,13 @@ def download_archive_to_file(
     """
     json_data = {}
     if album_id is not None:
-        set_nested(json_data, ["albumId"], album_id)
+        set_nested(json_data, ["album_id"], album_id)
     if archive_size is not None:
-        set_nested(json_data, ["archiveSize"], archive_size)
+        set_nested(json_data, ["archive_size"], archive_size)
     if asset_ids is not None:
-        set_nested(json_data, ["assetIds"], asset_ids)
+        set_nested(json_data, ["asset_ids"], asset_ids)
     if user_id is not None:
-        set_nested(json_data, ["userId"], user_id)
+        set_nested(json_data, ["user_id"], user_id)
     from immich.client.generated.models.download_info_dto import DownloadInfoDto
 
     download_info = DownloadInfoDto.model_validate(json_data)

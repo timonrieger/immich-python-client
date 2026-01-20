@@ -18,7 +18,7 @@ def get_profile_image_to_file(
     ctx: typer.Context,
     id: str = typer.Argument(..., help="User ID (UUID)"),
     out_dir: Path = typer.Argument(
-        ..., help="Output directory for the profile image file", exists=True
+        ..., help="Output directory for the profile image file"
     ),
     filename: str | None = typer.Option(
         None,
