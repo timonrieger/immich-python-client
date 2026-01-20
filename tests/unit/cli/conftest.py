@@ -1,6 +1,12 @@
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
+from immich.cli.consts import (
+    DEFAULT_FORMAT,
+    DEFAULT_PROFILE,
+    IMMICH_FORMAT,
+    IMMICH_PROFILE,
+)
 import pytest
 from typer.testing import CliRunner
 
@@ -8,7 +14,9 @@ from typer.testing import CliRunner
 @pytest.fixture
 def runner() -> CliRunner:
     """Typer CliRunner fixture for CLI testing."""
-    return CliRunner()
+    return CliRunner(
+        env={IMMICH_FORMAT: DEFAULT_FORMAT, IMMICH_PROFILE: DEFAULT_PROFILE}
+    )
 
 
 @pytest.fixture
