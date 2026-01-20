@@ -203,7 +203,6 @@ def callback(
         help="Show version and exit.",
     ),
 ) -> None:
-    """An unofficial CLI for the Immich API written in Python."""
     ctx.ensure_object(dict)
     ctx.obj["format"] = format_mode
     ctx.obj["verbose"] = verbose

@@ -108,6 +108,6 @@ run = [
     { task = "test:e2e" },
 ]
 
-[tasks.clean]
-run = "rm -rf build/ dist/ *.egg-info/ .pytest_cache/ htmlcov/ .coverage .ruff_cache/"
-description = "Clean build artifacts and cache files"
+[tasks."docs:dev"]
+description = "Run documentation development server"
+run = "uv run zensical serve"

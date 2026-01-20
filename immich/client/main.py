@@ -71,217 +71,217 @@ class AsyncClient:
     activities: ActivitiesApi
     """An activity is a like or a comment made by a user on an asset or album.
 
-    https://api.immich.app/endpoints/activities
+    See [ActivitiesApi][immich.client.generated.api.activities_api.ActivitiesApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/activities) for more information.
     """
 
     albums: AlbumsApi
     """An album is a collection of assets that can be shared with other users or via shared links.
 
-    https://api.immich.app/endpoints/albums
+    See [AlbumsApi][immich.client.generated.api.albums_api.AlbumsApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/albums) for more information.
     """
 
     api_keys: APIKeysApi
     """An api key can be used to programmatically access the Immich API.
 
-    https://api.immich.app/endpoints/api-keys
+    See [APIKeysApi][immich.client.generated.api.api_keys_api.APIKeysApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/api-keys) for more information.
     """
 
     assets: AssetsApiWrapped
     """An asset is an image or video that has been uploaded to Immich.
 
-    https://api.immich.app/endpoints/assets
+    See [AssetsApiWrapped][immich.client.wrapper.assets_api_wrapped.AssetsApiWrapped] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/assets) for more information.
     """
 
     authentication: AuthenticationApi
     """Endpoints related to user authentication, including OAuth.
 
-    https://api.immich.app/endpoints/authentication
+    See [AuthenticationApi][immich.client.generated.api.authentication_api.AuthenticationApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/authentication) for more information.
     """
 
     authentication_admin: AuthenticationAdminApi
     """Administrative endpoints related to authentication.
 
-    https://api.immich.app/endpoints/authentication-(admin)
+    See [AuthenticationAdminApi][immich.client.generated.api.authentication_admin_api.AuthenticationAdminApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/authentication-(admin)) for more information.
     """
 
     deprecated: DeprecatedApi
     """Deprecated endpoints that are planned for removal in the next major release.
 
-    https://api.immich.app/endpoints/deprecated
+    See [DeprecatedApi][immich.client.generated.api.deprecated_api.DeprecatedApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/deprecated) for more information.
     """
 
     download: DownloadApiWrapped
     """Endpoints for downloading assets or collections of assets.
 
-    https://api.immich.app/endpoints/download
+    See [DownloadApiWrapped][immich.client.wrapper.download_api_wrapped.DownloadApiWrapped] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/download) for more information.
     """
 
     duplicates: DuplicatesApi
     """Endpoints for managing and identifying duplicate assets.
 
-    https://api.immich.app/endpoints/duplicates
+    See [DuplicatesApi][immich.client.generated.api.duplicates_api.DuplicatesApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/duplicates) for more information.
     """
 
     faces: FacesApi
     """A face is a detected human face within an asset, which can be associated with a person. Faces are normally detected via machine learning, but can also be created via manually.
 
-    https://api.immich.app/endpoints/faces
+    See [FacesApi][immich.client.generated.api.faces_api.FacesApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/faces) for more information.
     """
 
     jobs: JobsApi
     """Queues and background jobs are used for processing tasks asynchronously. Queues can be paused and resumed as needed.
 
-    https://api.immich.app/endpoints/jobs
+    See [JobsApi][immich.client.generated.api.jobs_api.JobsApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/jobs) for more information.
     """
 
     libraries: LibrariesApi
     """An external library is made up of input file paths or expressions that are scanned for asset files. Discovered files are automatically imported. Assets much be unique within a library, but can be duplicated across libraries. Each user has a default upload library, and can have one or more external libraries.
 
-    https://api.immich.app/endpoints/libraries
+    See [LibrariesApi][immich.client.generated.api.libraries_api.LibrariesApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/libraries) for more information.
     """
 
     maintenance_admin: MaintenanceAdminApi
     """Maintenance mode allows you to put Immich in a read-only state to perform various operations.
 
-    https://api.immich.app/endpoints/maintenance-(admin)
+    See [MaintenanceAdminApi][immich.client.generated.api.maintenance_admin_api.MaintenanceAdminApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/maintenance-(admin)) for more information.
     """
 
     map: MapApi
     """Map endpoints include supplemental functionality related to geolocation, such as reverse geocoding and retrieving map markers for assets with geolocation data.
 
-    https://api.immich.app/endpoints/map
+    See [MapApi][immich.client.generated.api.map_api.MapApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/map) for more information.
     """
 
     memories: MemoriesApi
     """A memory is a specialized collection of assets with dedicated viewing implementations in the web and mobile clients. A memory includes fields related to visibility and are automatically generated per user via a background job.
 
-    https://api.immich.app/endpoints/memories
+    See [MemoriesApi][immich.client.generated.api.memories_api.MemoriesApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/memories) for more information.
     """
 
     notifications: NotificationsApi
     """A notification is a specialized message sent to users to inform them of important events. Currently, these notifications are only shown in the Immich web application.
 
-    https://api.immich.app/endpoints/notifications
+    See [NotificationsApi][immich.client.generated.api.notifications_api.NotificationsApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/notifications) for more information.
     """
 
     notifications_admin: NotificationsAdminApi
     """Notification administrative endpoints.
 
-    https://api.immich.app/endpoints/notifications-(admin)
+    See [NotificationsAdminApi][immich.client.generated.api.notifications_admin_api.NotificationsAdminApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/notifications-(admin)) for more information.
     """
 
     partners: PartnersApi
     """A partner is a link with another user that allows sharing of assets between two users.
 
-    https://api.immich.app/endpoints/partners
+    See [PartnersApi][immich.client.generated.api.partners_api.PartnersApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/partners) for more information.
     """
 
     people: PeopleApi
     """A person is a collection of faces, which can be favorited and named. A person can also be merged into another person. People are automatically created via the face recognition job.
 
-    https://api.immich.app/endpoints/people
+    See [PeopleApi][immich.client.generated.api.people_api.PeopleApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/people) for more information.
     """
 
     plugins: PluginsApi
     """A plugin is an installed module that makes filters and actions available for the workflow feature.
 
-    https://api.immich.app/endpoints/plugins
+    See [PluginsApi][immich.client.generated.api.plugins_api.PluginsApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/plugins) for more information.
     """
 
     queues: QueuesApi
     """Queues and background jobs are used for processing tasks asynchronously. Queues can be paused and resumed as needed.
 
-    https://api.immich.app/endpoints/queues
+    See [QueuesApi][immich.client.generated.api.queues_api.QueuesApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/queues) for more information.
     """
 
     search: SearchApi
     """Endpoints related to searching assets via text, smart search, optical character recognition (OCR), and other filters like person, album, and other metadata. Search endpoints usually support pagination and sorting.
 
-    https://api.immich.app/endpoints/search
+    See [SearchApi][immich.client.generated.api.search_api.SearchApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/search) for more information.
     """
 
     server: ServerApi
     """Information about the current server deployment, including version and build information, available features, supported media types, and more.
 
-    https://api.immich.app/endpoints/server
+    See [ServerApi][immich.client.generated.api.server_api.ServerApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/server) for more information.
     """
 
     sessions: SessionsApi
     """A session represents an authenticated login session for a user. Sessions also appear in the web application as "Authorized devices".
 
-    https://api.immich.app/endpoints/sessions
+    See [SessionsApi][immich.client.generated.api.sessions_api.SessionsApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/sessions) for more information.
     """
 
     shared_links: SharedLinksApi
     """A shared link is a public url that provides access to a specific album, asset, or collection of assets. A shared link can be protected with a password, include a specific slug, allow or disallow downloads, and optionally include an expiration date.
 
-    https://api.immich.app/endpoints/shared-links
+    See [SharedLinksApi][immich.client.generated.api.shared_links_api.SharedLinksApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/shared-links) for more information.
     """
 
     stacks: StacksApi
     """A stack is a group of related assets. One asset is the "primary" asset, and the rest are "child" assets. On the main timeline, stack parents are included by default, while child assets are hidden.
 
-    https://api.immich.app/endpoints/stacks
+    See [StacksApi][immich.client.generated.api.stacks_api.StacksApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/stacks) for more information.
     """
 
     sync: SyncApi
     """A collection of endpoints for the new mobile synchronization implementation.
 
-    https://api.immich.app/endpoints/sync
+    See [SyncApi][immich.client.generated.api.sync_api.SyncApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/sync) for more information.
     """
 
     system_config: SystemConfigApi
     """Endpoints to view, modify, and validate the system configuration settings.
 
-    https://api.immich.app/endpoints/system-config
+    See [SystemConfigApi][immich.client.generated.api.system_config_api.SystemConfigApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/system-config) for more information.
     """
 
     system_metadata: SystemMetadataApi
     """Endpoints to view, modify, and validate the system metadata, which includes information about things like admin onboarding status.
 
-    https://api.immich.app/endpoints/system-metadata
+    See [SystemMetadataApi][immich.client.generated.api.system_metadata_api.SystemMetadataApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/system-metadata) for more information.
     """
 
     tags: TagsApi
     """A tag is a user-defined label that can be applied to assets for organizational purposes. Tags can also be hierarchical, allowing for parent-child relationships between tags.
 
-    https://api.immich.app/endpoints/tags
+    See [TagsApi][immich.client.generated.api.tags_api.TagsApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/tags) for more information.
     """
 
     timeline: TimelineApi
     """Specialized endpoints related to the timeline implementation used in the web application. External applications or tools should not use or rely on these endpoints, as they are subject to change without notice.
 
-    https://api.immich.app/endpoints/timeline
+    See [TimelineApi][immich.client.generated.api.timeline_api.TimelineApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/timeline) for more information.
     """
 
     trash: TrashApi
     """Endpoints for managing the trash can, which includes assets that have been discarded. Items in the trash are automatically deleted after a configured amount of time.
 
-    https://api.immich.app/endpoints/trash
+    See [TrashApi][immich.client.generated.api.trash_api.TrashApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/trash) for more information.
     """
 
     users_admin: UsersAdminApi
     """Administrative endpoints for managing users, including creating, updating, deleting, and restoring users. Also includes endpoints for resetting passwords and PIN codes.
 
-    https://api.immich.app/endpoints/users-(admin)
+    See [UsersAdminApi][immich.client.generated.api.users_admin_api.UsersAdminApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/users-(admin)) for more information.
     """
 
     users: UsersApiWrapped
     """Endpoints for viewing and updating the current users, including product key information, profile picture data, onboarding progress, and more.
 
-    https://api.immich.app/endpoints/users
+    See [UsersApiWrapped][immich.client.wrapper.users_api_wrapped.UsersApiWrapped] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/users) for more information.
     """
 
     views: ViewsApi
     """Endpoints for specialized views, such as the folder view.
 
-    https://api.immich.app/endpoints/views
+    See [ViewsApi][immich.client.generated.api.views_api.ViewsApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/views) for more information.
     """
 
     workflows: WorkflowsApi
     """A workflow is a set of actions that run whenever a triggering event occurs. Workflows also can include filters to further limit execution.
 
-    https://api.immich.app/endpoints/workflows
+    See [WorkflowsApi][immich.client.generated.api.workflows_api.WorkflowsApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/workflows) for more information.
     """
 
     def __init__(

@@ -25,13 +25,13 @@ def setup(
         os.getenv(IMMICH_API_URL) or DEMO_API_URL,
         "--base-url",
         help="The base URL of the Immich server, including the API path.",
-        prompt="Base URL",
+        prompt="Enter your server URL",
     ),
     api_key: Optional[str] = typer.Option(
         "",
         "--api-key",
         help="An API key to use with the profile ([green]recommended[/green])",
-        prompt="API Key (optional, recommended)",
+        prompt="Enter your API key (optional, recommended)",
         hide_input=True,
         show_default=False,
     ),
@@ -39,7 +39,7 @@ def setup(
         "",
         "--access-token",
         help="An access token to use with the profile ([red]not recommended[/red])",
-        prompt="Access Token (optional, not recommended)",
+        prompt="Enter your access token (optional, not recommended)",
         hide_input=True,
         show_default=False,
     ),
@@ -61,7 +61,7 @@ def setup(
             run_command(client, client.server, "ping_server")
         except Exception as exc:
             print_(
-                "Error validating server. Make sure the base URL is correct and the server is reachable.",
+                "Error validating server. Make sure the base URL is correct (including /api) and the server is reachable.",
                 type="error",
                 ctx=ctx,
             )
