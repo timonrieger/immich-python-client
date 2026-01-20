@@ -55,7 +55,8 @@ nav = [
     "overview/introduction.md",
     "overview/getting-started.md",
     "overview/versioning.md",
-    "overview/custom-functions.md"
+    "overview/custom-functions.md",
+    "overview/credits.md"
   ]},
   { "CLI" = [
     "cli/getting-started.md",

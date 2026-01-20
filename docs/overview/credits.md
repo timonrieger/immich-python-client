@@ -13,3 +13,15 @@ The CLI framework powering the Immich CLI. Typer makes it easy to build command-
 ## [OpenAPI Generator](https://openapi-generator.tech/)
 
 The tool used to generate the Python client from the Immich OpenAPI specification. This enables the SDK to stay in sync with the latest Immich API automatically.
+
+## [Zensical](https://zensical.org/)
+
+The modern static site generator used to build this documentation. Built by the creators of Material for MkDocs, it provides a powerful and easy-to-use documentation platform.
+
+## [uv](https://docs.astral.sh/uv/)
+
+A fast Python package and project manager, used for dependency management and development workflows.
+
+## [mise](https://mise.jdx.dev/)
+
+A polyglot tool version manager used to manage Python versions and development tools across the project.

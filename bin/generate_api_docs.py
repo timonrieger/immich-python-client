@@ -49,7 +49,7 @@ def main():
     # Paths
     project_root = Path(__file__).parent.parent
     api_dir = project_root / "immich" / "client" / "generated" / "api"
-    docs_dir = project_root / "docs" / "client"
+    docs_dir = project_root / "docs" / "client" / "reference"
 
     # Create docs/client directory if it doesn't exist
     docs_dir.mkdir(parents=True, exist_ok=True)
@@ -72,7 +72,7 @@ def main():
         # Generate markdown content
         content = generate_markdown_content(filename, module_path, class_name)
 
-        # Write to docs/client/{filename}.md
+        # Write to docs/client/reference/{filename}.md
         output_file = docs_dir / filename.replace(".py", ".md")
         output_file.write_text(content)
         print(f"Generated: {output_file.relative_to(project_root)}")

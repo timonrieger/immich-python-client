@@ -1,6 +1,6 @@
 ## Custom functions
 
-Some API groups include custom convenience methods that are **preferred** over the auto-generated ones for common operations:
+While most of the API is auto-generated, some API groups include custom convenience methods that are **preferred** over the auto-generated ones for common operations as they make it easier to use the API.
 
 ### Assets API
 
