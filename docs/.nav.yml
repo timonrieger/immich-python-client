@@ -1,4 +1,22 @@
 nav:
-  - Overview
-  - CLI
-  - client
+  - Overview:
+      - overview/introduction.md
+      - overview/getting-started.md
+      - overview/custom-functions.md
+      - overview/versioning.md
+      - overview/credits.md
+  - CLI:
+      - cli/getting-started.md
+      - cli/examples.md
+      - cli/usage-tips.md
+      - cli/env-vars.md
+      - cli/reference.md
+  - Client:
+      - client/getting-started.md
+      - client/structure.md
+      - client/authentication.md
+      - client/response-types.md
+      - client/session-management.md
+      - Reference:
+          - client/reference/client.md
+          - client/reference/*
