@@ -11,7 +11,7 @@ def test_unlink_all_o_auth_accounts_admin(runner: CliRunner) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "authentication-admin",
+            "auth-admin",
             "unlink-all-o-auth-accounts-admin",
         ],
     )

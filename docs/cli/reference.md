@@ -28,8 +28,8 @@ For more information on a specific command, run 'immich <command> --help'.
 * `activities`: An activity is a like or a comment made by...
 * `albums`: An album is a collection of assets that...
 * `assets`: An asset is an image or video that has...
-* `authentication`: Endpoints related to user authentication,...
-* `authentication-admin`: Administrative endpoints related to...
+* `auth`: Endpoints related to user authentication,...
+* `auth-admin`: Administrative endpoints related to...
 * `download`: Endpoints for downloading assets or...
 * `config`: Configure the CLI with server details,...
 * `duplicates`: Endpoints for managing and identifying...
@@ -60,6 +60,7 @@ For more information on a specific command, run 'immich <command> --help'.
 * `users-admin`: Administrative endpoints for managing...
 * `views`: Endpoints for specialized views, such as...
 * `workflows`: A workflow is a set of actions that run...
+* `backups`: Manage backups of the Immich database.
 
 ## `immich setup`
 
@@ -1317,7 +1318,7 @@ $ immich assets upload [OPTIONS] PATHS...
 * `--dry-run`: Simulate uploads without actually uploading
 * `--help`: Show this message and exit.
 
-## `immich authentication`
+## `immich auth`
 
 Endpoints related to user authentication, including OAuth.
 
@@ -1326,7 +1327,7 @@ Endpoints related to user authentication, including OAuth.
 **Usage**:
 
 ```console
-$ immich authentication [OPTIONS] COMMAND [ARGS]...
+$ immich auth [OPTIONS] COMMAND [ARGS]...
 ```
 
 **Options**:
@@ -1352,7 +1353,7 @@ $ immich authentication [OPTIONS] COMMAND [ARGS]...
 * `unlock-auth-session`: Unlock auth session
 * `validate-access-token`: Validate access token
 
-### `immich authentication change-password`
+### `immich auth change-password`
 
 Change password
 
@@ -1361,7 +1362,7 @@ Change password
 **Usage**:
 
 ```console
-$ immich authentication change-password [OPTIONS]
+$ immich auth change-password [OPTIONS]
 ```
 
 **Options**:
@@ -1371,7 +1372,7 @@ $ immich authentication change-password [OPTIONS]
 * `--password TEXT`: Example: password  [required]
 * `--help`: Show this message and exit.
 
-### `immich authentication change-pin-code`
+### `immich auth change-pin-code`
 
 Change pin code
 
@@ -1380,7 +1381,7 @@ Change pin code
 **Usage**:
 
 ```console
-$ immich authentication change-pin-code [OPTIONS]
+$ immich auth change-pin-code [OPTIONS]
 ```
 
 **Options**:
@@ -1390,7 +1391,7 @@ $ immich authentication change-pin-code [OPTIONS]
 * `--pin-code TEXT`: Example: 123456
 * `--help`: Show this message and exit.
 
-### `immich authentication finish-o-auth`
+### `immich auth finish-o-auth`
 
 Finish OAuth
 
@@ -1399,7 +1400,7 @@ Finish OAuth
 **Usage**:
 
 ```console
-$ immich authentication finish-o-auth [OPTIONS]
+$ immich auth finish-o-auth [OPTIONS]
 ```
 
 **Options**:
@@ -1409,7 +1410,7 @@ $ immich authentication finish-o-auth [OPTIONS]
 * `--url TEXT`: [required]
 * `--help`: Show this message and exit.
 
-### `immich authentication get-auth-status`
+### `immich auth get-auth-status`
 
 Retrieve auth status
 
@@ -1418,14 +1419,14 @@ Retrieve auth status
 **Usage**:
 
 ```console
-$ immich authentication get-auth-status [OPTIONS]
+$ immich auth get-auth-status [OPTIONS]
 ```
 
 **Options**:
 
 * `--help`: Show this message and exit.
 
-### `immich authentication link-o-auth-account`
+### `immich auth link-o-auth-account`
 
 Link OAuth account
 
@@ -1434,7 +1435,7 @@ Link OAuth account
 **Usage**:
 
 ```console
-$ immich authentication link-o-auth-account [OPTIONS]
+$ immich auth link-o-auth-account [OPTIONS]
 ```
 
 **Options**:
@@ -1444,7 +1445,7 @@ $ immich authentication link-o-auth-account [OPTIONS]
 * `--url TEXT`: [required]
 * `--help`: Show this message and exit.
 
-### `immich authentication lock-auth-session`
+### `immich auth lock-auth-session`
 
 Lock auth session
 
@@ -1453,14 +1454,14 @@ Lock auth session
 **Usage**:
 
 ```console
-$ immich authentication lock-auth-session [OPTIONS]
+$ immich auth lock-auth-session [OPTIONS]
 ```
 
 **Options**:
 
 * `--help`: Show this message and exit.
 
-### `immich authentication login`
+### `immich auth login`
 
 Login
 
@@ -1469,7 +1470,7 @@ Login
 **Usage**:
 
 ```console
-$ immich authentication login [OPTIONS]
+$ immich auth login [OPTIONS]
 ```
 
 **Options**:
@@ -1478,7 +1479,7 @@ $ immich authentication login [OPTIONS]
 * `--password TEXT`: Example: password  [required]
 * `--help`: Show this message and exit.
 
-### `immich authentication logout`
+### `immich auth logout`
 
 Logout
 
@@ -1487,14 +1488,14 @@ Logout
 **Usage**:
 
 ```console
-$ immich authentication logout [OPTIONS]
+$ immich auth logout [OPTIONS]
 ```
 
 **Options**:
 
 * `--help`: Show this message and exit.
 
-### `immich authentication redirect-o-auth-to-mobile`
+### `immich auth redirect-o-auth-to-mobile`
 
 Redirect OAuth to mobile
 
@@ -1503,14 +1504,14 @@ Redirect OAuth to mobile
 **Usage**:
 
 ```console
-$ immich authentication redirect-o-auth-to-mobile [OPTIONS]
+$ immich auth redirect-o-auth-to-mobile [OPTIONS]
 ```
 
 **Options**:
 
 * `--help`: Show this message and exit.
 
-### `immich authentication reset-pin-code`
+### `immich auth reset-pin-code`
 
 Reset pin code
 
@@ -1519,7 +1520,7 @@ Reset pin code
 **Usage**:
 
 ```console
-$ immich authentication reset-pin-code [OPTIONS]
+$ immich auth reset-pin-code [OPTIONS]
 ```
 
 **Options**:
@@ -1528,7 +1529,7 @@ $ immich authentication reset-pin-code [OPTIONS]
 * `--pin-code TEXT`: Example: 123456
 * `--help`: Show this message and exit.
 
-### `immich authentication setup-pin-code`
+### `immich auth setup-pin-code`
 
 Setup pin code
 
@@ -1537,7 +1538,7 @@ Setup pin code
 **Usage**:
 
 ```console
-$ immich authentication setup-pin-code [OPTIONS]
+$ immich auth setup-pin-code [OPTIONS]
 ```
 
 **Options**:
@@ -1545,7 +1546,7 @@ $ immich authentication setup-pin-code [OPTIONS]
 * `--pin-code TEXT`: Example: 123456  [required]
 * `--help`: Show this message and exit.
 
-### `immich authentication sign-up-admin`
+### `immich auth sign-up-admin`
 
 Register admin
 
@@ -1554,7 +1555,7 @@ Register admin
 **Usage**:
 
 ```console
-$ immich authentication sign-up-admin [OPTIONS]
+$ immich auth sign-up-admin [OPTIONS]
 ```
 
 **Options**:
@@ -1564,7 +1565,7 @@ $ immich authentication sign-up-admin [OPTIONS]
 * `--password TEXT`: Example: password  [required]
 * `--help`: Show this message and exit.
 
-### `immich authentication start-o-auth`
+### `immich auth start-o-auth`
 
 Start OAuth
 
@@ -1573,7 +1574,7 @@ Start OAuth
 **Usage**:
 
 ```console
-$ immich authentication start-o-auth [OPTIONS]
+$ immich auth start-o-auth [OPTIONS]
 ```
 
 **Options**:
@@ -1583,7 +1584,7 @@ $ immich authentication start-o-auth [OPTIONS]
 * `--state TEXT`
 * `--help`: Show this message and exit.
 
-### `immich authentication unlink-o-auth-account`
+### `immich auth unlink-o-auth-account`
 
 Unlink OAuth account
 
@@ -1592,14 +1593,14 @@ Unlink OAuth account
 **Usage**:
 
 ```console
-$ immich authentication unlink-o-auth-account [OPTIONS]
+$ immich auth unlink-o-auth-account [OPTIONS]
 ```
 
 **Options**:
 
 * `--help`: Show this message and exit.
 
-### `immich authentication unlock-auth-session`
+### `immich auth unlock-auth-session`
 
 Unlock auth session
 
@@ -1608,7 +1609,7 @@ Unlock auth session
 **Usage**:
 
 ```console
-$ immich authentication unlock-auth-session [OPTIONS]
+$ immich auth unlock-auth-session [OPTIONS]
 ```
 
 **Options**:
@@ -1617,7 +1618,7 @@ $ immich authentication unlock-auth-session [OPTIONS]
 * `--pin-code TEXT`: Example: 123456
 * `--help`: Show this message and exit.
 
-### `immich authentication validate-access-token`
+### `immich auth validate-access-token`
 
 Validate access token
 
@@ -1626,14 +1627,14 @@ Validate access token
 **Usage**:
 
 ```console
-$ immich authentication validate-access-token [OPTIONS]
+$ immich auth validate-access-token [OPTIONS]
 ```
 
 **Options**:
 
 * `--help`: Show this message and exit.
 
-## `immich authentication-admin`
+## `immich auth-admin`
 
 Administrative endpoints related to authentication.
 
@@ -1642,7 +1643,7 @@ Administrative endpoints related to authentication.
 **Usage**:
 
 ```console
-$ immich authentication-admin [OPTIONS] COMMAND [ARGS]...
+$ immich auth-admin [OPTIONS] COMMAND [ARGS]...
 ```
 
 **Options**:
@@ -1653,7 +1654,7 @@ $ immich authentication-admin [OPTIONS] COMMAND [ARGS]...
 
 * `unlink-all-o-auth-accounts-admin`: Unlink all OAuth accounts
 
-### `immich authentication-admin unlink-all-o-auth-accounts-admin`
+### `immich auth-admin unlink-all-o-auth-accounts-admin`
 
 Unlink all OAuth accounts
 
@@ -1662,7 +1663,7 @@ Unlink all OAuth accounts
 **Usage**:
 
 ```console
-$ immich authentication-admin unlink-all-o-auth-accounts-admin [OPTIONS]
+$ immich auth-admin unlink-all-o-auth-accounts-admin [OPTIONS]
 ```
 
 **Options**:
@@ -6164,4 +6165,114 @@ $ immich workflows update-workflow [OPTIONS] ID
 * `--filters TEXT`: As a JSON string
 * `--name TEXT`
 * `--trigger-type TEXT`
+* `--help`: Show this message and exit.
+
+## `immich backups`
+
+Manage backups of the Immich database.
+
+<a href="https://api.immich.app/endpoints/database-backups-admin">Immich API documentation</a>
+
+**Usage**:
+
+```console
+$ immich backups [OPTIONS] COMMAND [ARGS]...
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+**Commands**:
+
+* `delete-database-backup`: Delete database backup
+* `download-database-backup`: Download database backup
+* `list-database-backups`: List database backups
+* `start-database-restore-flow`: Start database backup restore flow
+* `upload-database-backup`: Upload database backup
+
+### `immich backups delete-database-backup`
+
+Delete database backup
+
+<a href="https://api.immich.app/endpoints/database-backups-admin/deleteDatabaseBackup">Immich API documentation</a>
+
+**Usage**:
+
+```console
+$ immich backups delete-database-backup [OPTIONS]
+```
+
+**Options**:
+
+* `--backups TEXT`: [required]
+* `--help`: Show this message and exit.
+
+### `immich backups download-database-backup`
+
+Download database backup
+
+<a href="https://api.immich.app/endpoints/database-backups-admin/downloadDatabaseBackup">Immich API documentation</a>
+
+**Usage**:
+
+```console
+$ immich backups download-database-backup [OPTIONS] FILENAME
+```
+
+**Arguments**:
+
+* `FILENAME`: [required]
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+### `immich backups list-database-backups`
+
+List database backups
+
+<a href="https://api.immich.app/endpoints/database-backups-admin/listDatabaseBackups">Immich API documentation</a>
+
+**Usage**:
+
+```console
+$ immich backups list-database-backups [OPTIONS]
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+### `immich backups start-database-restore-flow`
+
+Start database backup restore flow
+
+<a href="https://api.immich.app/endpoints/database-backups-admin/startDatabaseRestoreFlow">Immich API documentation</a>
+
+**Usage**:
+
+```console
+$ immich backups start-database-restore-flow [OPTIONS]
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+### `immich backups upload-database-backup`
+
+Upload database backup
+
+<a href="https://api.immich.app/endpoints/database-backups-admin/uploadDatabaseBackup">Immich API documentation</a>
+
+**Usage**:
+
+```console
+$ immich backups upload-database-backup [OPTIONS]
+```
+
+**Options**:
+
+* `--file PATH`
 * `--help`: Show this message and exit.

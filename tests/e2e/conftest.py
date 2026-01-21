@@ -80,7 +80,7 @@ async def client_with_access_token(env: dict[str, str]):
     try:
         # Sign up admin (idempotent: subsequent tests will hit "already has an admin")
         try:
-            await setup_client.authentication.sign_up_admin(
+            await setup_client.auth.sign_up_admin(
                 SignUpDto(
                     email="admin@immich.cloud", name="Immich Admin", password="password"
                 )
@@ -90,7 +90,7 @@ async def client_with_access_token(env: dict[str, str]):
                 raise
 
         # Login to get access token
-        login_response = await setup_client.authentication.login(
+        login_response = await setup_client.auth.login(
             LoginCredentialDto(email="admin@immich.cloud", password="password")
         )
 
@@ -402,17 +402,13 @@ async def pin_code_setup(
     try:
         # safe play in case a previous test failed and left a PIN code set
         try:
-            await client_with_api_key.authentication.reset_pin_code(
+            await client_with_api_key.auth.reset_pin_code(
                 PinCodeResetDto(password="password")
             )
         except Exception:
             pass
-        await client_with_api_key.authentication.setup_pin_code(
-            PinCodeSetupDto(pinCode=pin_code)
-        )
-        assert (
-            await client_with_api_key.authentication.get_auth_status()
-        ).pin_code is True
+        await client_with_api_key.auth.setup_pin_code(PinCodeSetupDto(pinCode=pin_code))
+        assert (await client_with_api_key.auth.get_auth_status()).pin_code is True
     except Exception as e:
         pytest.skip(f"PIN code setup failed: {e}")
 
@@ -420,7 +416,7 @@ async def pin_code_setup(
 
     if teardown:
         # Reset PIN code by deleting it (requires password)
-        await client_with_api_key.authentication.reset_pin_code(
+        await client_with_api_key.auth.reset_pin_code(
             PinCodeResetDto(password="password")
         )
 
@@ -439,7 +435,7 @@ async def pin_code_change(
     new_pin = "567890"
 
     try:
-        await client_with_api_key.authentication.change_pin_code(
+        await client_with_api_key.auth.change_pin_code(
             PinCodeChangeDto(newPinCode=new_pin, password="password")
         )
     except Exception as e:
@@ -460,7 +456,7 @@ async def get_auth_status_factory(
 
     async def _get_auth_status() -> AuthStatusResponseDto:
         try:
-            return await client_with_access_token.authentication.get_auth_status()
+            return await client_with_access_token.auth.get_auth_status()
         except Exception as e:
             pytest.skip(f"Get auth status failed:\n{e}")
 

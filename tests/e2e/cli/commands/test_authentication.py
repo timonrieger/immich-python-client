@@ -21,7 +21,7 @@ def test_get_auth_status(runner: CliRunner) -> None:
     """Test get-auth-status command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["authentication", "get-auth-status"],
+        ["auth", "get-auth-status"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -33,7 +33,7 @@ def test_validate_access_token(runner: CliRunner) -> None:
     """Test validate-access-token command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["authentication", "validate-access-token"],
+        ["auth", "validate-access-token"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -46,7 +46,7 @@ def test_login(runner: CliRunner) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "authentication",
+            "auth",
             "login",
             "--email",
             "admin@immich.cloud",
@@ -64,7 +64,7 @@ def test_logout(runner: CliRunner) -> None:
     """Test logout command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["authentication", "logout"],
+        ["auth", "logout"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -77,7 +77,7 @@ def test_change_password(runner: CliRunner) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "authentication",
+            "auth",
             "change-password",
             "--password",
             "password",
@@ -95,7 +95,7 @@ def test_change_password(runner: CliRunner) -> None:
     revert_result = runner.invoke(
         cli_app,
         [
-            "authentication",
+            "auth",
             "change-password",
             "--password",
             "newpassword123",
@@ -114,7 +114,7 @@ def test_setup_pin_code(runner: CliRunner) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "authentication",
+            "auth",
             "setup-pin-code",
             "--pin-code",
             "123456",
@@ -131,7 +131,7 @@ def test_change_pin_code(runner: CliRunner, pin_code_setup: str) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "authentication",
+            "auth",
             "change-pin-code",
             "--new-pin-code",
             "567890",
@@ -151,7 +151,7 @@ def test_reset_pin_code(runner: CliRunner, pin_code_setup: str) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "authentication",
+            "auth",
             "reset-pin-code",
             "--password",
             "password",
@@ -182,7 +182,7 @@ async def test_auth_session_lock_unlock(
         runner_with_access_token.invoke,
         cli_app,
         [
-            "authentication",
+            "auth",
             "unlock-auth-session",
             "--pin-code",
             initial_pin,
@@ -201,7 +201,7 @@ async def test_auth_session_lock_unlock(
         runner_with_access_token.invoke,
         cli_app,
         [
-            "authentication",
+            "auth",
             "unlock-auth-session",
             "--pin-code",
             new_pin,
@@ -218,7 +218,7 @@ async def test_auth_session_lock_unlock(
     result = await asyncio.to_thread(
         runner_with_access_token.invoke,
         cli_app,
-        ["authentication", "lock-auth-session"],
+        ["auth", "lock-auth-session"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -233,7 +233,7 @@ def test_unlink_o_auth_account(runner: CliRunner) -> None:
     """Test unlink-o-auth-account command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["authentication", "unlink-o-auth-account"],
+        ["auth", "unlink-o-auth-account"],
     )
     assert result.exit_code == 0, result.stdout + result.stderr
     response_data = json.loads(result.stdout)
@@ -247,7 +247,7 @@ def test_start_o_auth(runner: CliRunner) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "authentication",
+            "auth",
             "start-o-auth",
             "--redirect-uri",
             "http://localhost:3000/oauth/callback",
@@ -270,7 +270,7 @@ def test_redirect_o_auth_to_mobile(runner: CliRunner) -> None:
     """Test redirect-o-auth-to-mobile command and validate response structure."""
     result = runner.invoke(
         cli_app,
-        ["authentication", "redirect-o-auth-to-mobile"],
+        ["auth", "redirect-o-auth-to-mobile"],
     )
     response_data = json.loads(result.stdout)
     assert response_data is None
@@ -285,7 +285,7 @@ def test_finish_o_auth(runner: CliRunner) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "authentication",
+            "auth",
             "finish-o-auth",
             "--url",
             "http://localhost:3000/oauth/callback?code=test-code&state=test-state",
@@ -307,7 +307,7 @@ def test_link_o_auth_account(runner: CliRunner) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "authentication",
+            "auth",
             "link-o-auth-account",
             "--url",
             "http://localhost:3000/oauth/callback?code=test-code&state=test-state",
@@ -329,7 +329,7 @@ def test_sign_up_admin(runner: CliRunner) -> None:
     result = runner.invoke(
         cli_app,
         [
-            "authentication",
+            "auth",
             "sign-up-admin",
             "--email",
             "test-admin@immich.cloud",

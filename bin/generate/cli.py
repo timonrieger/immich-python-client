@@ -72,6 +72,17 @@ def to_snake_case(name: str) -> str:
     return inflection.parameterize(snake, separator="_")
 
 
+def get_tag_attr(tag: str) -> str:
+    """Get the attribute name for a tag."""
+    snaked = to_snake_case(tag)
+    mappings = {
+        "database_backups_admin": "backups",
+        "authentication_admin": "auth_admin",
+        "authentication": "auth",
+    }
+    return mappings.get(snaked, snaked)
+
+
 def to_kebab_case(name: str) -> str:
     """Convert string to kebab-case."""
     snake = to_snake_case(name)
@@ -472,7 +483,7 @@ def generate_tag_app(
     tag: str, operations: list[tuple[str, str, dict[str, Any]]], spec: dict[str, Any]
 ) -> str:
     """Generate a Typer app module for a tag."""
-    tag_attr = to_snake_case(tag)
+    tag_attr = get_tag_attr(tag)
     tag_description = next(t for t in spec["tags"] if t["name"] == tag)["description"]
     tag_slug = inflection.parameterize(tag)
     tag_help = f"{tag_description}\\n\\n[link=https://api.immich.app/endpoints/{tag_slug}]Immich API documentation[/link]"

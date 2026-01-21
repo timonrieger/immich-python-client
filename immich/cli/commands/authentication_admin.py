@@ -29,10 +29,6 @@ def unlink_all_o_auth_accounts_admin(
     kwargs = {}
     client: "AsyncClient" = ctx.obj["client"]
     result = run_command(
-        client,
-        client.authentication_admin,
-        "unlink_all_o_auth_accounts_admin",
-        ctx,
-        **kwargs,
+        client, client.auth_admin, "unlink_all_o_auth_accounts_admin", ctx, **kwargs
     )
     print_response(result, ctx)

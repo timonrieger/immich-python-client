@@ -42,9 +42,7 @@ def change_password(
     change_password_dto = ChangePasswordDto.model_validate(json_data)
     kwargs["change_password_dto"] = change_password_dto
     client: "AsyncClient" = ctx.obj["client"]
-    result = run_command(
-        client, client.authentication, "change_password", ctx, **kwargs
-    )
+    result = run_command(client, client.auth, "change_password", ctx, **kwargs)
     print_response(result, ctx)
 
 
@@ -69,9 +67,7 @@ def change_pin_code(
     pin_code_change_dto = PinCodeChangeDto.model_validate(json_data)
     kwargs["pin_code_change_dto"] = pin_code_change_dto
     client: "AsyncClient" = ctx.obj["client"]
-    result = run_command(
-        client, client.authentication, "change_pin_code", ctx, **kwargs
-    )
+    result = run_command(client, client.auth, "change_pin_code", ctx, **kwargs)
     print_response(result, ctx)
 
 
@@ -96,7 +92,7 @@ def finish_o_auth(
     o_auth_callback_dto = OAuthCallbackDto.model_validate(json_data)
     kwargs["o_auth_callback_dto"] = o_auth_callback_dto
     client: "AsyncClient" = ctx.obj["client"]
-    result = run_command(client, client.authentication, "finish_o_auth", ctx, **kwargs)
+    result = run_command(client, client.auth, "finish_o_auth", ctx, **kwargs)
     print_response(result, ctx)
 
 
@@ -110,9 +106,7 @@ def get_auth_status(
     """
     kwargs = {}
     client: "AsyncClient" = ctx.obj["client"]
-    result = run_command(
-        client, client.authentication, "get_auth_status", ctx, **kwargs
-    )
+    result = run_command(client, client.auth, "get_auth_status", ctx, **kwargs)
     print_response(result, ctx)
 
 
@@ -137,9 +131,7 @@ def link_o_auth_account(
     o_auth_callback_dto = OAuthCallbackDto.model_validate(json_data)
     kwargs["o_auth_callback_dto"] = o_auth_callback_dto
     client: "AsyncClient" = ctx.obj["client"]
-    result = run_command(
-        client, client.authentication, "link_o_auth_account", ctx, **kwargs
-    )
+    result = run_command(client, client.auth, "link_o_auth_account", ctx, **kwargs)
     print_response(result, ctx)
 
 
@@ -153,9 +145,7 @@ def lock_auth_session(
     """
     kwargs = {}
     client: "AsyncClient" = ctx.obj["client"]
-    result = run_command(
-        client, client.authentication, "lock_auth_session", ctx, **kwargs
-    )
+    result = run_command(client, client.auth, "lock_auth_session", ctx, **kwargs)
     print_response(result, ctx)
 
 
@@ -176,7 +166,7 @@ def login(
     login_credential_dto = LoginCredentialDto.model_validate(json_data)
     kwargs["login_credential_dto"] = login_credential_dto
     client: "AsyncClient" = ctx.obj["client"]
-    result = run_command(client, client.authentication, "login", ctx, **kwargs)
+    result = run_command(client, client.auth, "login", ctx, **kwargs)
     print_response(result, ctx)
 
 
@@ -190,7 +180,7 @@ def logout(
     """
     kwargs = {}
     client: "AsyncClient" = ctx.obj["client"]
-    result = run_command(client, client.authentication, "logout", ctx, **kwargs)
+    result = run_command(client, client.auth, "logout", ctx, **kwargs)
     print_response(result, ctx)
 
 
@@ -207,7 +197,7 @@ def redirect_o_auth_to_mobile(
     kwargs = {}
     client: "AsyncClient" = ctx.obj["client"]
     result = run_command(
-        client, client.authentication, "redirect_o_auth_to_mobile", ctx, **kwargs
+        client, client.auth, "redirect_o_auth_to_mobile", ctx, **kwargs
     )
     print_response(result, ctx)
 
@@ -231,7 +221,7 @@ def reset_pin_code(
     pin_code_reset_dto = PinCodeResetDto.model_validate(json_data)
     kwargs["pin_code_reset_dto"] = pin_code_reset_dto
     client: "AsyncClient" = ctx.obj["client"]
-    result = run_command(client, client.authentication, "reset_pin_code", ctx, **kwargs)
+    result = run_command(client, client.auth, "reset_pin_code", ctx, **kwargs)
     print_response(result, ctx)
 
 
@@ -250,7 +240,7 @@ def setup_pin_code(
     pin_code_setup_dto = PinCodeSetupDto.model_validate(json_data)
     kwargs["pin_code_setup_dto"] = pin_code_setup_dto
     client: "AsyncClient" = ctx.obj["client"]
-    result = run_command(client, client.authentication, "setup_pin_code", ctx, **kwargs)
+    result = run_command(client, client.auth, "setup_pin_code", ctx, **kwargs)
     print_response(result, ctx)
 
 
@@ -273,7 +263,7 @@ def sign_up_admin(
     sign_up_dto = SignUpDto.model_validate(json_data)
     kwargs["sign_up_dto"] = sign_up_dto
     client: "AsyncClient" = ctx.obj["client"]
-    result = run_command(client, client.authentication, "sign_up_admin", ctx, **kwargs)
+    result = run_command(client, client.auth, "sign_up_admin", ctx, **kwargs)
     print_response(result, ctx)
 
 
@@ -298,7 +288,7 @@ def start_o_auth(
     o_auth_config_dto = OAuthConfigDto.model_validate(json_data)
     kwargs["o_auth_config_dto"] = o_auth_config_dto
     client: "AsyncClient" = ctx.obj["client"]
-    result = run_command(client, client.authentication, "start_o_auth", ctx, **kwargs)
+    result = run_command(client, client.auth, "start_o_auth", ctx, **kwargs)
     print_response(result, ctx)
 
 
@@ -312,9 +302,7 @@ def unlink_o_auth_account(
     """
     kwargs = {}
     client: "AsyncClient" = ctx.obj["client"]
-    result = run_command(
-        client, client.authentication, "unlink_o_auth_account", ctx, **kwargs
-    )
+    result = run_command(client, client.auth, "unlink_o_auth_account", ctx, **kwargs)
     print_response(result, ctx)
 
 
@@ -337,9 +325,7 @@ def unlock_auth_session(
     session_unlock_dto = SessionUnlockDto.model_validate(json_data)
     kwargs["session_unlock_dto"] = session_unlock_dto
     client: "AsyncClient" = ctx.obj["client"]
-    result = run_command(
-        client, client.authentication, "unlock_auth_session", ctx, **kwargs
-    )
+    result = run_command(client, client.auth, "unlock_auth_session", ctx, **kwargs)
     print_response(result, ctx)
 
 
@@ -353,7 +339,5 @@ def validate_access_token(
     """
     kwargs = {}
     client: "AsyncClient" = ctx.obj["client"]
-    result = run_command(
-        client, client.authentication, "validate_access_token", ctx, **kwargs
-    )
+    result = run_command(client, client.auth, "validate_access_token", ctx, **kwargs)
     print_response(result, ctx)

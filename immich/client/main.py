@@ -95,13 +95,13 @@ class AsyncClient:
     See [AssetsApiWrapped][immich.client.wrapper.assets_api_wrapped.AssetsApiWrapped] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/assets) for more information.
     """
 
-    authentication: AuthenticationApi
+    auth: AuthenticationApi
     """Endpoints related to user authentication, including OAuth.
 
     See [AuthenticationApi][immich.client.generated.api.authentication_api.AuthenticationApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/authentication) for more information.
     """
 
-    authentication_admin: AuthenticationAdminApi
+    auth_admin: AuthenticationAdminApi
     """Administrative endpoints related to authentication.
 
     See [AuthenticationAdminApi][immich.client.generated.api.authentication_admin_api.AuthenticationAdminApi] for available methods and [Immich API Documentation](https://api.immich.app/endpoints/authentication-(admin)) for more information.
@@ -314,8 +314,8 @@ class AsyncClient:
         self.albums = AlbumsApi(self.base_client)
         self.api_keys = APIKeysApi(self.base_client)
         self.assets = AssetsApiWrapped(self.base_client)
-        self.authentication = AuthenticationApi(self.base_client)
-        self.authentication_admin = AuthenticationAdminApi(self.base_client)
+        self.auth = AuthenticationApi(self.base_client)
+        self.auth_admin = AuthenticationAdminApi(self.base_client)
         self.backups = DatabaseBackupsAdminApi(self.base_client)
         self.deprecated = DeprecatedApi(self.base_client)
         self.download = DownloadApiWrapped(self.base_client)

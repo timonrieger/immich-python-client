@@ -91,12 +91,10 @@ app.add_typer(
 )
 app.add_typer(albums_commands.app, name="albums", rich_help_panel="API commands")
 app.add_typer(assets_wrapper.app, name="assets", rich_help_panel="API commands")
-app.add_typer(
-    authentication_commands.app, name="authentication", rich_help_panel="API commands"
-)
+app.add_typer(authentication_commands.app, name="auth", rich_help_panel="API commands")
 app.add_typer(
     authentication_admin_commands.app,
-    name="authentication-admin",
+    name="auth-admin",
     rich_help_panel="API commands",
 )
 app.add_typer(download_wrapper.app, name="download", rich_help_panel="API commands")
@@ -152,7 +150,7 @@ app.add_typer(views_commands.app, name="views", rich_help_panel="API commands")
 app.add_typer(workflows_commands.app, name="workflows", rich_help_panel="API commands")
 app.add_typer(
     database_backups_admin_commands.app,
-    name="database-backups-admin",
+    name="backups",
     rich_help_panel="API commands",
 )
 
