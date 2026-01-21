@@ -77,9 +77,7 @@ from immich.cli.commands import (
 
 # Global state
 app = typer.Typer(
-    context_settings={"help_option_names": ["-h", "--help"]},
-    no_args_is_help=True,
-    epilog="For more information on a specific command, run 'immich <command> --help'.",
+    context_settings={"help_option_names": ["-h", "--help"]}, no_args_is_help=True
 )
 console = Console()
 stderr_console = Console(file=sys.stderr)
