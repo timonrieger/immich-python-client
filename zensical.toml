@@ -49,8 +49,77 @@ edit_uri = "edit/main/docs"
 
 #
 # Read more: https://zensical.org/docs/setup/navigation/
-# Navigation is now defined in docs/.nav.yml
-
+nav = [
+    "index.md",
+    { Overview = [
+        "overview/getting-started.md",
+        "overview/custom-functions.md",
+        "overview/versioning.md",
+    ] },
+    { CLI = [
+        "cli/getting-started.md",
+        "cli/examples.md",
+        "cli/usage-tips.md",
+        "cli/env-vars.md",
+        "cli/reference.md",
+    ] },
+    { Client = [
+        "client/getting-started.md",
+        "client/response-types.md",
+        "client/session-management.md",
+        { Reference = [
+            "client/reference/AsyncClient.md",
+            { API = [
+                "client/reference/api/activities_api.md",
+                "client/reference/api/albums_api.md",
+                "client/reference/api/api_keys_api.md",
+                "client/reference/api/assets_api.md",
+                "client/reference/api/authentication_admin_api.md",
+                "client/reference/api/authentication_api.md",
+                "client/reference/api/deprecated_api.md",
+                "client/reference/api/download_api.md",
+                "client/reference/api/duplicates_api.md",
+                "client/reference/api/faces_api.md",
+                "client/reference/api/jobs_api.md",
+                "client/reference/api/libraries_api.md",
+                "client/reference/api/maintenance_admin_api.md",
+                "client/reference/api/map_api.md",
+                "client/reference/api/memories_api.md",
+                "client/reference/api/notifications_admin_api.md",
+                "client/reference/api/notifications_api.md",
+                "client/reference/api/partners_api.md",
+                "client/reference/api/people_api.md",
+                "client/reference/api/plugins_api.md",
+                "client/reference/api/queues_api.md",
+                "client/reference/api/search_api.md",
+                "client/reference/api/server_api.md",
+                "client/reference/api/sessions_api.md",
+                "client/reference/api/shared_links_api.md",
+                "client/reference/api/stacks_api.md",
+                "client/reference/api/sync_api.md",
+                "client/reference/api/system_config_api.md",
+                "client/reference/api/system_metadata_api.md",
+                "client/reference/api/tags_api.md",
+                "client/reference/api/timeline_api.md",
+                "client/reference/api/trash_api.md",
+                "client/reference/api/users_admin_api.md",
+                "client/reference/api/users_api.md",
+                "client/reference/api/views_api.md",
+                "client/reference/api/workflows_api.md",
+            ] },
+            { Wrapper = [
+                "client/reference/wrapper/assets_api_wrapped.md",
+                "client/reference/wrapper/download_api_wrapped.md",
+                "client/reference/wrapper/users_api_wrapped.md",
+            ] },
+        ] },
+    ] },
+    { Info = [
+        "info/credits.md",
+        "info/contributing.md",
+        "info/development.md",
+    ] },
+]
 # With the "extra_css" option you can add your own CSS styling to customize
 # your Zensical project according to your needs. You can add any number of
 # CSS files.
@@ -340,7 +409,7 @@ inventories = ["https://docs.python.org/3/objects.inv"]
 
 [project.plugins.mkdocstrings.handlers.python.options]
 # Docstring style: "google", "numpy", or "sphinx"
-docstring_style = "google"
+docstring_style = "auto"
 # Use static parsing only - this prevents rebuild loops from dynamic imports
 allow_inspection = false
 # Only show public members to reduce processing
@@ -354,82 +423,10 @@ show_signature_return_annotation = true
 # Customize prompt characters that trigger command lines
 prompt_literal_start = ["$", ">"]
 
-[project.plugins.awesome-nav]
+# [project.plugins.awesome-nav]
 
 [project.markdown_extensions.admonition]
 [project.markdown_extensions.pymdownx.details]
 [project.markdown_extensions.pymdownx.superfences]
 [project.markdown_extensions.pymdownx.tabbed]
 
-[project.nav]
-nav = [
-    "index.md",
-    { Overview = [
-        "overview/getting-started.md",
-        "overview/custom-functions.md",
-        "overview/versioning.md",
-    ] },
-    { CLI = [
-        "cli/getting-started.md",
-        "cli/examples.md",
-        "cli/usage-tips.md",
-        "cli/env-vars.md",
-        "cli/reference.md",
-    ] },
-    { Client = [
-        "client/getting-started.md",
-        "client/response-types.md",
-        "client/session-management.md",
-        { Reference = [
-            "client/reference/AsyncClient.md",
-            { API = [
-                "client/reference/api/activities_api.md",
-                "client/reference/api/albums_api.md",
-                "client/reference/api/api_keys_api.md",
-                "client/reference/api/assets_api.md",
-                "client/reference/api/authentication_admin_api.md",
-                "client/reference/api/authentication_api.md",
-                "client/reference/api/deprecated_api.md",
-                "client/reference/api/download_api.md",
-                "client/reference/api/duplicates_api.md",
-                "client/reference/api/faces_api.md",
-                "client/reference/api/jobs_api.md",
-                "client/reference/api/libraries_api.md",
-                "client/reference/api/maintenance_admin_api.md",
-                "client/reference/api/map_api.md",
-                "client/reference/api/memories_api.md",
-                "client/reference/api/notifications_admin_api.md",
-                "client/reference/api/notifications_api.md",
-                "client/reference/api/partners_api.md",
-                "client/reference/api/people_api.md",
-                "client/reference/api/plugins_api.md",
-                "client/reference/api/queues_api.md",
-                "client/reference/api/search_api.md",
-                "client/reference/api/server_api.md",
-                "client/reference/api/sessions_api.md",
-                "client/reference/api/shared_links_api.md",
-                "client/reference/api/stacks_api.md",
-                "client/reference/api/sync_api.md",
-                "client/reference/api/system_config_api.md",
-                "client/reference/api/system_metadata_api.md",
-                "client/reference/api/tags_api.md",
-                "client/reference/api/timeline_api.md",
-                "client/reference/api/trash_api.md",
-                "client/reference/api/users_admin_api.md",
-                "client/reference/api/users_api.md",
-                "client/reference/api/views_api.md",
-                "client/reference/api/workflows_api.md",
-            ] },
-            { Wrapper = [
-                "client/reference/wrapper/assets_api_wrapped.md",
-                "client/reference/wrapper/download_api_wrapped.md",
-                "client/reference/wrapper/users_api_wrapped.md",
-            ] },
-        ] },
-    ] },
-    { Info = [
-        "info/credits.md",
-        "info/contributing.md",
-        "info/development.md",
-    ] },
-]
