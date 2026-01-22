@@ -139,8 +139,6 @@ jobs:
         with:
           directory: ./
           github_token: ${{ secrets.RELEASE_PAT }}
-          git_committer_name: "github-actions"
-          git_committer_email: "actions@users.noreply.github.com"
           changelog: false # github releases are sufficient
 
       - name: Upload | Distribution Artifacts
