@@ -8,7 +8,10 @@ from immich.cli import main
 
 class TestCallbackConfigResolution:
     def test_cli_options_take_precedence_over_profile(
-        self, runner: CliRunner, mock_config_path: Path, mock_api_calls: MagicMock
+        self,
+        runner_simple: CliRunner,
+        mock_config_path: Path,
+        mock_api_calls: MagicMock,
     ):
         """Test that CLI options take precedence over profile values."""
         mock_config_path.parent.mkdir(parents=True, exist_ok=True)
@@ -19,7 +22,7 @@ class TestCallbackConfigResolution:
             'access_token = "profile-token"'
         )
 
-        result = runner.invoke(
+        result = runner_simple.invoke(
             main.app,
             [
                 "--base-url",
@@ -42,7 +45,10 @@ class TestCallbackConfigResolution:
         assert call_kwargs["access_token"] is None
 
     def test_profile_values_used_when_cli_options_missing(
-        self, runner: CliRunner, mock_config_path: Path, mock_api_calls: MagicMock
+        self,
+        runner_simple: CliRunner,
+        mock_config_path: Path,
+        mock_api_calls: MagicMock,
     ):
         """Test that profile values are used when CLI options are not provided."""
         mock_config_path.parent.mkdir(parents=True, exist_ok=True)
@@ -53,7 +59,7 @@ class TestCallbackConfigResolution:
             'access_token = "profile-token"'
         )
 
-        result = runner.invoke(
+        result = runner_simple.invoke(
             main.app,
             ["server", "get-about-info"],
         )
@@ -67,7 +73,10 @@ class TestCallbackConfigResolution:
         assert call_kwargs["access_token"] is None
 
     def test_partial_cli_options_merge_with_profile(
-        self, runner: CliRunner, mock_config_path: Path, mock_api_calls: MagicMock
+        self,
+        runner_simple: CliRunner,
+        mock_config_path: Path,
+        mock_api_calls: MagicMock,
     ):
         """Test that partial CLI options merge with profile values."""
         mock_config_path.parent.mkdir(parents=True, exist_ok=True)
@@ -78,7 +87,7 @@ class TestCallbackConfigResolution:
             'access_token = "profile-token"'
         )
 
-        result = runner.invoke(
+        result = runner_simple.invoke(
             main.app,
             [
                 "--base-url",
@@ -97,7 +106,10 @@ class TestCallbackConfigResolution:
         assert call_kwargs["access_token"] is None
 
     def test_custom_profile_resolution(
-        self, runner: CliRunner, mock_config_path: Path, mock_api_calls: MagicMock
+        self,
+        runner_simple: CliRunner,
+        mock_config_path: Path,
+        mock_api_calls: MagicMock,
     ):
         """Test that custom profile is used when specified."""
         mock_config_path.parent.mkdir(parents=True, exist_ok=True)
@@ -111,7 +123,7 @@ class TestCallbackConfigResolution:
             'access_token = "default-token"'
         )
 
-        result = runner.invoke(
+        result = runner_simple.invoke(
             main.app,
             [
                 "--profile",
@@ -130,14 +142,14 @@ class TestCallbackConfigResolution:
         assert call_kwargs["access_token"] is None
 
     def test_no_base_url_exits_with_error(
-        self, runner: CliRunner, mock_config_path: Path
+        self, runner_simple: CliRunner, mock_config_path: Path
     ) -> None:
         """Test that missing base_url exits with error code 1."""
         # Create config file without base_url
         mock_config_path.parent.mkdir(parents=True, exist_ok=True)
         mock_config_path.write_text('[profiles.default]\napi_key = "profile-key"\n')
 
-        result = runner.invoke(
+        result = runner_simple.invoke(
             main.app,
             ["server", "get-about-info"],
         )
@@ -150,7 +162,7 @@ class TestCallbackConfigResolution:
     def test_verbose_mode_prints_debug_config(
         self,
         mock_print: MagicMock,
-        runner: CliRunner,
+        runner_simple: CliRunner,
         mock_config_path: Path,
         mock_api_calls: MagicMock,
     ) -> None:
@@ -162,7 +174,7 @@ class TestCallbackConfigResolution:
             'api_key = "profile-key"\n'
         )
 
-        result = runner.invoke(
+        result = runner_simple.invoke(
             main.app,
             [
                 "--verbose",

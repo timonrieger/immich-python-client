@@ -231,7 +231,6 @@ features = [
     # https://zensical.org/docs/authoring/content-tabs/#linked-content-tabs
     "content.tabs.link",
 
-    # TODO: not sure I understand this one? Is there a demo of this in the docs?
     # https://zensical.org/docs/authoring/tooltips/#improved-tooltips
     "content.tooltips",
 
@@ -412,7 +411,6 @@ paths = ["immich"]
 inventories = ["https://docs.python.org/3/objects.inv"]
 
 [project.plugins.mkdocstrings.handlers.python.options]
-# Docstring style: "google", "numpy", or "sphinx"
 docstring_style = "auto"
 # Use static parsing only - this prevents rebuild loops from dynamic imports
 allow_inspection = false
