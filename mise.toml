@@ -110,10 +110,11 @@ run = [
 ]
 
 [tasks."docs:dev"]
-description = "Run documentation development server (using zensical)"
+description = "Run documentation development server"
 run = "uv run zensical serve"
 
 [tasks."docs:serve"]
+hide = true
 description = "Run documentation development server (using mkdocs)"
 run = "uv run mkdocs serve"
 
