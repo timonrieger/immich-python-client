@@ -92,12 +92,6 @@ def run_command(
         raise Exit(code=code)
 
     except Exception as e:
-        msg = str(e).strip()
-
-        if msg:
-            print_(f"Unexpected error: {msg}", type="error", ctx=ctx)
-        else:
-            print_("Unexpected error occurred", type="error", ctx=ctx)
-
+        print_(f"Unexpected error: {str(e).strip()}", type="error", ctx=ctx)
         print_(traceback.format_exc(), type="debug", ctx=ctx)
         raise Exit(code=1)

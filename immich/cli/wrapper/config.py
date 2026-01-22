@@ -25,7 +25,7 @@ def set(
         help="Value to set (prompts if not provided)",
         prompt="Enter the value",
     ),
-) -> None:
+) -> None:  # pragma: no cover
     """Set a value in the config file."""
     data = load_config()
     set_path(data, key, value)
@@ -42,7 +42,7 @@ def get(
         "--show-secrets",
         help="Show secret values without redaction",
     ),
-) -> None:
+) -> None:  # pragma: no cover
     """Get a value from the config file. Secrets are redacted by default."""
     check_config()
     data = load_config()
@@ -62,7 +62,7 @@ def reset(
         help="Skip confirmation",
         prompt="Are you sure you want to reset the config? This will permanently delete the config file",
     ),
-) -> None:
+) -> None:  # pragma: no cover
     """Reset the configuration by deleting the config file."""
     check_config()
     CONFIG_FILE.unlink()

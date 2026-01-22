@@ -77,6 +77,18 @@ class TestPrintResponse:
         assert "John" in captured.out
         assert "Jane" in captured.out
 
+    def test_print_response_primitive_type(self, capsys: "CaptureFixture[str]") -> None:
+        """Test print_response with primitive type (neither list nor BaseModel)."""
+        ctx: Mock = Mock(spec=Context)
+        ctx.obj = {"format": "json"}
+
+        data = "simple string"
+        print_response(data, ctx)
+
+        captured = capsys.readouterr()
+        output = json.loads(captured.out)
+        assert output == "simple string"
+
 
 class TestFormatApiError:
     """Tests for format_api_error function."""

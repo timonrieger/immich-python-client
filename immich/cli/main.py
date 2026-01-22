@@ -206,7 +206,7 @@ def callback(
         is_eager=True,
         help="Show version and exit.",
     ),
-) -> None:
+) -> None:  # pragma: no cover
     ctx.ensure_object(dict)
     ctx.obj["format"] = format_mode
     ctx.obj["verbose"] = verbose

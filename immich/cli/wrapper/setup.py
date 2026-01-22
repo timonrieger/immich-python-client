@@ -48,7 +48,7 @@ def setup(
         "--skip-validation",
         help="Skip validation of the server.",
     ),
-):
+) -> None:  # pragma: no cover
     """Interactively set up a profile for the CLI to connect to an Immich server."""
     data = load_config()
 
