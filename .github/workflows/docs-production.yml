@@ -9,6 +9,7 @@ on:
     paths:
       - 'zensical.toml'
       - 'docs/**'
+      - '.github/workflows/docs-production.yml'
 jobs:
   deploy:
     runs-on: ubuntu-latest
