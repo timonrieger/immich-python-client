@@ -1309,7 +1309,6 @@ $ immich assets upload [OPTIONS] PATHS...
 * `--skip-duplicates`: Check for duplicates using SHA1 hashes before uploading
 * `--concurrency INTEGER`: Number of concurrent uploads  [default: 5]
 * `--show-progress`: Show progress bars
-* `--exclude-sidecars`: Exclude XMP sidecar files
 * `--album-name TEXT`: Album name to create or use (if not provided, no album operations are performed)
 * `--delete-uploads`: Delete successfully uploaded files locally
 * `--delete-duplicates`: Delete rejected duplicate files locally

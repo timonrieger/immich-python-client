@@ -179,11 +179,6 @@ def upload(
     show_progress: bool = typer.Option(
         False, "--show-progress", help="Show progress bars"
     ),
-    exclude_sidecars: bool = typer.Option(
-        False,
-        "--exclude-sidecars",
-        help="Exclude XMP sidecar files",
-    ),
     album_name: str | None = typer.Option(
         None,
         "--album-name",
@@ -220,7 +215,6 @@ def upload(
     kwargs["skip_duplicates"] = skip_duplicates
     kwargs["concurrency"] = concurrency
     kwargs["show_progress"] = show_progress
-    kwargs["exclude_sidecars"] = exclude_sidecars
     kwargs["delete_uploads"] = delete_uploads
     kwargs["delete_duplicates"] = delete_duplicates
     kwargs["dry_run"] = dry_run

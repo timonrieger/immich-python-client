@@ -400,30 +400,10 @@ async def test_upload_file_with_sidecar(mock_assets, tmp_path: Path) -> None:
         raw_data=b"",
     )
     mock_assets.upload_asset_with_http_info.return_value = mock_response
-    result = await upload_file(file1, mock_assets, exclude_sidecars=False)
+    result = await upload_file(file1, mock_assets)
     assert result == mock_response
     call_kwargs = mock_assets.upload_asset_with_http_info.call_args[1]
     assert call_kwargs["sidecar_data"] == str(sidecar1)
-
-
-@pytest.mark.asyncio
-async def test_upload_file_exclude_sidecars(mock_assets, tmp_path: Path) -> None:
-    """Test that exclude_sidecars=True skips sidecar even if it exists."""
-    file1 = tmp_path / "test1.jpg"
-    sidecar1 = tmp_path / "test1.xmp"
-    file1.write_bytes(b"test1")
-    sidecar1.write_bytes(b"xmp data")
-    mock_response = ApiResponse(
-        status_code=201,
-        headers=None,
-        data=AssetMediaResponseDto(id="asset-123", status=AssetMediaStatus.CREATED),
-        raw_data=b"",
-    )
-    mock_assets.upload_asset_with_http_info.return_value = mock_response
-    result = await upload_file(file1, mock_assets, exclude_sidecars=True)
-    assert result == mock_response
-    call_kwargs = mock_assets.upload_asset_with_http_info.call_args[1]
-    assert call_kwargs["sidecar_data"] is None
 
 
 @pytest.mark.asyncio
@@ -734,7 +714,9 @@ async def test_delete_files_dry_run(
 
     caplog.set_level(logging.INFO)
     file1 = tmp_path / "test1.jpg"
+    sidecar1 = tmp_path / "test1.xmp"
     file1.write_bytes(b"test1")
+    sidecar1.write_bytes(b"xmp data")
     uploaded_entry = UploadedEntry(
         asset=AssetMediaResponseDto(
             id=str(uuid.uuid4()), status=AssetMediaStatus.CREATED
@@ -743,12 +725,13 @@ async def test_delete_files_dry_run(
     )
     await delete_files([uploaded_entry], [], delete_uploads=True, dry_run=True)
     assert file1.exists()
+    assert sidecar1.exists()
     assert "Would have deleted" in caplog.text
 
 
 @pytest.mark.asyncio
 async def test_delete_files_with_sidecar(tmp_path: Path) -> None:
-    """Test that delete_files deletes sidecar files when exclude_sidecars=False."""
+    """Test that delete_files deletes sidecar files."""
     file1 = tmp_path / "test1.jpg"
     sidecar1 = tmp_path / "test1.xmp"
     file1.write_bytes(b"test1")
@@ -759,36 +742,28 @@ async def test_delete_files_with_sidecar(tmp_path: Path) -> None:
         ),
         filepath=file1,
     )
-    await delete_files(
-        [uploaded_entry], [], delete_uploads=True, exclude_sidecars=False
-    )
+    await delete_files([uploaded_entry], [], delete_uploads=True)
     assert not file1.exists()
     assert not sidecar1.exists()
 
 
 @pytest.mark.asyncio
-async def test_delete_files_exclude_sidecars(tmp_path: Path) -> None:
-    """Test that delete_files doesn't delete sidecar files when exclude_sidecars=True."""
-    file1 = tmp_path / "test1.jpg"
-    sidecar1 = tmp_path / "test1.xmp"
-    file1.write_bytes(b"test1")
-    sidecar1.write_bytes(b"xmp data")
-    uploaded_entry = UploadedEntry(
-        asset=AssetMediaResponseDto(
-            id=str(uuid.uuid4()), status=AssetMediaStatus.CREATED
-        ),
-        filepath=file1,
-    )
-    await delete_files([uploaded_entry], [], delete_uploads=True, exclude_sidecars=True)
-    assert not file1.exists()
-    assert sidecar1.exists()
-
-
-@pytest.mark.asyncio
-async def test_delete_files_sidecar_deletion_failure(
-    tmp_path: Path, caplog: pytest.LogCaptureFixture
+@pytest.mark.parametrize(
+    "fail_file,expected_file1_exists,expected_sidecar_exists,expected_log_message",
+    [
+        ("sidecar", False, True, "Failed to delete sidecar"),
+        ("main", True, True, "Failed to delete"),
+    ],
+)
+async def test_delete_files_deletion_failure(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+    fail_file: str,
+    expected_file1_exists: bool,
+    expected_sidecar_exists: bool,
+    expected_log_message: str,
 ) -> None:
-    """Test that delete_files handles sidecar deletion failure gracefully."""
+    """Test that delete_files handles deletion failures gracefully."""
     import logging
     from pathlib import Path as PathClass
 
@@ -806,48 +781,13 @@ async def test_delete_files_sidecar_deletion_failure(
     original_unlink = PathClass.unlink
 
     def failing_unlink(self):
-        if self.resolve() == sidecar1.resolve():
+        target = sidecar1 if fail_file == "sidecar" else file1
+        if self.resolve() == target.resolve():
             raise Exception("Permission denied")
         return original_unlink(self)
 
     with patch.object(PathClass, "unlink", failing_unlink):
-        await delete_files(
-            [uploaded_entry], [], delete_uploads=True, exclude_sidecars=False
-        )
-        assert not file1.exists()
-        assert "Failed to delete sidecar" in caplog.text
-
-
-@pytest.mark.asyncio
-async def test_delete_files_main_deletion_failure(
-    tmp_path: Path, caplog: pytest.LogCaptureFixture
-) -> None:
-    """Test that delete_files handles main file deletion failure and skips sidecar."""
-    import logging
-    from pathlib import Path as PathClass
-
-    caplog.set_level(logging.ERROR)
-    file1 = tmp_path / "test1.jpg"
-    sidecar1 = tmp_path / "test1.xmp"
-    file1.write_bytes(b"test1")
-    sidecar1.write_bytes(b"xmp data")
-    uploaded_entry = UploadedEntry(
-        asset=AssetMediaResponseDto(
-            id=str(uuid.uuid4()), status=AssetMediaStatus.CREATED
-        ),
-        filepath=file1,
-    )
-    original_unlink = PathClass.unlink
-
-    def failing_unlink(self):
-        if self.resolve() == file1.resolve():
-            raise Exception("Permission denied")
-        return original_unlink(self)
-
-    with patch.object(PathClass, "unlink", failing_unlink):
-        await delete_files(
-            [uploaded_entry], [], delete_uploads=True, exclude_sidecars=False
-        )
-        assert file1.exists()
-        assert sidecar1.exists()
-        assert "Failed to delete" in caplog.text
+        await delete_files([uploaded_entry], [], delete_uploads=True)
+        assert file1.exists() == expected_file1_exists
+        assert sidecar1.exists() == expected_sidecar_exists
+        assert expected_log_message in caplog.text

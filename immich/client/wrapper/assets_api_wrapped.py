@@ -175,7 +175,6 @@ class AssetsApiWrapped(AssetsApi):
         skip_duplicates: bool = False,
         concurrency: int = 5,
         show_progress: bool = False,
-        exclude_sidecars: bool = False,
         album_name: Optional[str] = None,
         delete_uploads: bool = False,
         delete_duplicates: bool = False,
@@ -190,7 +189,6 @@ class AssetsApiWrapped(AssetsApi):
         :param skip_duplicates: Whether to skip duplicate checking (might still get rejected on the server).
         :param concurrency: Number of concurrent uploads. Defaults to 5. A higher number may increase upload speed, but also increases the risk of rate limiting or other issues.
         :param show_progress: Whether to show progress bars.
-        :param exclude_sidecars: Whether to exclude XMP sidecar files.
         :param album_name: Album name to create or use. If None, no album operations are performed.
         :param delete_uploads: Whether to delete successfully uploaded files locally.
         :param delete_duplicates: Whether to delete duplicate files locally.
@@ -228,7 +226,6 @@ class AssetsApiWrapped(AssetsApi):
             assets_api=self,
             concurrency=concurrency,
             show_progress=show_progress,
-            exclude_sidecars=exclude_sidecars,
             dry_run=dry_run,
         )
 
@@ -246,7 +243,6 @@ class AssetsApiWrapped(AssetsApi):
             rejected=rejected,
             delete_uploads=delete_uploads,
             delete_duplicates=delete_duplicates,
-            exclude_sidecars=exclude_sidecars,
             dry_run=dry_run,
         )
 
