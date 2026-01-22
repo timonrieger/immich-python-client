@@ -20,7 +20,7 @@ app = typer.Typer(
 def create_job(
     ctx: typer.Context,
     name: str = typer.Option(..., "--name", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Create a manual job
 
     [link=https://api.immich.app/endpoints/jobs/createJob]Immich API documentation[/link]
@@ -38,7 +38,7 @@ def create_job(
 @app.command("get-queues-legacy", deprecated=True, rich_help_panel="API commands")
 def get_queues_legacy(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve queue counts and status
 
     [link=https://api.immich.app/endpoints/jobs/getQueuesLegacy]Immich API documentation[/link]
@@ -57,7 +57,7 @@ def run_queue_command_legacy(
     name: QueueName = typer.Argument(..., help=""""""),
     command: str = typer.Option(..., "--command", help=""""""),
     force: Literal["true", "false"] | None = typer.Option(None, "--force", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Run jobs
 
     [link=https://api.immich.app/endpoints/jobs/runQueueCommandLegacy]Immich API documentation[/link]

@@ -24,7 +24,7 @@ def create_session(
     duration: float | None = typer.Option(
         None, "--duration", help="""session duration, in seconds""", min=1
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Create a session
 
     [link=https://api.immich.app/endpoints/sessions/createSession]Immich API documentation[/link]
@@ -47,7 +47,7 @@ def create_session(
 @app.command("delete-all-sessions", deprecated=False, rich_help_panel="API commands")
 def delete_all_sessions(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Delete all sessions
 
     [link=https://api.immich.app/endpoints/sessions/deleteAllSessions]Immich API documentation[/link]
@@ -62,7 +62,7 @@ def delete_all_sessions(
 def delete_session(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete a session
 
     [link=https://api.immich.app/endpoints/sessions/deleteSession]Immich API documentation[/link]
@@ -77,7 +77,7 @@ def delete_session(
 @app.command("get-sessions", deprecated=False, rich_help_panel="API commands")
 def get_sessions(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve sessions
 
     [link=https://api.immich.app/endpoints/sessions/getSessions]Immich API documentation[/link]
@@ -92,7 +92,7 @@ def get_sessions(
 def lock_session(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Lock a session
 
     [link=https://api.immich.app/endpoints/sessions/lockSession]Immich API documentation[/link]
@@ -111,7 +111,7 @@ def update_session(
     is_pending_sync_reset: Literal["true", "false"] | None = typer.Option(
         None, "--is-pending-sync-reset", help=""""""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Update a session
 
     [link=https://api.immich.app/endpoints/sessions/updateSession]Immich API documentation[/link]

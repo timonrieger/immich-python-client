@@ -21,7 +21,7 @@ app = typer.Typer(
 )
 def unlink_all_o_auth_accounts_admin(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Unlink all OAuth accounts
 
     [link=https://api.immich.app/endpoints/authentication-admin/unlinkAllOAuthAccountsAdmin]Immich API documentation[/link]

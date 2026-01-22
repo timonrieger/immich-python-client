@@ -19,7 +19,7 @@ app = typer.Typer(
 @app.command("delete-server-license", deprecated=False, rich_help_panel="API commands")
 def delete_server_license(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Delete server product key
 
     [link=https://api.immich.app/endpoints/server/deleteServerLicense]Immich API documentation[/link]
@@ -33,7 +33,7 @@ def delete_server_license(
 @app.command("get-about-info", deprecated=False, rich_help_panel="API commands")
 def get_about_info(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Get server information
 
     [link=https://api.immich.app/endpoints/server/getAboutInfo]Immich API documentation[/link]
@@ -47,7 +47,7 @@ def get_about_info(
 @app.command("get-apk-links", deprecated=False, rich_help_panel="API commands")
 def get_apk_links(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Get APK links
 
     [link=https://api.immich.app/endpoints/server/getApkLinks]Immich API documentation[/link]
@@ -61,7 +61,7 @@ def get_apk_links(
 @app.command("get-server-config", deprecated=False, rich_help_panel="API commands")
 def get_server_config(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Get config
 
     [link=https://api.immich.app/endpoints/server/getServerConfig]Immich API documentation[/link]
@@ -75,7 +75,7 @@ def get_server_config(
 @app.command("get-server-features", deprecated=False, rich_help_panel="API commands")
 def get_server_features(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Get features
 
     [link=https://api.immich.app/endpoints/server/getServerFeatures]Immich API documentation[/link]
@@ -89,7 +89,7 @@ def get_server_features(
 @app.command("get-server-license", deprecated=False, rich_help_panel="API commands")
 def get_server_license(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Get product key
 
     [link=https://api.immich.app/endpoints/server/getServerLicense]Immich API documentation[/link]
@@ -103,7 +103,7 @@ def get_server_license(
 @app.command("get-server-statistics", deprecated=False, rich_help_panel="API commands")
 def get_server_statistics(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Get statistics
 
     [link=https://api.immich.app/endpoints/server/getServerStatistics]Immich API documentation[/link]
@@ -117,7 +117,7 @@ def get_server_statistics(
 @app.command("get-server-version", deprecated=False, rich_help_panel="API commands")
 def get_server_version(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Get server version
 
     [link=https://api.immich.app/endpoints/server/getServerVersion]Immich API documentation[/link]
@@ -131,7 +131,7 @@ def get_server_version(
 @app.command("get-storage", deprecated=False, rich_help_panel="API commands")
 def get_storage(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Get storage
 
     [link=https://api.immich.app/endpoints/server/getStorage]Immich API documentation[/link]
@@ -147,7 +147,7 @@ def get_storage(
 )
 def get_supported_media_types(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Get supported media types
 
     [link=https://api.immich.app/endpoints/server/getSupportedMediaTypes]Immich API documentation[/link]
@@ -163,7 +163,7 @@ def get_supported_media_types(
 @app.command("get-theme", deprecated=False, rich_help_panel="API commands")
 def get_theme(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Get theme
 
     [link=https://api.immich.app/endpoints/server/getTheme]Immich API documentation[/link]
@@ -177,7 +177,7 @@ def get_theme(
 @app.command("get-version-check", deprecated=False, rich_help_panel="API commands")
 def get_version_check(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Get version check status
 
     [link=https://api.immich.app/endpoints/server/getVersionCheck]Immich API documentation[/link]
@@ -191,7 +191,7 @@ def get_version_check(
 @app.command("get-version-history", deprecated=False, rich_help_panel="API commands")
 def get_version_history(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Get version history
 
     [link=https://api.immich.app/endpoints/server/getVersionHistory]Immich API documentation[/link]
@@ -205,7 +205,7 @@ def get_version_history(
 @app.command("ping-server", deprecated=False, rich_help_panel="API commands")
 def ping_server(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Ping
 
     [link=https://api.immich.app/endpoints/server/pingServer]Immich API documentation[/link]
@@ -221,7 +221,7 @@ def set_server_license(
     ctx: typer.Context,
     activation_key: str = typer.Option(..., "--activation-key", help=""""""),
     license_key: str = typer.Option(..., "--license-key", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Set server product key
 
     [link=https://api.immich.app/endpoints/server/setServerLicense]Immich API documentation[/link]

@@ -25,7 +25,7 @@ def create_library(
     import_paths: list[str] | None = typer.Option(None, "--import-paths", help=""""""),
     name: str | None = typer.Option(None, "--name", help=""""""),
     owner_id: str = typer.Option(..., "--owner-id", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Create a library
 
     [link=https://api.immich.app/endpoints/libraries/createLibrary]Immich API documentation[/link]
@@ -50,7 +50,7 @@ def create_library(
 def delete_library(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete a library
 
     [link=https://api.immich.app/endpoints/libraries/deleteLibrary]Immich API documentation[/link]
@@ -65,7 +65,7 @@ def delete_library(
 @app.command("get-all-libraries", deprecated=False, rich_help_panel="API commands")
 def get_all_libraries(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve libraries
 
     [link=https://api.immich.app/endpoints/libraries/getAllLibraries]Immich API documentation[/link]
@@ -80,7 +80,7 @@ def get_all_libraries(
 def get_library(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve a library
 
     [link=https://api.immich.app/endpoints/libraries/getLibrary]Immich API documentation[/link]
@@ -96,7 +96,7 @@ def get_library(
 def get_library_statistics(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve library statistics
 
     [link=https://api.immich.app/endpoints/libraries/getLibraryStatistics]Immich API documentation[/link]
@@ -114,7 +114,7 @@ def get_library_statistics(
 def scan_library(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Scan a library
 
     [link=https://api.immich.app/endpoints/libraries/scanLibrary]Immich API documentation[/link]
@@ -135,7 +135,7 @@ def update_library(
     ),
     import_paths: list[str] | None = typer.Option(None, "--import-paths", help=""""""),
     name: str | None = typer.Option(None, "--name", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Update a library
 
     [link=https://api.immich.app/endpoints/libraries/updateLibrary]Immich API documentation[/link]
@@ -164,7 +164,7 @@ def validate(
         None, "--exclusion-patterns", help=""""""
     ),
     import_paths: list[str] | None = typer.Option(None, "--import-paths", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Validate library settings
 
     [link=https://api.immich.app/endpoints/libraries/validate]Immich API documentation[/link]

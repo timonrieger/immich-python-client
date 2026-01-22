@@ -20,7 +20,7 @@ app = typer.Typer(
 @app.command("get-assets-by-city", deprecated=False, rich_help_panel="API commands")
 def get_assets_by_city(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve assets by city
 
     [link=https://api.immich.app/endpoints/search/getAssetsByCity]Immich API documentation[/link]
@@ -34,7 +34,7 @@ def get_assets_by_city(
 @app.command("get-explore-data", deprecated=False, rich_help_panel="API commands")
 def get_explore_data(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve explore data
 
     [link=https://api.immich.app/endpoints/search/getExploreData]Immich API documentation[/link]
@@ -57,7 +57,7 @@ def get_search_suggestions(
     model: str | None = typer.Option(None, "--model", help=""""""),
     state: str | None = typer.Option(None, "--state", help=""""""),
     type: SearchSuggestionType = typer.Option(..., "--type", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve search suggestions
 
     [link=https://api.immich.app/endpoints/search/getSearchSuggestions]Immich API documentation[/link]
@@ -131,7 +131,7 @@ def search_asset_statistics(
         None, "--updated-before", help=""""""
     ),
     visibility: str | None = typer.Option(None, "--visibility", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Search asset statistics
 
     [link=https://api.immich.app/endpoints/search/searchAssetStatistics]Immich API documentation[/link]
@@ -280,7 +280,7 @@ def search_assets(
     with_stacked: Literal["true", "false"] | None = typer.Option(
         None, "--with-stacked", help=""""""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Search assets by metadata
 
     [link=https://api.immich.app/endpoints/search/searchAssets]Immich API documentation[/link]
@@ -441,7 +441,7 @@ def search_large_assets(
     with_exif: Literal["true", "false"] | None = typer.Option(
         None, "--with-exif", help=""""""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Search large assets
 
     [link=https://api.immich.app/endpoints/search/searchLargeAssets]Immich API documentation[/link]
@@ -523,7 +523,7 @@ def search_person(
     with_hidden: Literal["true", "false"] | None = typer.Option(
         None, "--with-hidden", help=""""""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Search people
 
     [link=https://api.immich.app/endpoints/search/searchPerson]Immich API documentation[/link]
@@ -541,7 +541,7 @@ def search_person(
 def search_places(
     ctx: typer.Context,
     name: str = typer.Option(..., "--name", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Search places
 
     [link=https://api.immich.app/endpoints/search/searchPlaces]Immich API documentation[/link]
@@ -613,7 +613,7 @@ def search_random(
     with_stacked: Literal["true", "false"] | None = typer.Option(
         None, "--with-stacked", help=""""""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Search random assets
 
     [link=https://api.immich.app/endpoints/search/searchRandom]Immich API documentation[/link]
@@ -751,7 +751,7 @@ def search_smart(
     with_exif: Literal["true", "false"] | None = typer.Option(
         None, "--with-exif", help=""""""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Smart asset search
 
     [link=https://api.immich.app/endpoints/search/searchSmart]Immich API documentation[/link]

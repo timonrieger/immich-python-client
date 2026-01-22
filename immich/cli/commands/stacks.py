@@ -22,7 +22,7 @@ def create_stack(
     asset_ids: list[str] = typer.Option(
         ..., "--asset-ids", help="""first asset becomes the primary"""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Create a stack
 
     [link=https://api.immich.app/endpoints/stacks/createStack]Immich API documentation[/link]
@@ -41,7 +41,7 @@ def create_stack(
 def delete_stack(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete a stack
 
     [link=https://api.immich.app/endpoints/stacks/deleteStack]Immich API documentation[/link]
@@ -57,7 +57,7 @@ def delete_stack(
 def delete_stacks(
     ctx: typer.Context,
     ids: list[str] = typer.Option(..., "--ids", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete stacks
 
     [link=https://api.immich.app/endpoints/stacks/deleteStacks]Immich API documentation[/link]
@@ -76,7 +76,7 @@ def delete_stacks(
 def get_stack(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve a stack
 
     [link=https://api.immich.app/endpoints/stacks/getStack]Immich API documentation[/link]
@@ -95,7 +95,7 @@ def remove_asset_from_stack(
     ctx: typer.Context,
     asset_id: str = typer.Argument(..., help=""""""),
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Remove an asset from a stack
 
     [link=https://api.immich.app/endpoints/stacks/removeAssetFromStack]Immich API documentation[/link]
@@ -116,7 +116,7 @@ def search_stacks(
     primary_asset_id: str | None = typer.Option(
         None, "--primary-asset-id", help=""""""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve stacks
 
     [link=https://api.immich.app/endpoints/stacks/searchStacks]Immich API documentation[/link]
@@ -136,7 +136,7 @@ def update_stack(
     primary_asset_id: str | None = typer.Option(
         None, "--primary-asset-id", help=""""""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Update a stack
 
     [link=https://api.immich.app/endpoints/stacks/updateStack]Immich API documentation[/link]

@@ -98,6 +98,9 @@ markers = [
     "e2e: marks tests as end-to-end tests (deselect with '-m \"not e2e\"')",
 ]
 
+[tool.coverage.run]
+omit = ["immich/client/generated/**", "immich/cli/commands/**", "immich/client/wrapper/**"]
+
 [tool.ty]
 environment.root = ['immich']
 src.exclude = ["immich/client/generated/**"]

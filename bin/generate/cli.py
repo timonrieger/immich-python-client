@@ -385,7 +385,7 @@ def generate_command_function(
                 f'    {param.name}: {type_str} = typer.Option({default_value}, "--{param.flag_name}"{help_arg}{min_arg}{max_arg}{exists_arg}),'
             )
 
-    lines.append(") -> None:  # pragma: no cover")
+    lines.append(") -> None:")
 
     # Function body
     summary = operation.get("summary", operation_id)

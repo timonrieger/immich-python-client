@@ -22,7 +22,7 @@ app = typer.Typer(
 def get_assets_by_original_path(
     ctx: typer.Context,
     path: str = typer.Option(..., "--path", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve assets by original path
 
     [link=https://api.immich.app/endpoints/views/getAssetsByOriginalPath]Immich API documentation[/link]
@@ -41,7 +41,7 @@ def get_assets_by_original_path(
 )
 def get_unique_original_paths(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve unique paths
 
     [link=https://api.immich.app/endpoints/views/getUniqueOriginalPaths]Immich API documentation[/link]

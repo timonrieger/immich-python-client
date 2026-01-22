@@ -71,7 +71,7 @@ def get_time_bucket(
         "--with-stacked",
         help="""Include stacked assets in the response. When true, only primary assets from stacks are returned.""",
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Get time bucket
 
     [link=https://api.immich.app/endpoints/timeline/getTimeBucket]Immich API documentation[/link]
@@ -159,7 +159,7 @@ def get_time_buckets(
         "--with-stacked",
         help="""Include stacked assets in the response. When true, only primary assets from stacks are returned.""",
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Get time buckets
 
     [link=https://api.immich.app/endpoints/timeline/getTimeBuckets]Immich API documentation[/link]

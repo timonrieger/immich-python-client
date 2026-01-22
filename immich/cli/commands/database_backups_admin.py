@@ -21,7 +21,7 @@ app = typer.Typer(
 def delete_database_backup(
     ctx: typer.Context,
     backups: list[str] = typer.Option(..., "--backups", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete database backup
 
     [link=https://api.immich.app/endpoints/database-backups-admin/deleteDatabaseBackup]Immich API documentation[/link]
@@ -44,7 +44,7 @@ def delete_database_backup(
 def download_database_backup(
     ctx: typer.Context,
     filename: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Download database backup
 
     [link=https://api.immich.app/endpoints/database-backups-admin/downloadDatabaseBackup]Immich API documentation[/link]
@@ -61,7 +61,7 @@ def download_database_backup(
 @app.command("list-database-backups", deprecated=False, rich_help_panel="API commands")
 def list_database_backups(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """List database backups
 
     [link=https://api.immich.app/endpoints/database-backups-admin/listDatabaseBackups]Immich API documentation[/link]
@@ -77,7 +77,7 @@ def list_database_backups(
 )
 def start_database_restore_flow(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Start database backup restore flow
 
     [link=https://api.immich.app/endpoints/database-backups-admin/startDatabaseRestoreFlow]Immich API documentation[/link]
@@ -94,7 +94,7 @@ def start_database_restore_flow(
 def upload_database_backup(
     ctx: typer.Context,
     file: Path | None = typer.Option(None, "--file", help="""""", exists=True),
-) -> None:  # pragma: no cover
+) -> None:
     """Upload database backup
 
     [link=https://api.immich.app/endpoints/database-backups-admin/uploadDatabaseBackup]Immich API documentation[/link]

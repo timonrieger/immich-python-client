@@ -36,7 +36,7 @@ def create_user_admin(
         None, "--should-change-password", help=""""""
     ),
     storage_label: str | None = typer.Option(None, "--storage-label", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Create a user
 
     [link=https://api.immich.app/endpoints/users-admin/createUserAdmin]Immich API documentation[/link]
@@ -74,7 +74,7 @@ def delete_user_admin(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
     force: Literal["true", "false"] | None = typer.Option(None, "--force", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete a user
 
     [link=https://api.immich.app/endpoints/users-admin/deleteUserAdmin]Immich API documentation[/link]
@@ -95,7 +95,7 @@ def delete_user_admin(
 def get_user_admin(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve a user
 
     [link=https://api.immich.app/endpoints/users-admin/getUserAdmin]Immich API documentation[/link]
@@ -113,7 +113,7 @@ def get_user_admin(
 def get_user_preferences_admin(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve user preferences
 
     [link=https://api.immich.app/endpoints/users-admin/getUserPreferencesAdmin]Immich API documentation[/link]
@@ -133,7 +133,7 @@ def get_user_preferences_admin(
 def get_user_sessions_admin(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve user sessions
 
     [link=https://api.immich.app/endpoints/users-admin/getUserSessionsAdmin]Immich API documentation[/link]
@@ -162,7 +162,7 @@ def get_user_statistics_admin(
     visibility: AssetVisibility | None = typer.Option(
         None, "--visibility", help=""""""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve user statistics
 
     [link=https://api.immich.app/endpoints/users-admin/getUserStatisticsAdmin]Immich API documentation[/link]
@@ -186,7 +186,7 @@ def get_user_statistics_admin(
 def restore_user_admin(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Restore a deleted user
 
     [link=https://api.immich.app/endpoints/users-admin/restoreUserAdmin]Immich API documentation[/link]
@@ -207,7 +207,7 @@ def search_users_admin(
     with_deleted: Literal["true", "false"] | None = typer.Option(
         None, "--with-deleted", help=""""""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Search users
 
     [link=https://api.immich.app/endpoints/users-admin/searchUsersAdmin]Immich API documentation[/link]
@@ -243,7 +243,7 @@ def update_user_admin(
         None, "--should-change-password", help=""""""
     ),
     storage_label: str | None = typer.Option(None, "--storage-label", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Update a user
 
     [link=https://api.immich.app/endpoints/users-admin/updateUserAdmin]Immich API documentation[/link]
@@ -347,7 +347,7 @@ def update_user_preferences_admin(
     tags_sidebar_web: Literal["true", "false"] | None = typer.Option(
         None, "--tags-sidebar-web", help=""""""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Update user preferences
 
     [link=https://api.immich.app/endpoints/users-admin/updateUserPreferencesAdmin]Immich API documentation[/link]

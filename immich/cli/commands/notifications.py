@@ -21,7 +21,7 @@ app = typer.Typer(
 def delete_notification(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete a notification
 
     [link=https://api.immich.app/endpoints/notifications/deleteNotification]Immich API documentation[/link]
@@ -39,7 +39,7 @@ def delete_notification(
 def delete_notifications(
     ctx: typer.Context,
     ids: list[str] = typer.Option(..., "--ids", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete notifications
 
     [link=https://api.immich.app/endpoints/notifications/deleteNotifications]Immich API documentation[/link]
@@ -60,7 +60,7 @@ def delete_notifications(
 def get_notification(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Get a notification
 
     [link=https://api.immich.app/endpoints/notifications/getNotification]Immich API documentation[/link]
@@ -83,7 +83,7 @@ def get_notifications(
     unread: Literal["true", "false"] | None = typer.Option(
         None, "--unread", help=""""""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve notifications
 
     [link=https://api.immich.app/endpoints/notifications/getNotifications]Immich API documentation[/link]
@@ -109,7 +109,7 @@ def update_notification(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
     read_at: datetime | None = typer.Option(None, "--read-at", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Update a notification
 
     [link=https://api.immich.app/endpoints/notifications/updateNotification]Immich API documentation[/link]
@@ -133,7 +133,7 @@ def update_notifications(
     ctx: typer.Context,
     ids: list[str] = typer.Option(..., "--ids", help=""""""),
     read_at: datetime | None = typer.Option(None, "--read-at", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Update notifications
 
     [link=https://api.immich.app/endpoints/notifications/updateNotifications]Immich API documentation[/link]

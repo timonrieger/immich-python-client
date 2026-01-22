@@ -20,7 +20,7 @@ app = typer.Typer(
 def delete_duplicate(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete a duplicate
 
     [link=https://api.immich.app/endpoints/duplicates/deleteDuplicate]Immich API documentation[/link]
@@ -36,7 +36,7 @@ def delete_duplicate(
 def delete_duplicates(
     ctx: typer.Context,
     ids: list[str] = typer.Option(..., "--ids", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete duplicates
 
     [link=https://api.immich.app/endpoints/duplicates/deleteDuplicates]Immich API documentation[/link]
@@ -54,7 +54,7 @@ def delete_duplicates(
 @app.command("get-asset-duplicates", deprecated=False, rich_help_panel="API commands")
 def get_asset_duplicates(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve duplicates
 
     [link=https://api.immich.app/endpoints/duplicates/getAssetDuplicates]Immich API documentation[/link]

@@ -34,7 +34,7 @@ Note: the mobile app cannot currently set the birth date to null.""",
         None, "--is-hidden", help="""Person visibility"""
     ),
     name: str | None = typer.Option(None, "--name", help="""Person name."""),
-) -> None:  # pragma: no cover
+) -> None:
     """Create a person
 
     [link=https://api.immich.app/endpoints/people/createPerson]Immich API documentation[/link]
@@ -62,7 +62,7 @@ Note: the mobile app cannot currently set the birth date to null.""",
 def delete_people(
     ctx: typer.Context,
     ids: list[str] = typer.Option(..., "--ids", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete people
 
     [link=https://api.immich.app/endpoints/people/deletePeople]Immich API documentation[/link]
@@ -81,7 +81,7 @@ def delete_people(
 def delete_person(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete person
 
     [link=https://api.immich.app/endpoints/people/deletePerson]Immich API documentation[/link]
@@ -111,7 +111,7 @@ def get_all_people(
     with_hidden: Literal["true", "false"] | None = typer.Option(
         None, "--with-hidden", help=""""""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Get all people
 
     [link=https://api.immich.app/endpoints/people/getAllPeople]Immich API documentation[/link]
@@ -136,7 +136,7 @@ def get_all_people(
 def get_person(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Get a person
 
     [link=https://api.immich.app/endpoints/people/getPerson]Immich API documentation[/link]
@@ -152,7 +152,7 @@ def get_person(
 def get_person_statistics(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Get person statistics
 
     [link=https://api.immich.app/endpoints/people/getPersonStatistics]Immich API documentation[/link]
@@ -168,7 +168,7 @@ def get_person_statistics(
 def get_person_thumbnail(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Get person thumbnail
 
     [link=https://api.immich.app/endpoints/people/getPersonThumbnail]Immich API documentation[/link]
@@ -185,7 +185,7 @@ def merge_person(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
     ids: list[str] = typer.Option(..., "--ids", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Merge people
 
     [link=https://api.immich.app/endpoints/people/mergePerson]Immich API documentation[/link]
@@ -206,7 +206,7 @@ def reassign_faces(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
     data: list[str] = typer.Option(..., "--data", help="""As a JSON string"""),
-) -> None:  # pragma: no cover
+) -> None:
     """Reassign faces
 
     [link=https://api.immich.app/endpoints/people/reassignFaces]Immich API documentation[/link]
@@ -227,7 +227,7 @@ def reassign_faces(
 def update_people(
     ctx: typer.Context,
     people: list[str] = typer.Option(..., "--people", help="""As a JSON string"""),
-) -> None:  # pragma: no cover
+) -> None:
     """Update people
 
     [link=https://api.immich.app/endpoints/people/updatePeople]Immich API documentation[/link]
@@ -266,7 +266,7 @@ Note: the mobile app cannot currently set the birth date to null.""",
         None, "--is-hidden", help="""Person visibility"""
     ),
     name: str | None = typer.Option(None, "--name", help="""Person name."""),
-) -> None:  # pragma: no cover
+) -> None:
     """Update person
 
     [link=https://api.immich.app/endpoints/people/updatePerson]Immich API documentation[/link]

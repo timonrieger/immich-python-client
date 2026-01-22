@@ -19,7 +19,7 @@ app = typer.Typer(
 @app.command("detect-prior-install", deprecated=False, rich_help_panel="API commands")
 def detect_prior_install(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Detect existing install
 
     [link=https://api.immich.app/endpoints/maintenance-admin/detectPriorInstall]Immich API documentation[/link]
@@ -35,7 +35,7 @@ def detect_prior_install(
 @app.command("get-maintenance-status", deprecated=False, rich_help_panel="API commands")
 def get_maintenance_status(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Get maintenance mode status
 
     [link=https://api.immich.app/endpoints/maintenance-admin/getMaintenanceStatus]Immich API documentation[/link]
@@ -52,7 +52,7 @@ def get_maintenance_status(
 def maintenance_login(
     ctx: typer.Context,
     token: str | None = typer.Option(None, "--token", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Log into maintenance mode
 
     [link=https://api.immich.app/endpoints/maintenance-admin/maintenanceLogin]Immich API documentation[/link]
@@ -77,7 +77,7 @@ def set_maintenance_mode(
     restore_backup_filename: str | None = typer.Option(
         None, "--restore-backup-filename", help=""""""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Set maintenance mode
 
     [link=https://api.immich.app/endpoints/maintenance-admin/setMaintenanceMode]Immich API documentation[/link]

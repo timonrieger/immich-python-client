@@ -20,7 +20,7 @@ app = typer.Typer(
 def create_partner(
     ctx: typer.Context,
     shared_with_id: str = typer.Option(..., "--shared-with-id", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Create a partner
 
     [link=https://api.immich.app/endpoints/partners/createPartner]Immich API documentation[/link]
@@ -41,7 +41,7 @@ def create_partner(
 def create_partner_deprecated(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Create a partner
 
     [link=https://api.immich.app/endpoints/partners/createPartnerDeprecated]Immich API documentation[/link]
@@ -59,7 +59,7 @@ def create_partner_deprecated(
 def get_partners(
     ctx: typer.Context,
     direction: PartnerDirection = typer.Option(..., "--direction", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve partners
 
     [link=https://api.immich.app/endpoints/partners/getPartners]Immich API documentation[/link]
@@ -75,7 +75,7 @@ def get_partners(
 def remove_partner(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Remove a partner
 
     [link=https://api.immich.app/endpoints/partners/removePartner]Immich API documentation[/link]
@@ -92,7 +92,7 @@ def update_partner(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
     in_timeline: bool = typer.Option(..., "--in-timeline", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Update a partner
 
     [link=https://api.immich.app/endpoints/partners/updatePartner]Immich API documentation[/link]

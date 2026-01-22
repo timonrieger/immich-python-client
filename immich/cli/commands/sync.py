@@ -21,7 +21,7 @@ app = typer.Typer(
 def delete_sync_ack(
     ctx: typer.Context,
     types: list[SyncEntityType] | None = typer.Option(None, "--types", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete acknowledgements
 
     [link=https://api.immich.app/endpoints/sync/deleteSyncAck]Immich API documentation[/link]
@@ -42,7 +42,7 @@ def get_delta_sync(
     ctx: typer.Context,
     updated_after: datetime = typer.Option(..., "--updated-after", help=""""""),
     user_ids: list[str] = typer.Option(..., "--user-ids", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Get delta sync for user
 
     [link=https://api.immich.app/endpoints/sync/getDeltaSync]Immich API documentation[/link]
@@ -65,7 +65,7 @@ def get_full_sync_for_user(
     limit: int = typer.Option(..., "--limit", help="""""", min=1),
     updated_until: datetime = typer.Option(..., "--updated-until", help=""""""),
     user_id: str | None = typer.Option(None, "--user-id", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Get full sync for user
 
     [link=https://api.immich.app/endpoints/sync/getFullSyncForUser]Immich API documentation[/link]
@@ -88,7 +88,7 @@ def get_full_sync_for_user(
 @app.command("get-sync-ack", deprecated=False, rich_help_panel="API commands")
 def get_sync_ack(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve acknowledgements
 
     [link=https://api.immich.app/endpoints/sync/getSyncAck]Immich API documentation[/link]
@@ -104,7 +104,7 @@ def get_sync_stream(
     ctx: typer.Context,
     reset: Literal["true", "false"] | None = typer.Option(None, "--reset", help=""""""),
     types: list[SyncRequestType] = typer.Option(..., "--types", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Stream sync changes
 
     [link=https://api.immich.app/endpoints/sync/getSyncStream]Immich API documentation[/link]
@@ -125,7 +125,7 @@ def get_sync_stream(
 def send_sync_ack(
     ctx: typer.Context,
     acks: list[str] = typer.Option(..., "--acks", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Acknowledge changes
 
     [link=https://api.immich.app/endpoints/sync/sendSyncAck]Immich API documentation[/link]

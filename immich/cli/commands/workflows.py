@@ -28,7 +28,7 @@ def create_workflow(
     filters: list[str] = typer.Option(..., "--filters", help="""As a JSON string"""),
     name: str = typer.Option(..., "--name", help=""""""),
     trigger_type: str = typer.Option(..., "--trigger-type", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Create a workflow
 
     [link=https://api.immich.app/endpoints/workflows/createWorkflow]Immich API documentation[/link]
@@ -56,7 +56,7 @@ def create_workflow(
 def delete_workflow(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete a workflow
 
     [link=https://api.immich.app/endpoints/workflows/deleteWorkflow]Immich API documentation[/link]
@@ -72,7 +72,7 @@ def delete_workflow(
 def get_workflow(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve a workflow
 
     [link=https://api.immich.app/endpoints/workflows/getWorkflow]Immich API documentation[/link]
@@ -87,7 +87,7 @@ def get_workflow(
 @app.command("get-workflows", deprecated=False, rich_help_panel="API commands")
 def get_workflows(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """List all workflows
 
     [link=https://api.immich.app/endpoints/workflows/getWorkflows]Immich API documentation[/link]
@@ -114,7 +114,7 @@ def update_workflow(
     ),
     name: str | None = typer.Option(None, "--name", help=""""""),
     trigger_type: str | None = typer.Option(None, "--trigger-type", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Update a workflow
 
     [link=https://api.immich.app/endpoints/workflows/updateWorkflow]Immich API documentation[/link]

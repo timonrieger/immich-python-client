@@ -22,7 +22,7 @@ def add_memory_assets(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
     ids: list[str] = typer.Option(..., "--ids", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Add assets to a memory
 
     [link=https://api.immich.app/endpoints/memories/addMemoryAssets]Immich API documentation[/link]
@@ -49,7 +49,7 @@ def create_memory(
     memory_at: datetime = typer.Option(..., "--memory-at", help=""""""),
     seen_at: datetime | None = typer.Option(None, "--seen-at", help=""""""),
     type: str = typer.Option(..., "--type", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Create a memory
 
     [link=https://api.immich.app/endpoints/memories/createMemory]Immich API documentation[/link]
@@ -76,7 +76,7 @@ def create_memory(
 def delete_memory(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete a memory
 
     [link=https://api.immich.app/endpoints/memories/deleteMemory]Immich API documentation[/link]
@@ -92,7 +92,7 @@ def delete_memory(
 def get_memory(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve a memory
 
     [link=https://api.immich.app/endpoints/memories/getMemory]Immich API documentation[/link]
@@ -119,7 +119,7 @@ def memories_statistics(
         None, "--size", help="""Number of memories to return""", min=1
     ),
     type: MemoryType | None = typer.Option(None, "--type", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve memories statistics
 
     [link=https://api.immich.app/endpoints/memories/memoriesStatistics]Immich API documentation[/link]
@@ -147,7 +147,7 @@ def remove_memory_assets(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
     ids: list[str] = typer.Option(..., "--ids", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Remove assets from a memory
 
     [link=https://api.immich.app/endpoints/memories/removeMemoryAssets]Immich API documentation[/link]
@@ -178,7 +178,7 @@ def search_memories(
         None, "--size", help="""Number of memories to return""", min=1
     ),
     type: MemoryType | None = typer.Option(None, "--type", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve memories
 
     [link=https://api.immich.app/endpoints/memories/searchMemories]Immich API documentation[/link]
@@ -210,7 +210,7 @@ def update_memory(
     ),
     memory_at: datetime | None = typer.Option(None, "--memory-at", help=""""""),
     seen_at: datetime | None = typer.Option(None, "--seen-at", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Update a memory
 
     [link=https://api.immich.app/endpoints/memories/updateMemory]Immich API documentation[/link]

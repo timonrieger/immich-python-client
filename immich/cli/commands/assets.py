@@ -23,7 +23,7 @@ app = typer.Typer(
 def check_bulk_upload(
     ctx: typer.Context,
     assets: list[str] = typer.Option(..., "--assets", help="""As a JSON string"""),
-) -> None:  # pragma: no cover
+) -> None:
     """Check bulk upload
 
     [link=https://api.immich.app/endpoints/assets/checkBulkUpload]Immich API documentation[/link]
@@ -44,7 +44,7 @@ def check_existing_assets(
     ctx: typer.Context,
     device_asset_ids: list[str] = typer.Option(..., "--device-asset-ids", help=""""""),
     device_id: str = typer.Option(..., "--device-id", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Check existing assets
 
     [link=https://api.immich.app/endpoints/assets/checkExistingAssets]Immich API documentation[/link]
@@ -78,7 +78,7 @@ def copy_asset(
     source_id: str = typer.Option(..., "--source-id", help=""""""),
     stack: Literal["true", "false"] | None = typer.Option(None, "--stack", help=""""""),
     target_id: str = typer.Option(..., "--target-id", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Copy asset
 
     [link=https://api.immich.app/endpoints/assets/copyAsset]Immich API documentation[/link]
@@ -109,7 +109,7 @@ def delete_asset_metadata(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
     key: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete asset metadata by key
 
     [link=https://api.immich.app/endpoints/assets/deleteAssetMetadata]Immich API documentation[/link]
@@ -127,7 +127,7 @@ def delete_assets(
     ctx: typer.Context,
     force: Literal["true", "false"] | None = typer.Option(None, "--force", help=""""""),
     ids: list[str] = typer.Option(..., "--ids", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete assets
 
     [link=https://api.immich.app/endpoints/assets/deleteAssets]Immich API documentation[/link]
@@ -150,7 +150,7 @@ def delete_assets(
 def delete_bulk_asset_metadata(
     ctx: typer.Context,
     items: list[str] = typer.Option(..., "--items", help="""As a JSON string"""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete asset metadata
 
     [link=https://api.immich.app/endpoints/assets/deleteBulkAssetMetadata]Immich API documentation[/link]
@@ -179,7 +179,7 @@ def download_asset(
     ),
     key: str | None = typer.Option(None, "--key", help=""""""),
     slug: str | None = typer.Option(None, "--slug", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Download original asset
 
     [link=https://api.immich.app/endpoints/assets/downloadAsset]Immich API documentation[/link]
@@ -208,7 +208,7 @@ def edit_asset(
 
 As a JSON string""",
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Apply edits to an existing asset
 
     [link=https://api.immich.app/endpoints/assets/editAsset]Immich API documentation[/link]
@@ -231,7 +231,7 @@ As a JSON string""",
 def get_all_user_assets_by_device_id(
     ctx: typer.Context,
     device_id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve assets by device ID
 
     [link=https://api.immich.app/endpoints/assets/getAllUserAssetsByDeviceId]Immich API documentation[/link]
@@ -249,7 +249,7 @@ def get_all_user_assets_by_device_id(
 def get_asset_edits(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve edits for an existing asset
 
     [link=https://api.immich.app/endpoints/assets/getAssetEdits]Immich API documentation[/link]
@@ -267,7 +267,7 @@ def get_asset_info(
     id: str = typer.Argument(..., help=""""""),
     key: str | None = typer.Option(None, "--key", help=""""""),
     slug: str | None = typer.Option(None, "--slug", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve an asset
 
     [link=https://api.immich.app/endpoints/assets/getAssetInfo]Immich API documentation[/link]
@@ -287,7 +287,7 @@ def get_asset_info(
 def get_asset_metadata(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Get asset metadata
 
     [link=https://api.immich.app/endpoints/assets/getAssetMetadata]Immich API documentation[/link]
@@ -306,7 +306,7 @@ def get_asset_metadata_by_key(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
     key: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve asset metadata by key
 
     [link=https://api.immich.app/endpoints/assets/getAssetMetadataByKey]Immich API documentation[/link]
@@ -325,7 +325,7 @@ def get_asset_metadata_by_key(
 def get_asset_ocr(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve asset OCR data
 
     [link=https://api.immich.app/endpoints/assets/getAssetOcr]Immich API documentation[/link]
@@ -349,7 +349,7 @@ def get_asset_statistics(
     visibility: AssetVisibility | None = typer.Option(
         None, "--visibility", help=""""""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Get asset statistics
 
     [link=https://api.immich.app/endpoints/assets/getAssetStatistics]Immich API documentation[/link]
@@ -370,7 +370,7 @@ def get_asset_statistics(
 def get_random(
     ctx: typer.Context,
     count: float | None = typer.Option(None, "--count", help="""""", min=1),
-) -> None:  # pragma: no cover
+) -> None:
     """Get random assets
 
     [link=https://api.immich.app/endpoints/assets/getRandom]Immich API documentation[/link]
@@ -389,7 +389,7 @@ def play_asset_video(
     id: str = typer.Argument(..., help=""""""),
     key: str | None = typer.Option(None, "--key", help=""""""),
     slug: str | None = typer.Option(None, "--slug", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Play asset video
 
     [link=https://api.immich.app/endpoints/assets/playAssetVideo]Immich API documentation[/link]
@@ -409,7 +409,7 @@ def play_asset_video(
 def remove_asset_edits(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Remove edits from an existing asset
 
     [link=https://api.immich.app/endpoints/assets/removeAssetEdits]Immich API documentation[/link]
@@ -434,7 +434,7 @@ def replace_asset(
     filename: str | None = typer.Option(None, "--filename", help=""""""),
     key: str | None = typer.Option(None, "--key", help=""""""),
     slug: str | None = typer.Option(None, "--slug", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Replace asset
 
     [link=https://api.immich.app/endpoints/assets/replaceAsset]Immich API documentation[/link]
@@ -466,7 +466,7 @@ def run_asset_jobs(
     ctx: typer.Context,
     asset_ids: list[str] = typer.Option(..., "--asset-ids", help=""""""),
     name: str = typer.Option(..., "--name", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Run an asset job
 
     [link=https://api.immich.app/endpoints/assets/runAssetJobs]Immich API documentation[/link]
@@ -500,7 +500,7 @@ def update_asset(
     longitude: float | None = typer.Option(None, "--longitude", help=""""""),
     rating: float | None = typer.Option(None, "--rating", help="""""", min=-1, max=5),
     visibility: str | None = typer.Option(None, "--visibility", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Update an asset
 
     [link=https://api.immich.app/endpoints/assets/updateAsset]Immich API documentation[/link]
@@ -536,7 +536,7 @@ def update_asset_metadata(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
     items: list[str] = typer.Option(..., "--items", help="""As a JSON string"""),
-) -> None:  # pragma: no cover
+) -> None:
     """Update asset metadata
 
     [link=https://api.immich.app/endpoints/assets/updateAssetMetadata]Immich API documentation[/link]
@@ -573,7 +573,7 @@ def update_assets(
     rating: float | None = typer.Option(None, "--rating", help="""""", min=-1, max=5),
     time_zone: str | None = typer.Option(None, "--time-zone", help=""""""),
     visibility: str | None = typer.Option(None, "--visibility", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Update assets
 
     [link=https://api.immich.app/endpoints/assets/updateAssets]Immich API documentation[/link]
@@ -614,7 +614,7 @@ def update_assets(
 def update_bulk_asset_metadata(
     ctx: typer.Context,
     items: list[str] = typer.Option(..., "--items", help="""As a JSON string"""),
-) -> None:  # pragma: no cover
+) -> None:
     """Upsert asset metadata
 
     [link=https://api.immich.app/endpoints/assets/updateBulkAssetMetadata]Immich API documentation[/link]
@@ -664,7 +664,7 @@ def upload_asset(
         "--x-immich-checksum",
         help="""sha1 checksum that can be used for duplicate detection before the file is uploaded""",
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Upload asset
 
     [link=https://api.immich.app/endpoints/assets/uploadAsset]Immich API documentation[/link]
@@ -715,7 +715,7 @@ def view_asset(
     key: str | None = typer.Option(None, "--key", help=""""""),
     size: AssetMediaSize | None = typer.Option(None, "--size", help=""""""),
     slug: str | None = typer.Option(None, "--slug", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """View asset thumbnail
 
     [link=https://api.immich.app/endpoints/assets/viewAsset]Immich API documentation[/link]

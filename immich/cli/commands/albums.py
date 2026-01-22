@@ -24,7 +24,7 @@ def add_assets_to_album(
     ids: list[str] = typer.Option(..., "--ids", help=""""""),
     key: str | None = typer.Option(None, "--key", help=""""""),
     slug: str | None = typer.Option(None, "--slug", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Add assets to an album
 
     [link=https://api.immich.app/endpoints/albums/addAssetsToAlbum]Immich API documentation[/link]
@@ -51,7 +51,7 @@ def add_assets_to_albums(
     asset_ids: list[str] = typer.Option(..., "--asset-ids", help=""""""),
     key: str | None = typer.Option(None, "--key", help=""""""),
     slug: str | None = typer.Option(None, "--slug", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Add assets to albums
 
     [link=https://api.immich.app/endpoints/albums/addAssetsToAlbums]Immich API documentation[/link]
@@ -78,7 +78,7 @@ def add_users_to_album(
     album_users: list[str] = typer.Option(
         ..., "--album-users", help="""As a JSON string"""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Share album with users
 
     [link=https://api.immich.app/endpoints/albums/addUsersToAlbum]Immich API documentation[/link]
@@ -104,7 +104,7 @@ def create_album(
     ),
     asset_ids: list[str] | None = typer.Option(None, "--asset-ids", help=""""""),
     description: str | None = typer.Option(None, "--description", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Create an album
 
     [link=https://api.immich.app/endpoints/albums/createAlbum]Immich API documentation[/link]
@@ -130,7 +130,7 @@ def create_album(
 def delete_album(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete an album
 
     [link=https://api.immich.app/endpoints/albums/deleteAlbum]Immich API documentation[/link]
@@ -151,7 +151,7 @@ def get_album_info(
     without_assets: Literal["true", "false"] | None = typer.Option(
         None, "--without-assets", help=""""""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve an album
 
     [link=https://api.immich.app/endpoints/albums/getAlbumInfo]Immich API documentation[/link]
@@ -172,7 +172,7 @@ def get_album_info(
 @app.command("get-album-statistics", deprecated=False, rich_help_panel="API commands")
 def get_album_statistics(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve album statistics
 
     [link=https://api.immich.app/endpoints/albums/getAlbumStatistics]Immich API documentation[/link]
@@ -196,7 +196,7 @@ undefined: get all albums""",
     shared: Literal["true", "false"] | None = typer.Option(
         None, "--shared", help=""""""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """List all albums
 
     [link=https://api.immich.app/endpoints/albums/getAllAlbums]Immich API documentation[/link]
@@ -218,7 +218,7 @@ def remove_asset_from_album(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
     ids: list[str] = typer.Option(..., "--ids", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Remove assets from an album
 
     [link=https://api.immich.app/endpoints/albums/removeAssetFromAlbum]Immich API documentation[/link]
@@ -241,7 +241,7 @@ def remove_user_from_album(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
     user_id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Remove user from album
 
     [link=https://api.immich.app/endpoints/albums/removeUserFromAlbum]Immich API documentation[/link]
@@ -267,7 +267,7 @@ def update_album_info(
         None, "--is-activity-enabled", help=""""""
     ),
     order: str | None = typer.Option(None, "--order", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Update an album
 
     [link=https://api.immich.app/endpoints/albums/updateAlbumInfo]Immich API documentation[/link]
@@ -300,7 +300,7 @@ def update_album_user(
     id: str = typer.Argument(..., help=""""""),
     user_id: str = typer.Argument(..., help=""""""),
     role: str = typer.Option(..., "--role", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Update user role
 
     [link=https://api.immich.app/endpoints/albums/updateAlbumUser]Immich API documentation[/link]

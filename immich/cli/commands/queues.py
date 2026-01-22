@@ -25,7 +25,7 @@ def empty_queue(
         "--failed",
         help="""If true, will also remove failed jobs from the queue.""",
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Empty a queue
 
     [link=https://api.immich.app/endpoints/queues/emptyQueue]Immich API documentation[/link]
@@ -46,7 +46,7 @@ def empty_queue(
 def get_queue(
     ctx: typer.Context,
     name: QueueName = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve a queue
 
     [link=https://api.immich.app/endpoints/queues/getQueue]Immich API documentation[/link]
@@ -63,7 +63,7 @@ def get_queue_jobs(
     ctx: typer.Context,
     name: QueueName = typer.Argument(..., help=""""""),
     status: list[QueueJobStatus] | None = typer.Option(None, "--status", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve queue jobs
 
     [link=https://api.immich.app/endpoints/queues/getQueueJobs]Immich API documentation[/link]
@@ -80,7 +80,7 @@ def get_queue_jobs(
 @app.command("get-queues", deprecated=False, rich_help_panel="API commands")
 def get_queues(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """List all queues
 
     [link=https://api.immich.app/endpoints/queues/getQueues]Immich API documentation[/link]
@@ -98,7 +98,7 @@ def update_queue(
     is_paused: Literal["true", "false"] | None = typer.Option(
         None, "--is-paused", help=""""""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Update a queue
 
     [link=https://api.immich.app/endpoints/queues/updateQueue]Immich API documentation[/link]

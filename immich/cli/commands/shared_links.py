@@ -24,7 +24,7 @@ def add_shared_link_assets(
     asset_ids: list[str] = typer.Option(..., "--asset-ids", help=""""""),
     key: str | None = typer.Option(None, "--key", help=""""""),
     slug: str | None = typer.Option(None, "--slug", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Add assets to a shared link
 
     [link=https://api.immich.app/endpoints/shared-links/addSharedLinkAssets]Immich API documentation[/link]
@@ -65,7 +65,7 @@ def create_shared_link(
     ),
     slug: str | None = typer.Option(None, "--slug", help=""""""),
     type: str = typer.Option(..., "--type", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Create a shared link
 
     [link=https://api.immich.app/endpoints/shared-links/createSharedLink]Immich API documentation[/link]
@@ -105,7 +105,7 @@ def get_all_shared_links(
     ctx: typer.Context,
     album_id: str | None = typer.Option(None, "--album-id", help=""""""),
     id: str | None = typer.Option(None, "--id", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve all shared links
 
     [link=https://api.immich.app/endpoints/shared-links/getAllSharedLinks]Immich API documentation[/link]
@@ -129,7 +129,7 @@ def get_my_shared_link(
     password: str | None = typer.Option(None, "--password", help="""password"""),
     slug: str | None = typer.Option(None, "--slug", help=""""""),
     token: str | None = typer.Option(None, "--token", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve current shared link
 
     [link=https://api.immich.app/endpoints/shared-links/getMySharedLink]Immich API documentation[/link]
@@ -154,7 +154,7 @@ def get_my_shared_link(
 def get_shared_link_by_id(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve a shared link
 
     [link=https://api.immich.app/endpoints/shared-links/getSharedLinkById]Immich API documentation[/link]
@@ -172,7 +172,7 @@ def get_shared_link_by_id(
 def remove_shared_link(
     ctx: typer.Context,
     id: str = typer.Argument(..., help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Delete a shared link
 
     [link=https://api.immich.app/endpoints/shared-links/removeSharedLink]Immich API documentation[/link]
@@ -195,7 +195,7 @@ def remove_shared_link_assets(
     asset_ids: list[str] = typer.Option(..., "--asset-ids", help=""""""),
     key: str | None = typer.Option(None, "--key", help=""""""),
     slug: str | None = typer.Option(None, "--slug", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Remove assets from a shared link
 
     [link=https://api.immich.app/endpoints/shared-links/removeSharedLinkAssets]Immich API documentation[/link]
@@ -241,7 +241,7 @@ Clients that can send null values can ignore this.""",
         None, "--show-metadata", help=""""""
     ),
     slug: str | None = typer.Option(None, "--slug", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Update a shared link
 
     [link=https://api.immich.app/endpoints/shared-links/updateSharedLink]Immich API documentation[/link]

@@ -28,7 +28,7 @@ def create_notification(
     title: str = typer.Option(..., "--title", help=""""""),
     type: str | None = typer.Option(None, "--type", help=""""""),
     user_id: str = typer.Option(..., "--user-id", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Create a notification
 
     [link=https://api.immich.app/endpoints/notifications-admin/createNotification]Immich API documentation[/link]
@@ -64,7 +64,7 @@ def get_notification_template_admin(
     ctx: typer.Context,
     name: str = typer.Argument(..., help=""""""),
     template: str = typer.Option(..., "--template", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Render email template
 
     [link=https://api.immich.app/endpoints/notifications-admin/getNotificationTemplateAdmin]Immich API documentation[/link]
@@ -102,7 +102,7 @@ def send_test_email_admin(
     ),
     transport_secure: bool = typer.Option(..., "--transport-secure", help=""""""),
     transport_username: str = typer.Option(..., "--transport-username", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Send test email
 
     [link=https://api.immich.app/endpoints/notifications-admin/sendTestEmailAdmin]Immich API documentation[/link]

@@ -19,7 +19,7 @@ app = typer.Typer(
 @app.command("empty-trash", deprecated=False, rich_help_panel="API commands")
 def empty_trash(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Empty trash
 
     [link=https://api.immich.app/endpoints/trash/emptyTrash]Immich API documentation[/link]
@@ -34,7 +34,7 @@ def empty_trash(
 def restore_assets(
     ctx: typer.Context,
     ids: list[str] = typer.Option(..., "--ids", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Restore assets
 
     [link=https://api.immich.app/endpoints/trash/restoreAssets]Immich API documentation[/link]
@@ -52,7 +52,7 @@ def restore_assets(
 @app.command("restore-trash", deprecated=False, rich_help_panel="API commands")
 def restore_trash(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Restore trash
 
     [link=https://api.immich.app/endpoints/trash/restoreTrash]Immich API documentation[/link]

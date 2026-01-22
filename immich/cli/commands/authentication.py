@@ -26,7 +26,7 @@ def change_password(
         ..., "--new-password", help="""Example: password"""
     ),
     password: str = typer.Option(..., "--password", help="""Example: password"""),
-) -> None:  # pragma: no cover
+) -> None:
     """Change password
 
     [link=https://api.immich.app/endpoints/authentication/changePassword]Immich API documentation[/link]
@@ -52,7 +52,7 @@ def change_pin_code(
     new_pin_code: str = typer.Option(..., "--new-pin-code", help="""Example: 123456"""),
     password: str | None = typer.Option(None, "--password", help=""""""),
     pin_code: str | None = typer.Option(None, "--pin-code", help="""Example: 123456"""),
-) -> None:  # pragma: no cover
+) -> None:
     """Change pin code
 
     [link=https://api.immich.app/endpoints/authentication/changePinCode]Immich API documentation[/link]
@@ -77,7 +77,7 @@ def finish_o_auth(
     code_verifier: str | None = typer.Option(None, "--code-verifier", help=""""""),
     state: str | None = typer.Option(None, "--state", help=""""""),
     url: str = typer.Option(..., "--url", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Finish OAuth
 
     [link=https://api.immich.app/endpoints/authentication/finishOAuth]Immich API documentation[/link]
@@ -99,7 +99,7 @@ def finish_o_auth(
 @app.command("get-auth-status", deprecated=False, rich_help_panel="API commands")
 def get_auth_status(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve auth status
 
     [link=https://api.immich.app/endpoints/authentication/getAuthStatus]Immich API documentation[/link]
@@ -116,7 +116,7 @@ def link_o_auth_account(
     code_verifier: str | None = typer.Option(None, "--code-verifier", help=""""""),
     state: str | None = typer.Option(None, "--state", help=""""""),
     url: str = typer.Option(..., "--url", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Link OAuth account
 
     [link=https://api.immich.app/endpoints/authentication/linkOAuthAccount]Immich API documentation[/link]
@@ -138,7 +138,7 @@ def link_o_auth_account(
 @app.command("lock-auth-session", deprecated=False, rich_help_panel="API commands")
 def lock_auth_session(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Lock auth session
 
     [link=https://api.immich.app/endpoints/authentication/lockAuthSession]Immich API documentation[/link]
@@ -154,7 +154,7 @@ def login(
     ctx: typer.Context,
     email: str = typer.Option(..., "--email", help="""Example: testuser@email.com"""),
     password: str = typer.Option(..., "--password", help="""Example: password"""),
-) -> None:  # pragma: no cover
+) -> None:
     """Login
 
     [link=https://api.immich.app/endpoints/authentication/login]Immich API documentation[/link]
@@ -173,7 +173,7 @@ def login(
 @app.command("logout", deprecated=False, rich_help_panel="API commands")
 def logout(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Logout
 
     [link=https://api.immich.app/endpoints/authentication/logout]Immich API documentation[/link]
@@ -189,7 +189,7 @@ def logout(
 )
 def redirect_o_auth_to_mobile(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Redirect OAuth to mobile
 
     [link=https://api.immich.app/endpoints/authentication/redirectOAuthToMobile]Immich API documentation[/link]
@@ -207,7 +207,7 @@ def reset_pin_code(
     ctx: typer.Context,
     password: str | None = typer.Option(None, "--password", help=""""""),
     pin_code: str | None = typer.Option(None, "--pin-code", help="""Example: 123456"""),
-) -> None:  # pragma: no cover
+) -> None:
     """Reset pin code
 
     [link=https://api.immich.app/endpoints/authentication/resetPinCode]Immich API documentation[/link]
@@ -229,7 +229,7 @@ def reset_pin_code(
 def setup_pin_code(
     ctx: typer.Context,
     pin_code: str = typer.Option(..., "--pin-code", help="""Example: 123456"""),
-) -> None:  # pragma: no cover
+) -> None:
     """Setup pin code
 
     [link=https://api.immich.app/endpoints/authentication/setupPinCode]Immich API documentation[/link]
@@ -250,7 +250,7 @@ def sign_up_admin(
     email: str = typer.Option(..., "--email", help="""Example: testuser@email.com"""),
     name: str = typer.Option(..., "--name", help="""Example: Admin"""),
     password: str = typer.Option(..., "--password", help="""Example: password"""),
-) -> None:  # pragma: no cover
+) -> None:
     """Register admin
 
     [link=https://api.immich.app/endpoints/authentication/signUpAdmin]Immich API documentation[/link]
@@ -273,7 +273,7 @@ def start_o_auth(
     code_challenge: str | None = typer.Option(None, "--code-challenge", help=""""""),
     redirect_uri: str = typer.Option(..., "--redirect-uri", help=""""""),
     state: str | None = typer.Option(None, "--state", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Start OAuth
 
     [link=https://api.immich.app/endpoints/authentication/startOAuth]Immich API documentation[/link]
@@ -295,7 +295,7 @@ def start_o_auth(
 @app.command("unlink-o-auth-account", deprecated=False, rich_help_panel="API commands")
 def unlink_o_auth_account(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Unlink OAuth account
 
     [link=https://api.immich.app/endpoints/authentication/unlinkOAuthAccount]Immich API documentation[/link]
@@ -311,7 +311,7 @@ def unlock_auth_session(
     ctx: typer.Context,
     password: str | None = typer.Option(None, "--password", help=""""""),
     pin_code: str | None = typer.Option(None, "--pin-code", help="""Example: 123456"""),
-) -> None:  # pragma: no cover
+) -> None:
     """Unlock auth session
 
     [link=https://api.immich.app/endpoints/authentication/unlockAuthSession]Immich API documentation[/link]
@@ -332,7 +332,7 @@ def unlock_auth_session(
 @app.command("validate-access-token", deprecated=False, rich_help_panel="API commands")
 def validate_access_token(
     ctx: typer.Context,
-) -> None:  # pragma: no cover
+) -> None:
     """Validate access token
 
     [link=https://api.immich.app/endpoints/authentication/validateAccessToken]Immich API documentation[/link]

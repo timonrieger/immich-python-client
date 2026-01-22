@@ -38,7 +38,7 @@ def get_map_markers(
     with_shared_albums: Literal["true", "false"] | None = typer.Option(
         None, "--with-shared-albums", help=""""""
     ),
-) -> None:  # pragma: no cover
+) -> None:
     """Retrieve map markers
 
     [link=https://api.immich.app/endpoints/map/getMapMarkers]Immich API documentation[/link]
@@ -66,7 +66,7 @@ def reverse_geocode(
     ctx: typer.Context,
     lat: float = typer.Option(..., "--lat", help=""""""),
     lon: float = typer.Option(..., "--lon", help=""""""),
-) -> None:  # pragma: no cover
+) -> None:
     """Reverse geocode coordinates
 
     [link=https://api.immich.app/endpoints/map/reverseGeocode]Immich API documentation[/link]
