@@ -1,6 +1,6 @@
 [tools]
 python = "3.14.2"
-uv = "0.9.21"
+uv = "0.9.26"
 
 # https://mise.jdx.dev/mise-cookbook/python.html#mise-uv
 [env]
@@ -44,7 +44,7 @@ run = "uv tree --outdated --depth 1"
 description = "Check dependencies for updates"
 
 [tasks.setup]
-run = ["mise i", "uvx pre-commit install"]
+run = ["mise run install", "uvx pre-commit install"]
 description = "Setup the project"
 
 [tasks.build]
@@ -93,7 +93,7 @@ run = [
 
 [tasks."ci:install"]
 description = "Install dependencies in CI"
-run = ["mise i --locked"]
+run = ["mise run install --locked"]
 
 [tasks."ci:test:unit"]
 description = "Run unit tests in CI"
