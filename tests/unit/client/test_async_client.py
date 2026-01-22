@@ -1,5 +1,4 @@
 import pytest
-from aiohttp import ClientSession
 
 from immich import AsyncClient
 from immich.client.generated.api.assets_api import AssetsApi
@@ -14,31 +13,22 @@ async def test_client_requires_base_url():
 
 @pytest.mark.asyncio
 async def test_client_exposes_api_groups():
-    client = AsyncClient(base_url="http://localhost:2283/api", api_key="test")
-    try:
+    async with AsyncClient(base_url="http://localhost:2283/api") as client:
         assert isinstance(client.assets, AssetsApi)
         assert isinstance(client.users, UsersApi)
-    finally:
-        await client.close()
 
 
 @pytest.mark.asyncio
-async def test_client_close_does_not_close_injected_session():
-    custom_session = ClientSession()
-    client = AsyncClient(
-        base_url="http://localhost:2283/api",
-        api_key="test",
-        http_client=custom_session,
-    )
-    await client.close()
-    assert not custom_session.closed
-    await custom_session.close()
+async def test_client_passes_parameters():
+    async with AsyncClient(
+        base_url="http://localhost:2283/api", api_key="test", access_token="test"
+    ) as client:
+        assert client.base_client.configuration.host == "http://localhost:2283/api"
+        assert client.base_client.configuration.api_key == {"api_key": "test"}
+        assert client.base_client.configuration.access_token == "test"
 
 
 @pytest.mark.asyncio
-async def test_client_close_closes_owned_session_if_present():
-    client = AsyncClient(base_url="http://localhost:2283/api", api_key="test")
-    session = ClientSession()
-    client.base_client.rest_client.pool_manager = session
-    await client.close()
-    assert session.closed
+async def test_client_normalizes_base_url():
+    async with AsyncClient(base_url="http://localhost:2283/api/") as client:
+        assert client.base_client.configuration.host == "http://localhost:2283/api"

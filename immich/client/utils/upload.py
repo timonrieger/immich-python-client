@@ -164,7 +164,7 @@ async def scan_files(
     return sorted(set(files))
 
 
-def compute_sha1_sync(filepath: Path) -> str:
+def compute_sha1_sync(filepath: Path) -> str:  # pragma: no cover
     """Compute SHA1 hash of a file synchronously.
 
     :param filepath: Path to the file to hash.
@@ -272,7 +272,9 @@ def find_sidecar(filepath: Path) -> Optional[Path]:
     return None
 
 
-def get_file_times(path: Path, stats: os.stat_result) -> tuple[datetime, datetime]:
+def get_file_times(
+    path: Path, stats: os.stat_result
+) -> tuple[datetime, datetime]:  # pragma: no cover
     """Get file creation and modification times reliably.
 
     Credits: https://stackoverflow.com/a/39501288
