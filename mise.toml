@@ -36,7 +36,7 @@ alias = "i"
 description = "Install dependencies (alias: 'i')"
 
 [tasks."install:upgrade"]
-run = "uv sync --upgrade"
+run = "mise run install --upgrade"
 description = "Upgrade dependencies in the allowed ranges"
 
 [tasks."install:check"]
