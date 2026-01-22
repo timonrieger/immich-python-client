@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from typing import AsyncGenerator, Awaitable, Callable, Generator, Optional
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 import pytest
 from typer.testing import CliRunner
@@ -18,7 +18,6 @@ from immich.cli.consts import (
 from immich.client.utils.upload import UploadResult
 from immich.client.generated import (
     AlbumResponseDto,
-    AssetBulkDeleteDto,
     AssetResponseDto,
 )
 from immich.client.generated.exceptions import BadRequestException
@@ -131,9 +130,9 @@ def runner_simple() -> CliRunner:
 
 @pytest.fixture
 def test_image_factory(
-    tmp_path: Path, teardown: bool
+    tmp_path: Path,
 ) -> Generator[Callable[[Optional[str]], Path], None, None]:
-    """Factory fixture: yields a callable to create test images and auto-clean them up.
+    """Factory fixture: yields a callable to create test images.
 
     Example:
         img_path = test_image_factory()
@@ -160,31 +159,23 @@ def test_image(
 
 @pytest.fixture
 def test_video_factory(
-    tmp_path: Path, teardown: bool
+    tmp_path: Path,
 ) -> Generator[Callable[[Optional[str]], Path], None, None]:
-    """Factory fixture: yields a callable to create test videos and auto-clean them up.
+    """Factory fixture: yields a callable to create test videos.
 
     Example:
         video_path = test_video_factory()
         video_path2 = test_video_factory(filename="custom.mp4")
     """
-    _created_paths: list[Path] = []
 
     def _create_video(filename: Optional[str] = None) -> Path:
-        nonlocal _created_paths
         if filename is None:
             filename = f"{uuid4()}.mp4"
         video_path = tmp_path / filename
         video_path.write_bytes(make_random_video())
-        _created_paths.append(video_path)
         return video_path
 
     yield _create_video
-
-    if teardown:
-        for path in _created_paths:
-            if path.exists():
-                path.unlink()
 
 
 @pytest.fixture
@@ -197,74 +188,44 @@ def test_video(
 
 @pytest.fixture
 async def album_factory(
-    client_with_api_key: AsyncClient, teardown: bool
+    client_with_api_key: AsyncClient,
 ) -> AsyncGenerator[Callable[..., Awaitable[AlbumResponseDto]], None]:
     """Fixture to set up album for testing with factory pattern.
 
     Creates an album, returns parsed album object.
     Skips dependent tests if album creation fails.
     """
-    _album_id: Optional[UUID] = None
 
     async def _create_album(*args, **kwargs) -> AlbumResponseDto:
-        nonlocal _album_id
         try:
             result = await client_with_api_key.albums.create_album(*args, **kwargs)
         except Exception as e:
             pytest.skip(f"Asset upload failed:\n{e}")
 
-        _album_id = UUID(str(result.id))
         return result
 
     yield _create_album
-
-    if teardown and _album_id:
-        await client_with_api_key.albums.delete_album(_album_id)
-
-
-@pytest.fixture
-def teardown(request: pytest.FixtureRequest) -> bool:
-    """Fixture to control whether teardown should be performed.
-
-    Can be parametrized in tests to override the default True value.
-    """
-    # Check if teardown was parametrized
-    if hasattr(request, "param"):
-        return request.param
-    return True
 
 
 @pytest.fixture
 async def upload_assets(
     client_with_api_key: AsyncClient,
-    teardown: bool,
 ) -> AsyncGenerator[Callable[..., Awaitable[UploadResult]], None]:
-    """Factory fixture: yields an async callable to upload assets and auto-clean them up.
+    """Factory fixture: yields an async callable to upload assets.
 
     Example:
         upload_result = await upload_assets([test_image], skip_duplicates=True)
     """
 
-    _uploaded_ids: list[UUID] = []
-
     async def _upload(*args, **kwargs) -> UploadResult:
-        nonlocal _uploaded_ids
         try:
             result = await client_with_api_key.assets.upload(*args, **kwargs)
         except Exception as e:
             pytest.skip(f"Asset upload failed:\n{e}")
 
-        _uploaded_ids.extend(UUID(u.asset.id) for u in result.uploaded)
         return result
 
     yield _upload
-
-    if teardown and _uploaded_ids:
-        await client_with_api_key.assets.delete_assets(
-            AssetBulkDeleteDto(
-                ids=_uploaded_ids, force=True
-            )  # deletes without moving to trash
-        )
 
 
 @pytest.fixture
