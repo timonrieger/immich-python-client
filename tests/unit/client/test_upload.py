@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Callable
 from unittest.mock import AsyncMock, MagicMock, patch
 import uuid
 
@@ -547,14 +548,12 @@ def mock_albums_api():
 
 
 @pytest.mark.asyncio
-async def test_update_albums_no_album_name(mock_albums_api, tmp_path: Path) -> None:
+async def test_update_albums_no_album_name(
+    mock_albums_api, uploaded_entry_factory: Callable[[], UploadedEntry]
+) -> None:
     """Test that update_albums returns early when album_name is None."""
-    file1 = tmp_path / "test1.jpg"
-    file1.write_bytes(b"test1")
-    uploaded_entry = UploadedEntry(
-        asset=AssetMediaResponseDto(id="asset-1", status=AssetMediaStatus.CREATED),
-        filepath=file1,
-    )
+    uploaded_entry = uploaded_entry_factory()
+    uploaded_entry.asset.id = "asset-1"
     await update_albums([uploaded_entry], None, mock_albums_api)
     mock_albums_api.get_all_albums.assert_not_called()
     mock_albums_api.create_album.assert_not_called()
@@ -571,16 +570,12 @@ async def test_update_albums_empty_uploaded(mock_albums_api) -> None:
 
 
 @pytest.mark.asyncio
-async def test_update_albums_existing_album(mock_albums_api, tmp_path: Path) -> None:
+async def test_update_albums_existing_album(
+    mock_albums_api, uploaded_entry_factory: Callable[[], UploadedEntry]
+) -> None:
     """Test that update_albums adds assets to existing album."""
     album_id = uuid.uuid4()
-    asset_id = uuid.uuid4()
-    file1 = tmp_path / "test1.jpg"
-    file1.write_bytes(b"test1")
-    uploaded_entry = UploadedEntry(
-        asset=AssetMediaResponseDto(id=str(asset_id), status=AssetMediaStatus.CREATED),
-        filepath=file1,
-    )
+    uploaded_entry = uploaded_entry_factory()
     existing_album = AlbumResponseDto.model_construct(
         album_name="My Album", id=str(album_id)
     )
@@ -595,16 +590,12 @@ async def test_update_albums_existing_album(mock_albums_api, tmp_path: Path) -> 
 
 
 @pytest.mark.asyncio
-async def test_update_albums_create_new_album(mock_albums_api, tmp_path: Path) -> None:
+async def test_update_albums_create_new_album(
+    mock_albums_api, uploaded_entry_factory: Callable[[], UploadedEntry]
+) -> None:
     """Test that update_albums creates album if it doesn't exist."""
     album_id = uuid.uuid4()
-    asset_id = uuid.uuid4()
-    file1 = tmp_path / "test1.jpg"
-    file1.write_bytes(b"test1")
-    uploaded_entry = UploadedEntry(
-        asset=AssetMediaResponseDto(id=str(asset_id), status=AssetMediaStatus.CREATED),
-        filepath=file1,
-    )
+    uploaded_entry = uploaded_entry_factory()
     new_album = AlbumResponseDto.model_construct(
         album_name="New Album", id=str(album_id)
     )
@@ -619,20 +610,14 @@ async def test_update_albums_create_new_album(mock_albums_api, tmp_path: Path) -
 
 
 @pytest.mark.asyncio
-async def test_update_albums_batching(mock_albums_api, tmp_path: Path) -> None:
+async def test_update_albums_batching(
+    mock_albums_api, uploaded_entry_factory: Callable[[], UploadedEntry]
+) -> None:
     """Test that update_albums batches assets in groups of 1000."""
     album_id = uuid.uuid4()
     uploaded_entries = [
-        UploadedEntry(
-            asset=AssetMediaResponseDto(
-                id=str(uuid.uuid4()), status=AssetMediaStatus.CREATED
-            ),
-            filepath=tmp_path / f"test{i}.jpg",
-        )
-        for i in range(1500)
+        uploaded_entry_factory(filename=f"test{i}.jpg") for i in range(1500)
     ]
-    for entry in uploaded_entries:
-        entry.filepath.write_bytes(b"test")
     existing_album = AlbumResponseDto.model_construct(
         album_name="Large Album", id=str(album_id)
     )
@@ -646,35 +631,25 @@ async def test_update_albums_batching(mock_albums_api, tmp_path: Path) -> None:
 
 
 @pytest.mark.asyncio
-async def test_delete_files_no_flags(tmp_path: Path) -> None:
+async def test_delete_files_no_flags(
+    uploaded_entry_factory: Callable[[], UploadedEntry],
+) -> None:
     """Test that delete_files does nothing when both flags are False."""
-    file1 = tmp_path / "test1.jpg"
-    file1.write_bytes(b"test1")
-    uploaded_entry = UploadedEntry(
-        asset=AssetMediaResponseDto(
-            id=str(uuid.uuid4()), status=AssetMediaStatus.CREATED
-        ),
-        filepath=file1,
-    )
+    uploaded_entry = uploaded_entry_factory()
     await delete_files(
         [uploaded_entry], [], delete_uploads=False, delete_duplicates=False
     )
-    assert file1.exists()
+    assert uploaded_entry.filepath.exists()
 
 
 @pytest.mark.asyncio
-async def test_delete_files_delete_uploads(tmp_path: Path) -> None:
+async def test_delete_files_delete_uploads(
+    uploaded_entry_factory: Callable[[], UploadedEntry],
+) -> None:
     """Test that delete_files deletes uploaded files when delete_uploads=True."""
-    file1 = tmp_path / "test1.jpg"
-    file1.write_bytes(b"test1")
-    uploaded_entry = UploadedEntry(
-        asset=AssetMediaResponseDto(
-            id=str(uuid.uuid4()), status=AssetMediaStatus.CREATED
-        ),
-        filepath=file1,
-    )
+    uploaded_entry = uploaded_entry_factory()
     await delete_files([uploaded_entry], [], delete_uploads=True)
-    assert not file1.exists()
+    assert not uploaded_entry.filepath.exists()
 
 
 @pytest.mark.asyncio
@@ -707,43 +682,30 @@ async def test_delete_files_skip_non_duplicate_rejected(tmp_path: Path) -> None:
 
 @pytest.mark.asyncio
 async def test_delete_files_dry_run(
-    tmp_path: Path, caplog: pytest.LogCaptureFixture
+    uploaded_entry_factory: Callable[[], UploadedEntry],
+    caplog: pytest.LogCaptureFixture,
 ) -> None:
     """Test that delete_files logs but doesn't delete in dry_run mode."""
     import logging
 
     caplog.set_level(logging.INFO)
-    file1 = tmp_path / "test1.jpg"
-    sidecar1 = tmp_path / "test1.xmp"
-    file1.write_bytes(b"test1")
-    sidecar1.write_bytes(b"xmp data")
-    uploaded_entry = UploadedEntry(
-        asset=AssetMediaResponseDto(
-            id=str(uuid.uuid4()), status=AssetMediaStatus.CREATED
-        ),
-        filepath=file1,
-    )
+    uploaded_entry = uploaded_entry_factory(sidecar=True)
     await delete_files([uploaded_entry], [], delete_uploads=True, dry_run=True)
-    assert file1.exists()
+    assert uploaded_entry.filepath.exists()
+    sidecar1 = uploaded_entry.filepath.parent / f"{uploaded_entry.filepath.stem}.xmp"
     assert sidecar1.exists()
     assert "Would have deleted" in caplog.text
 
 
 @pytest.mark.asyncio
-async def test_delete_files_with_sidecar(tmp_path: Path) -> None:
+async def test_delete_files_with_sidecar(
+    uploaded_entry_factory: Callable[[], UploadedEntry],
+) -> None:
     """Test that delete_files deletes sidecar files."""
-    file1 = tmp_path / "test1.jpg"
-    sidecar1 = tmp_path / "test1.xmp"
-    file1.write_bytes(b"test1")
-    sidecar1.write_bytes(b"xmp data")
-    uploaded_entry = UploadedEntry(
-        asset=AssetMediaResponseDto(
-            id=str(uuid.uuid4()), status=AssetMediaStatus.CREATED
-        ),
-        filepath=file1,
-    )
+    uploaded_entry = uploaded_entry_factory(sidecar=True)
+    sidecar1 = uploaded_entry.filepath.parent / f"{uploaded_entry.filepath.stem}.xmp"
     await delete_files([uploaded_entry], [], delete_uploads=True)
-    assert not file1.exists()
+    assert not uploaded_entry.filepath.exists()
     assert not sidecar1.exists()
 
 
@@ -756,7 +718,7 @@ async def test_delete_files_with_sidecar(tmp_path: Path) -> None:
     ],
 )
 async def test_delete_files_deletion_failure(
-    tmp_path: Path,
+    uploaded_entry_factory: Callable[[], UploadedEntry],
     caplog: pytest.LogCaptureFixture,
     fail_file: str,
     expected_file1_exists: bool,
@@ -768,16 +730,9 @@ async def test_delete_files_deletion_failure(
     from pathlib import Path as PathClass
 
     caplog.set_level(logging.ERROR)
-    file1 = tmp_path / "test1.jpg"
-    sidecar1 = tmp_path / "test1.xmp"
-    file1.write_bytes(b"test1")
-    sidecar1.write_bytes(b"xmp data")
-    uploaded_entry = UploadedEntry(
-        asset=AssetMediaResponseDto(
-            id=str(uuid.uuid4()), status=AssetMediaStatus.CREATED
-        ),
-        filepath=file1,
-    )
+    uploaded_entry = uploaded_entry_factory(sidecar=True)
+    file1 = uploaded_entry.filepath
+    sidecar1 = file1.parent / f"{file1.stem}.xmp"
     original_unlink = PathClass.unlink
 
     def failing_unlink(self):

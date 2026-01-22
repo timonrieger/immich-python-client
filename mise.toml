@@ -99,14 +99,16 @@ run = ["mise i --locked"]
 description = "Run unit tests in CI"
 run = [
     { task = "ci:install" },
-    { task = "test:unit" },
+    { task = "test:unit:cli" },
+    { task = "test:unit:client" },
 ]
 
 [tasks."ci:test:e2e"]
 description = "Run e2e tests in CI"
 run = [
     { task = "ci:install" },
-    { task = "test:e2e" },
+    { task = "test:e2e:cli" },
+    { task = "test:e2e:client" },
 ]
 
 [tasks."docs:dev"]
