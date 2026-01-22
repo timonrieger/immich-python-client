@@ -12,7 +12,7 @@ on:
       - main
 
 jobs:
-  Deploy-Production:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
