@@ -3,10 +3,29 @@
 
 from pathlib import Path
 
+# Explicit mapping for special cases
+SPECIAL_CASES: dict[str, tuple[str, str]] = {
+    "api_keys_api": ("APIKeysApi", "API Keys Api"),
+    "api_key_create_dto": ("APIKeyCreateDto", "API Key Create Dto"),
+    "api_key_create_response_dto": (
+        "APIKeyCreateResponseDto",
+        "API Key Create Response Dto",
+    ),
+    "api_key_response_dto": ("APIKeyResponseDto", "API Key Response Dto"),
+    "api_key_update_dto": ("APIKeyUpdateDto", "API Key Update Dto"),
+    "clip_config": ("CLIPConfig", "CLIP Config"),
+    "transcode_hw_accel": ("TranscodeHWAccel", "Transcode HW Accel"),
+    "o_auth_callback_dto": ("OAuthCallbackDto", "OAuth Callback Dto"),
+    "cq_mode": ("CQMode", "CQ Mode"),
+}
+
 
 def filename_to_title(filename: str) -> str:
     """Convert filename like 'activities_api.py' to 'Activities Api'."""
     name = filename.replace(".py", "")
+    if name in SPECIAL_CASES:
+        return SPECIAL_CASES[name][1]
+
     parts = name.split("_")
     return " ".join(part.capitalize() for part in parts)
 
@@ -19,21 +38,8 @@ def filename_to_class_name(filename: str) -> str:
     """
     name = filename.replace(".py", "")
 
-    # Explicit mapping for special cases
-    special_cases: dict[str, str] = {
-        "api_keys_api": "APIKeysApi",
-        "api_key_create_dto": "APIKeyCreateDto",
-        "api_key_create_response_dto": "APIKeyCreateResponseDto",
-        "api_key_response_dto": "APIKeyResponseDto",
-        "api_key_update_dto": "APIKeyUpdateDto",
-        "clip_config": "CLIPConfig",
-        "transcode_hw_accel": "TranscodeHWAccel",
-        "o_auth_callback_dto": "OAuthCallbackDto",
-        "cq_mode": "CQMode",
-    }
-
-    if name in special_cases:
-        return special_cases[name]
+    if name in SPECIAL_CASES:
+        return SPECIAL_CASES[name][0]
 
     # Default: split by underscore, capitalize each part, join
     parts = name.split("_")
@@ -60,7 +66,6 @@ def process_directory(
     output_dir: Path,
     project_root: Path,
     file_pattern: str,
-    title_prefix: str = "",
 ) -> int:
     """Process a directory and generate markdown files.
 
@@ -73,13 +78,10 @@ def process_directory(
 
     for source_file in files:
         filename = source_file.name
-        class_name = filename_to_class_name(filename)
         module_path = get_module_path(source_file, project_root)
 
         title = filename_to_title(filename)
-        if title_prefix:
-            title = f"{title_prefix}: {title}"
-
+        class_name = filename_to_class_name(filename)
         content = generate_markdown_content(title, module_path, class_name)
 
         output_file = output_dir / filename.replace(".py", ".md")
@@ -119,11 +121,11 @@ def main():
     total_generated += count
     print(f"  {count} model files")
 
-    # 3. wrapper/ -> docs/client/reference/wrapper/
+    # 3. wrapper/ -> docs/client/reference/api
     print("\nProcessing wrapper/...")
     count = process_directory(
         source_dir=client_dir / "wrapper",
-        output_dir=docs_ref_dir / "wrapper",
+        output_dir=docs_ref_dir / "api",
         project_root=project_root,
         file_pattern="*.py",
     )
