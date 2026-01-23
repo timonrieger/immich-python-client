@@ -1,4 +1,4 @@
-# Custom Types
+# Upload Result
 
 ::: immich.client.types.UploadResult
 ::: immich.client.types.UploadStats
