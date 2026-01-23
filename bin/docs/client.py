@@ -113,16 +113,16 @@ def main():
     total_generated += count
     print(f"  {count} API files")
 
-    # # 2. generated/models/ -> docs/client/reference/models/
-    # print("\nProcessing generated/models/...")
-    # count = process_directory(
-    #     source_dir=client_dir / "generated" / "models",
-    #     output_dir=docs_ref_dir / "models",
-    #     project_root=project_root,
-    #     file_pattern="*.py",
-    # )
-    # total_generated += count
-    # print(f"  {count} model files")
+    # 2. generated/models/ -> docs/client/reference/models/
+    print("\nProcessing generated/models/...")
+    count = process_directory(
+        source_dir=client_dir / "generated" / "models",
+        output_dir=docs_ref_dir / "models",
+        project_root=project_root,
+        file_pattern="*.py",
+    )
+    total_generated += count
+    print(f"  {count} model files")
 
     # 3. wrapper/ -> docs/client/reference/wrapper/
     print("\nProcessing wrapper/...")
