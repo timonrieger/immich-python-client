@@ -11,6 +11,12 @@ on:
     types:
       - opened
       - synchronize
+    paths:
+      - 'zensical.toml'
+      - 'docs/**'
+      - 'immich/client/generated/**'
+      - '.github/workflows/docs-preview.yml'
+      - 'vercel.json'
 
 jobs:
   deploy:
