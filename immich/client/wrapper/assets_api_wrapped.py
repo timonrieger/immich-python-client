@@ -11,8 +11,6 @@ from immich.client.generated.api.assets_api import AssetsApi
 from immich.client.generated.api.server_api import ServerApi
 from immich.client.generated.models.asset_media_size import AssetMediaSize
 from immich.client.utils.upload import (
-    UploadResult,
-    UploadStats,
     check_duplicates as check_dupes,
     delete_files,
     scan_files,
@@ -20,7 +18,7 @@ from immich.client.utils.upload import (
     upload_files,
 )
 from immich.client.utils.download import download_file, resolve_output_filename
-from immich.client.types import HeadersType
+from immich.client.types import HeadersType, UploadResult, UploadStats
 
 
 class AssetsApiWrapped(AssetsApi):

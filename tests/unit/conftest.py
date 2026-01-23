@@ -10,7 +10,7 @@ from immich.client.generated.models.asset_media_response_dto import (
     AssetMediaResponseDto,
 )
 from immich.client.generated.models.asset_media_status import AssetMediaStatus
-from immich.client.utils.upload import UploadedEntry
+from immich.client.types import UploadedEntry
 
 
 @pytest.fixture

@@ -14,7 +14,7 @@ from immich.client.generated import (
     AssetResponseDto,
     CreateProfileImageResponseDto,
 )
-from immich.client.utils.upload import UploadResult
+from immich.client.types import UploadResult
 
 
 @pytest.mark.asyncio

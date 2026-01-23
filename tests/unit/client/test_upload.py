@@ -27,13 +27,12 @@ from immich.client.utils.upload import (
     check_duplicates,
     delete_files,
     find_sidecar,
-    RejectedEntry,
     scan_files,
     update_albums,
     upload_file,
     upload_files,
-    UploadedEntry,
 )
+from immich.client.types import RejectedEntry, UploadedEntry
 
 
 @pytest.fixture

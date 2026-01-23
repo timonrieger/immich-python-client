@@ -16,7 +16,7 @@ from immich.cli.consts import (
     IMMICH_FORMAT,
     IMMICH_PROFILE,
 )
-from immich.client.utils.upload import UploadResult
+from immich.client.types import UploadResult
 from immich.client.generated import (
     AlbumResponseDto,
     AssetBulkDeleteDto,
