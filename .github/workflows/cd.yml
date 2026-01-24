@@ -12,6 +12,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
+      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
       - name: Check-out repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
         with:
@@ -39,6 +40,7 @@ jobs:
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
     steps:
+      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
       - name: Check-out repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
         with:
@@ -58,6 +60,7 @@ jobs:
     permissions:
       contents: read
     steps:
+      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
       - name: Check-out repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
         with:
@@ -118,6 +121,7 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
       - name: Setup | Checkout Repository on Release Branch
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
         with:
@@ -162,6 +166,7 @@ jobs:
       url: https://pypi.org/p/immich
 
     steps:
+      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
       - name: Setup | Download Build Artifacts
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
         id: artifact-download
