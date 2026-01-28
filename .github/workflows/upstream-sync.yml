@@ -150,13 +150,15 @@ jobs:
           committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           branch: ${{ steps.pr_branch.outputs.branch }}
           base: main
-          title: Sync Immich $TAG
+          title: Sync Immich ${TAG}
           body: |
-            Automatically generated sync to Immich $TAG.
+            Automatically generated sync to Immich ${TAG}.
 
             This PR was created by the upstream sync workflow.
 
-            Upstream tag: https://github.com/immich-app/immich/releases/tag/$TAG
+            Upstream tag: https://github.com/immich-app/immich/releases/tag/${TAG}
+
+            @coderabbitai ignore
           delete-branch: true
         env:
           TAG: ${{ steps.tag_to_use.outputs.tag }}
