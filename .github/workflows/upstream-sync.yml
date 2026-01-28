@@ -88,7 +88,7 @@ jobs:
           # Determine commit type based on semver diff
           if [ "$LATEST_MAJOR" != "$STORED_MAJOR" ]; then
             # Major version bump
-            COMMIT_TYPE="feat"
+            COMMIT_TYPE="feat!"
             COMMIT_BODY="BREAKING CHANGE: Immich server had a major release. Review upstream release notes for potential client-impacting changes."
           elif [ "$LATEST_MINOR" != "$STORED_MINOR" ]; then
             # Minor version bump
@@ -103,7 +103,7 @@ jobs:
           echo "commit_type=$COMMIT_TYPE" >> "$GITHUB_OUTPUT"
 
           # Build commit message
-          COMMIT_MESSAGE="$COMMIT_TYPE: sync client to Immich $TAG"$'\n\n'"Immich Release Notes: $RELEASE_URL"
+          COMMIT_MESSAGE="$COMMIT_TYPE: sync client to [Immich $TAG]($RELEASE_URL)"
           if [ -n "$COMMIT_BODY" ]; then
             COMMIT_MESSAGE="$COMMIT_MESSAGE"$'\n\n'"$COMMIT_BODY"
           fi
