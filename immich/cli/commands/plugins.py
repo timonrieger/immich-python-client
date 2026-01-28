@@ -32,6 +32,20 @@ def get_plugin(
     print_response(result, ctx)
 
 
+@app.command("get-plugin-triggers", deprecated=False, rich_help_panel="API commands")
+def get_plugin_triggers(
+    ctx: typer.Context,
+) -> None:
+    """List all plugin triggers
+
+    [link=https://api.immich.app/endpoints/plugins/getPluginTriggers]Immich API documentation[/link]
+    """
+    kwargs = {}
+    client: "AsyncClient" = ctx.obj["client"]
+    result = run_command(client, client.plugins, "get_plugin_triggers", ctx, **kwargs)
+    print_response(result, ctx)
+
+
 @app.command("get-plugins", deprecated=False, rich_help_panel="API commands")
 def get_plugins(
     ctx: typer.Context,

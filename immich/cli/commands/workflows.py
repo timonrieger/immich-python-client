@@ -113,6 +113,7 @@ def update_workflow(
         None, "--filters", help="""As a JSON string"""
     ),
     name: str | None = typer.Option(None, "--name", help=""""""),
+    trigger_type: str | None = typer.Option(None, "--trigger-type", help=""""""),
 ) -> None:
     """Update a workflow
 
@@ -133,6 +134,8 @@ def update_workflow(
         set_nested(json_data, ["filters"], value_filters)
     if name is not None:
         set_nested(json_data, ["name"], name)
+    if trigger_type is not None:
+        set_nested(json_data, ["trigger_type"], trigger_type)
     workflow_update_dto = WorkflowUpdateDto.model_validate(json_data)
     kwargs["workflow_update_dto"] = workflow_update_dto
     client: "AsyncClient" = ctx.obj["client"]

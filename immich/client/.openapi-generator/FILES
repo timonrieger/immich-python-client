@@ -6,6 +6,7 @@ generated/api/api_keys_api.py
 generated/api/assets_api.py
 generated/api/authentication_admin_api.py
 generated/api/authentication_api.py
+generated/api/database_backups_admin_api.py
 generated/api/deprecated_api.py
 generated/api/download_api.py
 generated/api/duplicates_api.py
@@ -69,6 +70,13 @@ generated/models/asset_bulk_upload_check_result.py
 generated/models/asset_copy_dto.py
 generated/models/asset_delta_sync_dto.py
 generated/models/asset_delta_sync_response_dto.py
+generated/models/asset_edit_action.py
+generated/models/asset_edit_action_crop.py
+generated/models/asset_edit_action_list_dto.py
+generated/models/asset_edit_action_list_dto_edits_inner.py
+generated/models/asset_edit_action_mirror.py
+generated/models/asset_edit_action_rotate.py
+generated/models/asset_edits_dto.py
 generated/models/asset_face_create_dto.py
 generated/models/asset_face_delete_dto.py
 generated/models/asset_face_response_dto.py
@@ -83,7 +91,11 @@ generated/models/asset_jobs_dto.py
 generated/models/asset_media_response_dto.py
 generated/models/asset_media_size.py
 generated/models/asset_media_status.py
-generated/models/asset_metadata_key.py
+generated/models/asset_metadata_bulk_delete_dto.py
+generated/models/asset_metadata_bulk_delete_item_dto.py
+generated/models/asset_metadata_bulk_response_dto.py
+generated/models/asset_metadata_bulk_upsert_dto.py
+generated/models/asset_metadata_bulk_upsert_item_dto.py
 generated/models/asset_metadata_response_dto.py
 generated/models/asset_metadata_upsert_dto.py
 generated/models/asset_metadata_upsert_item_dto.py
@@ -112,7 +124,11 @@ generated/models/cq_mode.py
 generated/models/create_album_dto.py
 generated/models/create_library_dto.py
 generated/models/create_profile_image_response_dto.py
+generated/models/crop_parameters.py
 generated/models/database_backup_config.py
+generated/models/database_backup_delete_dto.py
+generated/models/database_backup_dto.py
+generated/models/database_backup_list_response_dto.py
 generated/models/download_archive_info.py
 generated/models/download_info_dto.py
 generated/models/download_response.py
@@ -142,7 +158,10 @@ generated/models/logout_response_dto.py
 generated/models/machine_learning_availability_checks_dto.py
 generated/models/maintenance_action.py
 generated/models/maintenance_auth_dto.py
+generated/models/maintenance_detect_install_response_dto.py
+generated/models/maintenance_detect_install_storage_folder_dto.py
 generated/models/maintenance_login_dto.py
+generated/models/maintenance_status_response_dto.py
 generated/models/manual_job_name.py
 generated/models/map_marker_response_dto.py
 generated/models/map_reverse_geocode_response_dto.py
@@ -156,6 +175,8 @@ generated/models/memory_type.py
 generated/models/memory_update_dto.py
 generated/models/merge_person_dto.py
 generated/models/metadata_search_dto.py
+generated/models/mirror_axis.py
+generated/models/mirror_parameters.py
 generated/models/notification_create_dto.py
 generated/models/notification_delete_all_dto.py
 generated/models/notification_dto.py
@@ -191,9 +212,10 @@ generated/models/pin_code_reset_dto.py
 generated/models/pin_code_setup_dto.py
 generated/models/places_response_dto.py
 generated/models/plugin_action_response_dto.py
-generated/models/plugin_context.py
+generated/models/plugin_context_type.py
 generated/models/plugin_filter_response_dto.py
 generated/models/plugin_response_dto.py
+generated/models/plugin_trigger_response_dto.py
 generated/models/plugin_trigger_type.py
 generated/models/purchase_response.py
 generated/models/purchase_update.py
@@ -215,6 +237,7 @@ generated/models/ratings_update.py
 generated/models/reaction_level.py
 generated/models/reaction_type.py
 generated/models/reverse_geocoding_state_response_dto.py
+generated/models/rotate_parameters.py
 generated/models/search_album_response_dto.py
 generated/models/search_asset_response_dto.py
 generated/models/search_explore_item.py
@@ -254,6 +277,7 @@ generated/models/stack_create_dto.py
 generated/models/stack_response_dto.py
 generated/models/stack_update_dto.py
 generated/models/statistics_search_dto.py
+generated/models/storage_folder.py
 generated/models/sync_ack_delete_dto.py
 generated/models/sync_ack_dto.py
 generated/models/sync_ack_set_dto.py

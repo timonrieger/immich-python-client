@@ -118,7 +118,7 @@ $ immich api-keys create-api-key [OPTIONS]
 **Options**:
 
 * `--name TEXT`
-* `--permissions [all|activity.create|activity.read|activity.update|activity.delete|activity.statistics|apiKey.create|apiKey.read|apiKey.update|apiKey.delete|asset.read|asset.update|asset.delete|asset.statistics|asset.share|asset.view|asset.download|asset.upload|asset.replace|asset.copy|album.create|album.read|album.update|album.delete|album.statistics|album.share|album.download|albumAsset.create|albumAsset.delete|albumUser.create|albumUser.update|albumUser.delete|auth.changePassword|authDevice.delete|archive.read|duplicate.read|duplicate.delete|face.create|face.read|face.update|face.delete|job.create|job.read|library.create|library.read|library.update|library.delete|library.statistics|timeline.read|timeline.download|maintenance|memory.create|memory.read|memory.update|memory.delete|memory.statistics|memoryAsset.create|memoryAsset.delete|notification.create|notification.read|notification.update|notification.delete|partner.create|partner.read|partner.update|partner.delete|person.create|person.read|person.update|person.delete|person.statistics|person.merge|person.reassign|pinCode.create|pinCode.update|pinCode.delete|plugin.create|plugin.read|plugin.update|plugin.delete|server.about|server.apkLinks|server.storage|server.statistics|server.versionCheck|serverLicense.read|serverLicense.update|serverLicense.delete|session.create|session.read|session.update|session.delete|session.lock|sharedLink.create|sharedLink.read|sharedLink.update|sharedLink.delete|stack.create|stack.read|stack.update|stack.delete|sync.stream|syncCheckpoint.read|syncCheckpoint.update|syncCheckpoint.delete|systemConfig.read|systemConfig.update|systemMetadata.read|systemMetadata.update|tag.create|tag.read|tag.update|tag.delete|tag.asset|user.read|user.update|userLicense.create|userLicense.read|userLicense.update|userLicense.delete|userOnboarding.read|userOnboarding.update|userOnboarding.delete|userPreference.read|userPreference.update|userProfileImage.create|userProfileImage.read|userProfileImage.update|userProfileImage.delete|queue.read|queue.update|queueJob.create|queueJob.read|queueJob.update|queueJob.delete|workflow.create|workflow.read|workflow.update|workflow.delete|adminUser.create|adminUser.read|adminUser.update|adminUser.delete|adminSession.read|adminAuth.unlinkAll]`: [required]
+* `--permissions [all|activity.create|activity.read|activity.update|activity.delete|activity.statistics|apiKey.create|apiKey.read|apiKey.update|apiKey.delete|asset.read|asset.update|asset.delete|asset.statistics|asset.share|asset.view|asset.download|asset.upload|asset.replace|asset.copy|asset.derive|asset.edit.get|asset.edit.create|asset.edit.delete|album.create|album.read|album.update|album.delete|album.statistics|album.share|album.download|albumAsset.create|albumAsset.delete|albumUser.create|albumUser.update|albumUser.delete|auth.changePassword|authDevice.delete|archive.read|backup.list|backup.download|backup.upload|backup.delete|duplicate.read|duplicate.delete|face.create|face.read|face.update|face.delete|folder.read|job.create|job.read|library.create|library.read|library.update|library.delete|library.statistics|timeline.read|timeline.download|maintenance|map.read|map.search|memory.create|memory.read|memory.update|memory.delete|memory.statistics|memoryAsset.create|memoryAsset.delete|notification.create|notification.read|notification.update|notification.delete|partner.create|partner.read|partner.update|partner.delete|person.create|person.read|person.update|person.delete|person.statistics|person.merge|person.reassign|pinCode.create|pinCode.update|pinCode.delete|plugin.create|plugin.read|plugin.update|plugin.delete|server.about|server.apkLinks|server.storage|server.statistics|server.versionCheck|serverLicense.read|serverLicense.update|serverLicense.delete|session.create|session.read|session.update|session.delete|session.lock|sharedLink.create|sharedLink.read|sharedLink.update|sharedLink.delete|stack.create|stack.read|stack.update|stack.delete|sync.stream|syncCheckpoint.read|syncCheckpoint.update|syncCheckpoint.delete|systemConfig.read|systemConfig.update|systemMetadata.read|systemMetadata.update|tag.create|tag.read|tag.update|tag.delete|tag.asset|user.read|user.update|userLicense.create|userLicense.read|userLicense.update|userLicense.delete|userOnboarding.read|userOnboarding.update|userOnboarding.delete|userPreference.read|userPreference.update|userProfileImage.create|userProfileImage.read|userProfileImage.update|userProfileImage.delete|queue.read|queue.update|queueJob.create|queueJob.read|queueJob.update|queueJob.delete|workflow.create|workflow.read|workflow.update|workflow.delete|adminUser.create|adminUser.read|adminUser.update|adminUser.delete|adminSession.read|adminAuth.unlinkAll]`: [required]
 * `--help`: Show this message and exit.
 
 ### `immich api-keys delete-api-key`
@@ -212,7 +212,7 @@ $ immich api-keys update-api-key [OPTIONS] ID
 **Options**:
 
 * `--name TEXT`
-* `--permissions [all|activity.create|activity.read|activity.update|activity.delete|activity.statistics|apiKey.create|apiKey.read|apiKey.update|apiKey.delete|asset.read|asset.update|asset.delete|asset.statistics|asset.share|asset.view|asset.download|asset.upload|asset.replace|asset.copy|album.create|album.read|album.update|album.delete|album.statistics|album.share|album.download|albumAsset.create|albumAsset.delete|albumUser.create|albumUser.update|albumUser.delete|auth.changePassword|authDevice.delete|archive.read|duplicate.read|duplicate.delete|face.create|face.read|face.update|face.delete|job.create|job.read|library.create|library.read|library.update|library.delete|library.statistics|timeline.read|timeline.download|maintenance|memory.create|memory.read|memory.update|memory.delete|memory.statistics|memoryAsset.create|memoryAsset.delete|notification.create|notification.read|notification.update|notification.delete|partner.create|partner.read|partner.update|partner.delete|person.create|person.read|person.update|person.delete|person.statistics|person.merge|person.reassign|pinCode.create|pinCode.update|pinCode.delete|plugin.create|plugin.read|plugin.update|plugin.delete|server.about|server.apkLinks|server.storage|server.statistics|server.versionCheck|serverLicense.read|serverLicense.update|serverLicense.delete|session.create|session.read|session.update|session.delete|session.lock|sharedLink.create|sharedLink.read|sharedLink.update|sharedLink.delete|stack.create|stack.read|stack.update|stack.delete|sync.stream|syncCheckpoint.read|syncCheckpoint.update|syncCheckpoint.delete|systemConfig.read|systemConfig.update|systemMetadata.read|systemMetadata.update|tag.create|tag.read|tag.update|tag.delete|tag.asset|user.read|user.update|userLicense.create|userLicense.read|userLicense.update|userLicense.delete|userOnboarding.read|userOnboarding.update|userOnboarding.delete|userPreference.read|userPreference.update|userProfileImage.create|userProfileImage.read|userProfileImage.update|userProfileImage.delete|queue.read|queue.update|queueJob.create|queueJob.read|queueJob.update|queueJob.delete|workflow.create|workflow.read|workflow.update|workflow.delete|adminUser.create|adminUser.read|adminUser.update|adminUser.delete|adminSession.read|adminAuth.unlinkAll]`
+* `--permissions [all|activity.create|activity.read|activity.update|activity.delete|activity.statistics|apiKey.create|apiKey.read|apiKey.update|apiKey.delete|asset.read|asset.update|asset.delete|asset.statistics|asset.share|asset.view|asset.download|asset.upload|asset.replace|asset.copy|asset.derive|asset.edit.get|asset.edit.create|asset.edit.delete|album.create|album.read|album.update|album.delete|album.statistics|album.share|album.download|albumAsset.create|albumAsset.delete|albumUser.create|albumUser.update|albumUser.delete|auth.changePassword|authDevice.delete|archive.read|backup.list|backup.download|backup.upload|backup.delete|duplicate.read|duplicate.delete|face.create|face.read|face.update|face.delete|folder.read|job.create|job.read|library.create|library.read|library.update|library.delete|library.statistics|timeline.read|timeline.download|maintenance|map.read|map.search|memory.create|memory.read|memory.update|memory.delete|memory.statistics|memoryAsset.create|memoryAsset.delete|notification.create|notification.read|notification.update|notification.delete|partner.create|partner.read|partner.update|partner.delete|person.create|person.read|person.update|person.delete|person.statistics|person.merge|person.reassign|pinCode.create|pinCode.update|pinCode.delete|plugin.create|plugin.read|plugin.update|plugin.delete|server.about|server.apkLinks|server.storage|server.statistics|server.versionCheck|serverLicense.read|serverLicense.update|serverLicense.delete|session.create|session.read|session.update|session.delete|session.lock|sharedLink.create|sharedLink.read|sharedLink.update|sharedLink.delete|stack.create|stack.read|stack.update|stack.delete|sync.stream|syncCheckpoint.read|syncCheckpoint.update|syncCheckpoint.delete|systemConfig.read|systemConfig.update|systemMetadata.read|systemMetadata.update|tag.create|tag.read|tag.update|tag.delete|tag.asset|user.read|user.update|userLicense.create|userLicense.read|userLicense.update|userLicense.delete|userOnboarding.read|userOnboarding.update|userOnboarding.delete|userPreference.read|userPreference.update|userProfileImage.create|userProfileImage.read|userProfileImage.update|userProfileImage.delete|queue.read|queue.update|queueJob.create|queueJob.read|queueJob.update|queueJob.delete|workflow.create|workflow.read|workflow.update|workflow.delete|adminUser.create|adminUser.read|adminUser.update|adminUser.delete|adminSession.read|adminAuth.unlinkAll]`
 * `--help`: Show this message and exit.
 
 ## `immich activities`
@@ -623,8 +623,11 @@ $ immich assets [OPTIONS] COMMAND [ARGS]...
 * `copy-asset`: Copy asset
 * `delete-asset-metadata`: Delete asset metadata by key
 * `delete-assets`: Delete assets
+* `delete-bulk-asset-metadata`: Delete asset metadata
 * `download-asset`: Download original asset
+* `edit-asset`: Apply edits to an existing asset
 * `get-all-user-assets-by-device-id`: Retrieve assets by device ID (DEPRECATED)
+* `get-asset-edits`: Retrieve edits for an existing asset
 * `get-asset-info`: Retrieve an asset
 * `get-asset-metadata`: Get asset metadata
 * `get-asset-metadata-by-key`: Retrieve asset metadata by key
@@ -632,11 +635,13 @@ $ immich assets [OPTIONS] COMMAND [ARGS]...
 * `get-asset-statistics`: Get asset statistics
 * `get-random`: Get random assets (DEPRECATED)
 * `play-asset-video`: Play asset video
+* `remove-asset-edits`: Remove edits from an existing asset
 * `replace-asset`: Replace asset (DEPRECATED)
 * `run-asset-jobs`: Run an asset job
 * `update-asset`: Update an asset
 * `update-asset-metadata`: Update asset metadata
 * `update-assets`: Update assets
+* `update-bulk-asset-metadata`: Upsert asset metadata
 * `upload-asset`: Upload asset
 * `view-asset`: View asset thumbnail
 * `download-asset-to-file`: Download an asset to a file.
@@ -711,13 +716,13 @@ Delete asset metadata by key
 **Usage**:
 
 ```console
-$ immich assets delete-asset-metadata [OPTIONS] ID KEY:{mobile-app}
+$ immich assets delete-asset-metadata [OPTIONS] ID KEY
 ```
 
 **Arguments**:
 
 * `ID`: [required]
-* `KEY:{mobile-app}`: [required]
+* `KEY`: [required]
 
 **Options**:
 
@@ -741,6 +746,23 @@ $ immich assets delete-assets [OPTIONS]
 * `--ids TEXT`: [required]
 * `--help`: Show this message and exit.
 
+### `immich assets delete-bulk-asset-metadata`
+
+Delete asset metadata
+
+<a href="https://api.immich.app/endpoints/assets/deleteBulkAssetMetadata">Immich API documentation</a>
+
+**Usage**:
+
+```console
+$ immich assets delete-bulk-asset-metadata [OPTIONS]
+```
+
+**Options**:
+
+* `--items TEXT`: As a JSON string  [required]
+* `--help`: Show this message and exit.
+
 ### `immich assets download-asset`
 
 Download original asset
@@ -759,8 +781,32 @@ $ immich assets download-asset [OPTIONS] ID
 
 **Options**:
 
+* `--edited [true|false]`
 * `--key TEXT`
 * `--slug TEXT`
+* `--help`: Show this message and exit.
+
+### `immich assets edit-asset`
+
+Apply edits to an existing asset
+
+<a href="https://api.immich.app/endpoints/assets/editAsset">Immich API documentation</a>
+
+**Usage**:
+
+```console
+$ immich assets edit-asset [OPTIONS] ID
+```
+
+**Arguments**:
+
+* `ID`: [required]
+
+**Options**:
+
+* `--edits TEXT`: list of edits
+
+As a JSON string  [required]
 * `--help`: Show this message and exit.
 
 ### `immich assets get-all-user-assets-by-device-id`
@@ -778,6 +824,26 @@ $ immich assets get-all-user-assets-by-device-id [OPTIONS] DEVICE_ID
 **Arguments**:
 
 * `DEVICE_ID`: [required]
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+### `immich assets get-asset-edits`
+
+Retrieve edits for an existing asset
+
+<a href="https://api.immich.app/endpoints/assets/getAssetEdits">Immich API documentation</a>
+
+**Usage**:
+
+```console
+$ immich assets get-asset-edits [OPTIONS] ID
+```
+
+**Arguments**:
+
+* `ID`: [required]
 
 **Options**:
 
@@ -834,13 +900,13 @@ Retrieve asset metadata by key
 **Usage**:
 
 ```console
-$ immich assets get-asset-metadata-by-key [OPTIONS] ID KEY:{mobile-app}
+$ immich assets get-asset-metadata-by-key [OPTIONS] ID KEY
 ```
 
 **Arguments**:
 
 * `ID`: [required]
-* `KEY:{mobile-app}`: [required]
+* `KEY`: [required]
 
 **Options**:
 
@@ -922,6 +988,26 @@ $ immich assets play-asset-video [OPTIONS] ID
 
 * `--key TEXT`
 * `--slug TEXT`
+* `--help`: Show this message and exit.
+
+### `immich assets remove-asset-edits`
+
+Remove edits from an existing asset
+
+<a href="https://api.immich.app/endpoints/assets/removeAssetEdits">Immich API documentation</a>
+
+**Usage**:
+
+```console
+$ immich assets remove-asset-edits [OPTIONS] ID
+```
+
+**Arguments**:
+
+* `ID`: [required]
+
+**Options**:
+
 * `--help`: Show this message and exit.
 
 ### `immich assets replace-asset`
@@ -1047,6 +1133,23 @@ $ immich assets update-assets [OPTIONS]
 * `--visibility TEXT`
 * `--help`: Show this message and exit.
 
+### `immich assets update-bulk-asset-metadata`
+
+Upsert asset metadata
+
+<a href="https://api.immich.app/endpoints/assets/updateBulkAssetMetadata">Immich API documentation</a>
+
+**Usage**:
+
+```console
+$ immich assets update-bulk-asset-metadata [OPTIONS]
+```
+
+**Options**:
+
+* `--items TEXT`: As a JSON string  [required]
+* `--help`: Show this message and exit.
+
 ### `immich assets upload-asset`
 
 Upload asset
@@ -1071,7 +1174,7 @@ $ immich assets upload-asset [OPTIONS]
 * `--is-favorite [true|false]`
 * `--key TEXT`
 * `--live-photo-video-id TEXT`
-* `--metadata TEXT`: As a JSON string  [required]
+* `--metadata TEXT`: As a JSON string
 * `--sidecar-data PATH`
 * `--slug TEXT`
 * `--visibility TEXT`
@@ -1096,8 +1199,9 @@ $ immich assets view-asset [OPTIONS] ID
 
 **Options**:
 
+* `--edited [true|false]`
 * `--key TEXT`
-* `--size [fullsize|preview|thumbnail]`
+* `--size [original|fullsize|preview|thumbnail]`
 * `--slug TEXT`
 * `--help`: Show this message and exit.
 
@@ -1986,12 +2090,12 @@ Run jobs
 **Usage**:
 
 ```console
-$ immich jobs run-queue-command-legacy [OPTIONS] NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow}
+$ immich jobs run-queue-command-legacy [OPTIONS] NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow|editor}
 ```
 
 **Arguments**:
 
-* `NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow}`: [required]
+* `NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow|editor}`: [required]
 
 **Options**:
 
@@ -2205,8 +2309,42 @@ $ immich maintenance-admin [OPTIONS] COMMAND [ARGS]...
 
 **Commands**:
 
+* `detect-prior-install`: Detect existing install
+* `get-maintenance-status`: Get maintenance mode status
 * `maintenance-login`: Log into maintenance mode
 * `set-maintenance-mode`: Set maintenance mode
+
+### `immich maintenance-admin detect-prior-install`
+
+Detect existing install
+
+<a href="https://api.immich.app/endpoints/maintenance-admin/detectPriorInstall">Immich API documentation</a>
+
+**Usage**:
+
+```console
+$ immich maintenance-admin detect-prior-install [OPTIONS]
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+### `immich maintenance-admin get-maintenance-status`
+
+Get maintenance mode status
+
+<a href="https://api.immich.app/endpoints/maintenance-admin/getMaintenanceStatus">Immich API documentation</a>
+
+**Usage**:
+
+```console
+$ immich maintenance-admin get-maintenance-status [OPTIONS]
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
 
 ### `immich maintenance-admin maintenance-login`
 
@@ -2240,6 +2378,7 @@ $ immich maintenance-admin set-maintenance-mode [OPTIONS]
 **Options**:
 
 * `--action TEXT`: [required]
+* `--restore-backup-filename TEXT`
 * `--help`: Show this message and exit.
 
 ## `immich map`
@@ -3127,6 +3266,7 @@ $ immich plugins [OPTIONS] COMMAND [ARGS]...
 **Commands**:
 
 * `get-plugin`: Retrieve a plugin
+* `get-plugin-triggers`: List all plugin triggers
 * `get-plugins`: List all plugins
 
 ### `immich plugins get-plugin`
@@ -3144,6 +3284,22 @@ $ immich plugins get-plugin [OPTIONS] ID
 **Arguments**:
 
 * `ID`: [required]
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+### `immich plugins get-plugin-triggers`
+
+List all plugin triggers
+
+<a href="https://api.immich.app/endpoints/plugins/getPluginTriggers">Immich API documentation</a>
+
+**Usage**:
+
+```console
+$ immich plugins get-plugin-triggers [OPTIONS]
+```
 
 **Options**:
 
@@ -3198,12 +3354,12 @@ Empty a queue
 **Usage**:
 
 ```console
-$ immich queues empty-queue [OPTIONS] NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow}
+$ immich queues empty-queue [OPTIONS] NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow|editor}
 ```
 
 **Arguments**:
 
-* `NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow}`: [required]
+* `NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow|editor}`: [required]
 
 **Options**:
 
@@ -3219,12 +3375,12 @@ Retrieve a queue
 **Usage**:
 
 ```console
-$ immich queues get-queue [OPTIONS] NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow}
+$ immich queues get-queue [OPTIONS] NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow|editor}
 ```
 
 **Arguments**:
 
-* `NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow}`: [required]
+* `NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow|editor}`: [required]
 
 **Options**:
 
@@ -3239,12 +3395,12 @@ Retrieve queue jobs
 **Usage**:
 
 ```console
-$ immich queues get-queue-jobs [OPTIONS] NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow}
+$ immich queues get-queue-jobs [OPTIONS] NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow|editor}
 ```
 
 **Arguments**:
 
-* `NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow}`: [required]
+* `NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow|editor}`: [required]
 
 **Options**:
 
@@ -3276,12 +3432,12 @@ Update a queue
 **Usage**:
 
 ```console
-$ immich queues update-queue [OPTIONS] NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow}
+$ immich queues update-queue [OPTIONS] NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow|editor}
 ```
 
 **Arguments**:
 
-* `NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow}`: [required]
+* `NAME:{thumbnailGeneration|metadataExtraction|videoConversion|faceDetection|facialRecognition|smartSearch|duplicateDetection|backgroundTask|storageTemplateMigration|migration|search|sidecar|library|notifications|backupDatabase|ocr|workflow|editor}`: [required]
 
 **Options**:
 
@@ -4164,6 +4320,7 @@ $ immich shared-links get-all-shared-links [OPTIONS]
 **Options**:
 
 * `--album-id TEXT`
+* `--id TEXT`
 * `--help`: Show this message and exit.
 
 ### `immich shared-links get-my-shared-link`
@@ -4682,14 +4839,18 @@ $ immich system-config update-config [OPTIONS]
 * `--image-extract-embedded`: [required]
 * `--image-fullsize-enabled`: [required]
 * `--image-fullsize-format TEXT`: [required]
+* `--image-fullsize-progressive [true|false]`
 * `--image-fullsize-quality INTEGER RANGE`: [1&lt;=x&lt;=100; required]
 * `--image-preview-format TEXT`: [required]
+* `--image-preview-progressive [true|false]`
 * `--image-preview-quality INTEGER RANGE`: [1&lt;=x&lt;=100; required]
 * `--image-preview-size INTEGER RANGE`: [x&gt;=1; required]
 * `--image-thumbnail-format TEXT`: [required]
+* `--image-thumbnail-progressive [true|false]`
 * `--image-thumbnail-quality INTEGER RANGE`: [1&lt;=x&lt;=100; required]
 * `--image-thumbnail-size INTEGER RANGE`: [x&gt;=1; required]
 * `--job-background-task-concurrency INTEGER RANGE`: [x&gt;=1; required]
+* `--job-editor-concurrency INTEGER RANGE`: [x&gt;=1; required]
 * `--job-face-detection-concurrency INTEGER RANGE`: [x&gt;=1; required]
 * `--job-library-concurrency INTEGER RANGE`: [x&gt;=1; required]
 * `--job-metadata-extraction-concurrency INTEGER RANGE`: [x&gt;=1; required]
@@ -6002,4 +6163,5 @@ $ immich workflows update-workflow [OPTIONS] ID
 * `--enabled [true|false]`
 * `--filters TEXT`: As a JSON string
 * `--name TEXT`
+* `--trigger-type TEXT`
 * `--help`: Show this message and exit.
