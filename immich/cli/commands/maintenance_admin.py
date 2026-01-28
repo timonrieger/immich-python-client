@@ -16,6 +16,38 @@ app = typer.Typer(
 )
 
 
+@app.command("detect-prior-install", deprecated=False, rich_help_panel="API commands")
+def detect_prior_install(
+    ctx: typer.Context,
+) -> None:
+    """Detect existing install
+
+    [link=https://api.immich.app/endpoints/maintenance-admin/detectPriorInstall]Immich API documentation[/link]
+    """
+    kwargs = {}
+    client: "AsyncClient" = ctx.obj["client"]
+    result = run_command(
+        client, client.maintenance_admin, "detect_prior_install", ctx, **kwargs
+    )
+    print_response(result, ctx)
+
+
+@app.command("get-maintenance-status", deprecated=False, rich_help_panel="API commands")
+def get_maintenance_status(
+    ctx: typer.Context,
+) -> None:
+    """Get maintenance mode status
+
+    [link=https://api.immich.app/endpoints/maintenance-admin/getMaintenanceStatus]Immich API documentation[/link]
+    """
+    kwargs = {}
+    client: "AsyncClient" = ctx.obj["client"]
+    result = run_command(
+        client, client.maintenance_admin, "get_maintenance_status", ctx, **kwargs
+    )
+    print_response(result, ctx)
+
+
 @app.command("maintenance-login", deprecated=False, rich_help_panel="API commands")
 def maintenance_login(
     ctx: typer.Context,
@@ -42,6 +74,9 @@ def maintenance_login(
 def set_maintenance_mode(
     ctx: typer.Context,
     action: str = typer.Option(..., "--action", help=""""""),
+    restore_backup_filename: str | None = typer.Option(
+        None, "--restore-backup-filename", help=""""""
+    ),
 ) -> None:
     """Set maintenance mode
 
@@ -50,6 +85,8 @@ def set_maintenance_mode(
     kwargs = {}
     json_data = {}
     set_nested(json_data, ["action"], action)
+    if restore_backup_filename is not None:
+        set_nested(json_data, ["restore_backup_filename"], restore_backup_filename)
     set_maintenance_mode_dto = SetMaintenanceModeDto.model_validate(json_data)
     kwargs["set_maintenance_mode_dto"] = set_maintenance_mode_dto
     client: "AsyncClient" = ctx.obj["client"]

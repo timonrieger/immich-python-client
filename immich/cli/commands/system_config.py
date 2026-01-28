@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import typer
-from typing import TYPE_CHECKING
+from typing import Literal, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from immich import AsyncClient
@@ -123,11 +123,17 @@ def update_config(
     image_fullsize_format: str = typer.Option(
         ..., "--image-fullsize-format", help=""""""
     ),
+    image_fullsize_progressive: Literal["true", "false"] | None = typer.Option(
+        None, "--image-fullsize-progressive", help=""""""
+    ),
     image_fullsize_quality: int = typer.Option(
         ..., "--image-fullsize-quality", help="""""", min=1, max=100
     ),
     image_preview_format: str = typer.Option(
         ..., "--image-preview-format", help=""""""
+    ),
+    image_preview_progressive: Literal["true", "false"] | None = typer.Option(
+        None, "--image-preview-progressive", help=""""""
     ),
     image_preview_quality: int = typer.Option(
         ..., "--image-preview-quality", help="""""", min=1, max=100
@@ -138,6 +144,9 @@ def update_config(
     image_thumbnail_format: str = typer.Option(
         ..., "--image-thumbnail-format", help=""""""
     ),
+    image_thumbnail_progressive: Literal["true", "false"] | None = typer.Option(
+        None, "--image-thumbnail-progressive", help=""""""
+    ),
     image_thumbnail_quality: int = typer.Option(
         ..., "--image-thumbnail-quality", help="""""", min=1, max=100
     ),
@@ -146,6 +155,9 @@ def update_config(
     ),
     job_background_task_concurrency: int = typer.Option(
         ..., "--job-background-task-concurrency", help="""""", min=1
+    ),
+    job_editor_concurrency: int = typer.Option(
+        ..., "--job-editor-concurrency", help="""""", min=1
     ),
     job_face_detection_concurrency: int = typer.Option(
         ..., "--job-face-detection-concurrency", help="""""", min=1
@@ -433,16 +445,35 @@ def update_config(
     set_nested(json_data, ["image_extract_embedded"], image_extract_embedded)
     set_nested(json_data, ["image_fullsize_enabled"], image_fullsize_enabled)
     set_nested(json_data, ["image_fullsize_format"], image_fullsize_format)
+    if image_fullsize_progressive is not None:
+        set_nested(
+            json_data,
+            ["image_fullsize_progressive"],
+            image_fullsize_progressive.lower() == "true",
+        )
     set_nested(json_data, ["image_fullsize_quality"], image_fullsize_quality)
     set_nested(json_data, ["image_preview_format"], image_preview_format)
+    if image_preview_progressive is not None:
+        set_nested(
+            json_data,
+            ["image_preview_progressive"],
+            image_preview_progressive.lower() == "true",
+        )
     set_nested(json_data, ["image_preview_quality"], image_preview_quality)
     set_nested(json_data, ["image_preview_size"], image_preview_size)
     set_nested(json_data, ["image_thumbnail_format"], image_thumbnail_format)
+    if image_thumbnail_progressive is not None:
+        set_nested(
+            json_data,
+            ["image_thumbnail_progressive"],
+            image_thumbnail_progressive.lower() == "true",
+        )
     set_nested(json_data, ["image_thumbnail_quality"], image_thumbnail_quality)
     set_nested(json_data, ["image_thumbnail_size"], image_thumbnail_size)
     set_nested(
         json_data, ["job_background_task_concurrency"], job_background_task_concurrency
     )
+    set_nested(json_data, ["job_editor_concurrency"], job_editor_concurrency)
     set_nested(
         json_data, ["job_face_detection_concurrency"], job_face_detection_concurrency
     )
