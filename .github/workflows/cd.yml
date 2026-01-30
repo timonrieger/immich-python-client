@@ -2,10 +2,10 @@ name: Continuous Delivery
 
 on:
   pull_request:
-    branches: [main]
+    branches: [bp16]
     types: [opened, labeled, synchronize]
   push:
-    branches: [main]
+    branches: [bp16]
 
 permissions:
   contents: read
@@ -53,7 +53,7 @@ jobs:
   e2e-tests:
     runs-on: ubuntu-latest
     if: |
-      (github.ref == 'refs/heads/main' && github.event_name == 'push') ||
+      (github.ref == 'refs/heads/bp16' && github.event_name == 'push') ||
       (github.event.action == 'labeled' && github.event.label.name == 'run-e2e')
     steps:
       - name: Check-out repository
@@ -109,7 +109,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     needs: [lint, test, e2e-tests]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/bp16' && github.event_name == 'push'
     concurrency:
       group: ${{ github.workflow }}-release-${{ github.ref_name }}
       cancel-in-progress: false
