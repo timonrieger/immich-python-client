@@ -67,11 +67,14 @@ nav = [
     ] },
     { Client = [
         "client/getting-started.md",
-        "client/adoption-guide.md",
+        "client/integration-guide.md",
         "client/response-types.md",
+        "client/exception-handling.md",
         "client/session-management.md",
         { Reference = [
             {"Reference" = "client/reference/index.md"},
+            {"Exceptions" = "client/reference/exceptions.md"},
+            {"Responses" = "client/reference/responses.md"},
             { API = [
                 "client/reference/api/activities_api.md",
                 "client/reference/api/albums_api.md",
@@ -766,6 +769,7 @@ docstring_style = "sphinx"
 allow_inspection = false
 show_root_heading = true
 show_signature_annotations = true
+# show_if_no_docstring = true
 merge_init_into_class = true
 separate_signature = true
 extensions = [

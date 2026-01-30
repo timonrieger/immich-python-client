@@ -1,4 +1,4 @@
-# Adopting immich-py
+# Integration Guide
 
 This guide shows how to replace raw HTTP requests with immich-py with minimal changes. You get typed responses, no manual headers (`x-api-key`, `Accept`), no URL or path construction, and the client raises specific exceptions.
 
@@ -146,7 +146,7 @@ If you use an async HTTP client (`aiohttp` or `httpx`) to talk to the Immich API
 
 ## Error handling
 
-Each library raises different exceptions for connection failures, timeouts, and HTTP errors. immich-py makes the error handling easy by raising `immich.client.generated.exceptions.ApiException`.
+Each library raises different exceptions for connection failures, timeouts, and HTTP errors. immich-py makes the error handling easy with custom exceptions. Read on [Exception Handling](exception-handling.md) for more details.
 
 === "requests"
 
@@ -223,14 +223,3 @@ Each library raises different exceptions for connection failures, timeouts, and 
     ```
 
     1. Not needed if you don't set a timeout.
-
-## Tips for minimal changes
-
-- **Sync scripts**: Use one `asyncio.run(inner_async())` and a single `async with AsyncClient(...)` (or a helper like `request_api` above) so existing sync call sites stay sync; you do not need to refactor the whole app to async.
-- **Custom session**: If you already have an `aiohttp.ClientSession`, pass it as `http_client`. You remain responsible for closing it (see [Session management](session-management.md)).
-- **Errors**: The client raises `immich.client.generated.exceptions.ApiException` (and subclasses) with `status` and `body`. Handle those instead of checking `response.status_code` and parsing error bodies by hand.
-- **Types**: Methods return [Pydantic](https://docs.pydantic.dev/) models, which means you can use attributes (e.g. `version.major`, `album.album_name`) instead of dict keys.
-
-## Full API reference
-
-For deeper adoption, browse the [Reference](reference/index.md) for all API groups and methods (server, assets, albums, search, etc.).
